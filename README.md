@@ -1,0 +1,1 @@
+a flexible gui display for local AIs such as ollama
