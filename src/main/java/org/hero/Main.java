@@ -1,4 +1,4 @@
-package org.example;
+package org.hero;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -15,6 +15,7 @@ public class Main extends Application {
         primaryStage.setTitle("My Program");
         primaryStage.show();
 
+        new ProgramLauncher();
     }
 
     @SuppressWarnings("unused")

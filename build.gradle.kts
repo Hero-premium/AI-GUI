@@ -23,7 +23,7 @@ javafx {
 }
 
 application {
-    mainClass.set("org.example.Main")
+    mainClass.set("org.hero.Main")
 }
 
 tasks.test {
