@@ -17,6 +17,7 @@ public class ScannerInput implements GUIApi {
             if (scanner.hasNextLine()) {
                 String input = scanner.nextLine();
                 IO.println(Program.ai.chat(input).message().content());
+                IO.println("---- User turn!");
             }
         }
     }
