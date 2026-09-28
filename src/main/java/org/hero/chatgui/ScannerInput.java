@@ -1,0 +1,23 @@
+package org.hero.chatgui;
+
+import org.hero.Program;
+
+import java.util.Scanner;
+
+public class ScannerInput implements GUIApi {
+    Scanner scanner;
+
+    public ScannerInput(){
+        scanner = new Scanner(System.in);
+    }
+
+    @Override
+    public void launchApplication() {
+        while (true){
+            if (scanner.hasNextLine()) {
+                String input = scanner.nextLine();
+                IO.println(Program.ai.chat(input).message().content());
+            }
+        }
+    }
+}
