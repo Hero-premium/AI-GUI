@@ -9,10 +9,6 @@ public class Requests {
     }
 
     public record RequestIn(String model, List<Message> messages, boolean stream) {
-        @Override
-        public String toString(){
-            return messages.getLast().content;
-        }
     }
 
     public record RequestOut(
@@ -28,5 +24,10 @@ public class Requests {
             long prompt_eval_duration,
             int eval_count,
             long eval_duration
-    ) {}
+    ) {
+    }
+
+    private Requests(){
+        throw new AssertionError("no org.hero.chatai.Requests instances for you!");
+    }
 }

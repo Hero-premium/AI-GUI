@@ -8,10 +8,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public interface LocalAi {
+
+
     HttpClient client = HttpClient.newHttpClient();
-
-
-    Requests.RequestOut chat(String content);
 
     static Requests.RequestOut requestOut(HttpRequest request) {
         try {
@@ -21,4 +20,6 @@ public interface LocalAi {
             throw new RuntimeException(e);
         }
     }
+
+    Requests.RequestOut chat(String content);
 }
