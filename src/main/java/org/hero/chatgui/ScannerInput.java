@@ -1,6 +1,7 @@
 package org.hero.chatgui;
 
 import org.hero.Program;
+import org.hero.chatai.Requests;
 
 import java.util.Scanner;
 
@@ -16,7 +17,7 @@ public class ScannerInput implements GUIApi {
         while (true){
             if (scanner.hasNextLine()) {
                 String input = scanner.nextLine();
-                IO.println(Program.ai.chat(input).message().content());
+                IO.println(Program.ai.chat(new Requests.Message("user", input)).message().content());
                 IO.println("---- User turn!");
             }
         }

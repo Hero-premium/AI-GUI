@@ -7,12 +7,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+/**
+ * the interface every AI configuration is meant it implement
+ */
 public interface LocalAi {
 
 
     HttpClient client = HttpClient.newHttpClient();
 
-    static Requests.RequestOut requestOut(HttpRequest request) {
+    static Requests.RequestOut sentRequest(HttpRequest request) {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return Util.gson.fromJson(response.body(), Requests.RequestOut.class);
@@ -21,5 +24,5 @@ public interface LocalAi {
         }
     }
 
-    Requests.RequestOut chat(String content);
+    Requests.RequestOut chat(Requests.Message message);
 }
