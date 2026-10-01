@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class JavaFX extends Application implements GUIApi {
+public class JavaFX extends Application implements Client {
     @Override
     public void start(Stage primaryStage) {
         Scene scene = new Scene(new Pane(), 800, 600);

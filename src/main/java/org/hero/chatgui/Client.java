@@ -1,6 +1,6 @@
 package org.hero.chatgui;
 
-public interface GUIApi {
+public interface Client {
 
     void launchApplication();
 }

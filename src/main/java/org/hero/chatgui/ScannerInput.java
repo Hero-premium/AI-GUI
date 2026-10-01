@@ -5,7 +5,7 @@ import org.hero.chatai.Requests;
 
 import java.util.Scanner;
 
-public class ScannerInput implements GUIApi {
+public class ScannerInput implements Client {
     Scanner scanner;
 
     public ScannerInput(){

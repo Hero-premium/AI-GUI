@@ -31,7 +31,7 @@ public class Llama3b implements LocalAi {
     public Requests.RequestOut chat(Requests.Message message) {
         if (message.content().equals("/getMsgs")) {
             for (Requests.Message msg : messages){
-                IO.println(msg.role() + msg.content());
+                IO.println(msg.role() + " " + msg.content());
             }
 
         }
@@ -45,8 +45,9 @@ public class Llama3b implements LocalAi {
     }
 
     private void toolUse(Requests.RequestOut requestOut) {
-        if (requestOut.message().content().equals("tools/searchWeb -> current US President")) {
+        if (requestOut.message().content().equals("tools/WebSearch -> \"current US President\"")) {
             Tool.detectAndRunTool("WebSearch").ifPresent(this::chat);
+            IO.println("tool used!");
         }
     }
 

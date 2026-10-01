@@ -27,19 +27,20 @@ public class Requests {
     }
 
     /**
-     *  what the model returns
-     * @param model the model name
-     * @param created_at
-     * @param message the message containing the modes role (typically assistant) and the content of the message
-     * @param done
-     * @param done_reason
-     * @param total_duration
-     * @param load_duration
-     * @param prompt_eval_count
-     * @param prompt_eval_cached_count
-     * @param prompt_eval_duration
-     * @param eval_count
-     * @param eval_duration
+     * Response returned by the model for a chat request.
+     *
+     * @param model                    the name of the model that produced the response
+     * @param created_at               timestamp of when the response was created (ISO 8601)
+     * @param message                  the generated message, containing the model's role (typically "assistant") and the content of the message
+     * @param done                     whether the model has finished generating; false for intermediate streamed chunks
+     * @param done_reason              why generation ended (e.g. "stop" or "length"); only set when done is true
+     * @param total_duration           total time spent handling the request, in nanoseconds
+     * @param load_duration            time spent loading the model, in nanoseconds
+     * @param prompt_eval_count        number of tokens in the prompt
+     * @param prompt_eval_cached_count number of prompt tokens served from cache instead of being re-evaluated
+     * @param prompt_eval_duration     time spent evaluating the prompt, in nanoseconds
+     * @param eval_count               number of tokens generated in the response
+     * @param eval_duration            time spent generating the response, in nanoseconds
      */
     public record RequestOut(
             String model,
@@ -55,6 +56,9 @@ public class Requests {
             int eval_count,
             long eval_duration
     ) {
+        public int getEvalDurationInSeconds() {
+            return (int) eval_duration / 1_000_000_000;
+        }
     }
 
     /**
