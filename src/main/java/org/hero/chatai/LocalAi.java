@@ -7,14 +7,19 @@ import java.net.ConnectException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * the interface every AI configuration is meant to implement
  */
-public interface LocalAi {
+public abstract class LocalAi {
+
+    protected final List<Requests.Message> messages = new ArrayList<>();
+    private static final HttpClient client = HttpClient.newHttpClient();
 
 
-    HttpClient client = HttpClient.newHttpClient();
 
     static Requests.RequestOut sentRequest(HttpRequest request) {
         try {
@@ -27,5 +32,9 @@ public interface LocalAi {
         }
     }
 
-    Requests.RequestOut chat(Requests.Message message);
+    public Stream<Requests.Message> getMessages() {
+        return messages.stream();
+    }
+
+    public abstract Requests.RequestOut chat(Requests.Message message);
 }

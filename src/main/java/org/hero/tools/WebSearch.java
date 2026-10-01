@@ -3,7 +3,7 @@ package org.hero.tools;
 public class WebSearch extends Tool {
 
     public WebSearch() {
-        String name = WebSearch.class.getName();
+        String name = WebSearch.class.getSimpleName();
         super(
                 " You have a tool for searching: " + name + """
                         . To use it, reply with exactly this and nothing else: tools/ """ + name + """
