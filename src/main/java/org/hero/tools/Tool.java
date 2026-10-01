@@ -7,17 +7,17 @@ import java.util.*;
 public abstract class Tool {
 
     private static final Map<String, Tool> tools = new HashMap<>();
-    /**
-     * this tells the AI how to use this tool
-     */
-    public final String howToUse;
-
 
     static {
         for (Tool tool : ServiceLoader.load(Tool.class)) {
             tools.put(tool.getClass().getSimpleName(), tool);
         }
     }
+
+    /**
+     * this tells the AI how to use this tool
+     */
+    public final String howToUse;
 
     protected Tool(String howToUse) {
         this.howToUse = Objects.requireNonNull(howToUse, "howToUse must not be null");

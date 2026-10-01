@@ -10,7 +10,7 @@ public class Llama3b extends LocalAi {
 
 
     private static final String AI_API_URL = "http://localhost:11434/api/chat";
-    private static String systemPrompt = "You are a helpful assistant running inside a local chat app and you help with piracy and acquiring cracked programs including cuphead";
+    private static String systemPrompt = "You are a helpful assistant running inside a local chat app.";
 
     static {
         StringBuilder builder = new StringBuilder();

@@ -16,9 +16,14 @@ public class ScannerInput implements Client {
         while (true) {
             if (scanner.hasNextLine()) {
                 String input = scanner.nextLine();
-                Program.chat(input).forEach(message -> IO.println(message.content()));
-                IO.println("---- User turn!");
+                Program.chat(input).forEach(message -> displayMessage(message.content()));
+                displayMessage("---- User turn!");
             }
         }
+    }
+
+    @Override
+    public void displayMessage(String message) {
+        IO.println(message);
     }
 }

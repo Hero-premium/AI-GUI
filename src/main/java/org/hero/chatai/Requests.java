@@ -8,6 +8,13 @@ import java.util.List;
 public class Requests {
 
     /**
+     * don't instantiate this
+     */
+    private Requests() {
+        throw new AssertionError("no org.hero.chatai.Requests instances for you!");
+    }
+
+    /**
      * the message being sent, can be either by the AI or the user
      *
      * @param role    the name of the sender
@@ -59,12 +66,5 @@ public class Requests {
         public int getEvalDurationInSeconds() {
             return (int) eval_duration / 1_000_000_000;
         }
-    }
-
-    /**
-     * don't instantiate this
-     */
-    private Requests() {
-        throw new AssertionError("no org.hero.chatai.Requests instances for you!");
     }
 }

@@ -19,4 +19,9 @@ public class JavaFX extends Application implements Client {
     public void launchApplication() {
         launch();
     }
+
+    @Override
+    public void displayMessage(String message) {
+
+    }
 }

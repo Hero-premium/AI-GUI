@@ -16,10 +16,8 @@ import java.util.stream.Stream;
  */
 public abstract class LocalAi {
 
-    protected final List<Requests.Message> messages = new ArrayList<>();
     private static final HttpClient client = HttpClient.newHttpClient();
-
-
+    protected final List<Requests.Message> messages = new ArrayList<>();
 
     static Requests.RequestOut sentRequest(HttpRequest request) {
         try {

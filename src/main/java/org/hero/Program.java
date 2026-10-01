@@ -21,19 +21,19 @@ public class Program {
         ai = new Llama3b();
     }
 
-    public void launch() {
-        gui.launchApplication();
-    }
-
     public static Stream<Requests.Message> chat(String request) {
         if (Command.commandExists(request)) {
             return Command.findAndRunCommand(request, ai, gui);
         }
         Requests.RequestOut req = ai.chat(new Requests.Message("user", request));
         Optional<Requests.Message> message = Tool.detectAndRunTool(req.message().content());
-        if (message.isPresent()){
+        if (message.isPresent()) {
             req = ai.chat(message.get());
         }
         return Stream.of(req.message());
+    }
+
+    public void launch() {
+        gui.launchApplication();
     }
 }
