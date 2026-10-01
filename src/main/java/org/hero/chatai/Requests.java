@@ -64,7 +64,7 @@ public class Requests {
             long eval_duration
     ) {
         public int getEvalDurationInSeconds() {
-            return (int) eval_duration / 1_000_000_000;
+            return (int) (eval_duration / 1_000_000_000L);
         }
     }
 }
