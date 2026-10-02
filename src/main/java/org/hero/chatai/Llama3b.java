@@ -1,6 +1,7 @@
 package org.hero.chatai;
 
 import org.hero.tools.Tool;
+import org.hero.tools.ToolRegistry;
 import org.hero.util.Util;
 
 import java.net.URI;
@@ -15,7 +16,7 @@ public class Llama3b extends LocalAi {
     static {
         StringBuilder builder = new StringBuilder();
         builder.append(systemPrompt).append("\n");
-        for (Tool tool : Tool.TOOLS.values()) {
+        for (Tool tool : ToolRegistry.TOOLS.values()) {
             builder.append(tool.howToUse).append("\n");
         }
         systemPrompt = builder.toString();
