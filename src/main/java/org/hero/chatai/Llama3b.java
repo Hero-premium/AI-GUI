@@ -15,7 +15,7 @@ public class Llama3b extends LocalAi {
     static {
         StringBuilder builder = new StringBuilder();
         builder.append(systemPrompt).append("\n");
-        for (Tool tool : Tool.getTools().values()) {
+        for (Tool tool : Tool.TOOLS.values()) {
             builder.append(tool.howToUse).append("\n");
         }
         systemPrompt = builder.toString();
