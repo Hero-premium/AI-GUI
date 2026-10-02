@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * a class meant to hold requests related records
  */
-public class Requests {
+public final class Requests {
 
     /**
      * don't instantiate this

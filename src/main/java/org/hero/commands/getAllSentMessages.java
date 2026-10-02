@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 
 public class getAllSentMessages extends Command {
 
-
     /**
      *
      * @throws NullPointerException     if commandLine was null

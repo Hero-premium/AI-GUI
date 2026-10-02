@@ -18,6 +18,9 @@ public class ScannerInput implements Client {
                 String input = scanner.nextLine();
                 Program.chat(input).forEach(message -> displayMessage(message.content()));
                 displayMessage("---- User turn!");
+            } else {
+                displayMessage("you have just shut this down");
+                break;
             }
         }
     }

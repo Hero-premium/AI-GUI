@@ -5,7 +5,7 @@ import org.hero.chatai.LocalAi;
 import org.hero.chatai.Requests;
 import org.hero.chatgui.Client;
 import org.hero.chatgui.ScannerInput;
-import org.hero.commands.Command;
+import org.hero.commands.CommandsRegistry;
 import org.hero.tools.ToolRegistry;
 
 import java.util.Optional;
@@ -22,8 +22,8 @@ public class Program {
     }
 
     public static Stream<Requests.Message> chat(String request) {
-        if (Command.commandExists(request)) {
-            return Command.findAndRunCommand(request, ai, gui);
+        if (CommandsRegistry.commandExists(request)) {
+            return CommandsRegistry.findAndRunCommand(request, ai, gui);
         }
         Requests.RequestOut req = ai.chat(new Requests.Message("user", request));
         Optional<Requests.Message> message = ToolRegistry.detectAndRunTool(req.message().content());
