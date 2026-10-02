@@ -6,15 +6,15 @@ import org.hero.chatgui.Client;
 
 import java.util.stream.Stream;
 
-public class getAllSentMessages extends Command {
+public class GetConversationHistory extends Command {
 
     /**
      *
      * @throws NullPointerException     if commandLine was null
      * @throws IllegalArgumentException if the command given does not start with /
      */
-    public getAllSentMessages() {
-        super("/getAllSentMessages");
+    public GetConversationHistory() {
+        super("/getConversationHistory");
     }
 
     @Override

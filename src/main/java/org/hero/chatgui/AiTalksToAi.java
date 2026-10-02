@@ -18,7 +18,7 @@ public class AiTalksToAi implements Client {
             displayMessage("AI 1- " + ai1Input);
             String ai2Input = ai.chat(new Requests.Message("user", ai1Input)).message().content();
             displayMessage("AI 2- " + ai2Input);
-            Program.chat(ai2Input).forEach(builder::append);
+            Program.chat(ai2Input).forEach(message -> builder.append(message.content()));
             ai1Input = builder.toString();
             builder.setLength(0);
         }

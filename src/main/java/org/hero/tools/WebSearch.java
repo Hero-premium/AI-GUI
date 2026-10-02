@@ -6,7 +6,7 @@ public class WebSearch extends Tool {
         String name = WebSearch.class.getSimpleName();
         super(
                 " You have a tool for searching: " + name + """
-                        . To use it, reply with exactly this and nothing else: tools/ """ + name + """
+                        . To use it, reply with exactly this and nothing else: tools/""" + name + """
                         -> "search query"
                         The string is the search query. Do not ask about how the tool is implemented or designed. Only use it according to this syntax.
                         
@@ -23,7 +23,7 @@ public class WebSearch extends Tool {
                         Assistant: Put the egg in boiling water for 8 to 10 minutes, then cool it in cold water.
                         
                         User: Search for today's weather in London.
-                        Assistant: tools/""" + name + " -> London weather today"
+                        Assistant: tools/""" + name + " -> London weather today", "name"
         );
     }
 

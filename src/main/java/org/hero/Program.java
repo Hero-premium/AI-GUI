@@ -22,11 +22,10 @@ public class Program {
     }
 
     public static Stream<Requests.Message> chat(String request) {
-        if (CommandsRegistry.commandExists(request)) {
-            return CommandsRegistry.findAndRunCommand(request, ai, gui);
-        }
+        if (CommandsRegistry.commandExists(request)) return CommandsRegistry.findAndRunCommand(request, ai, gui);
+
         Requests.RequestOut req = ai.chat(new Requests.Message("user", request));
-        Optional<Requests.Message> message = ToolRegistry.detectAndRunTool(req.message().content());
+        Optional<Requests.Message> message = ToolRegistry.findAndRunTool(req.message().content());
         if (message.isPresent()) {
             req = ai.chat(message.get());
         }

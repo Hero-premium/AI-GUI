@@ -4,7 +4,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
-group = "org.example"
+group = "org.hero"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -19,7 +19,7 @@ dependencies {
 }
 
 javafx {
-    version = "21.0.2"
+    version = "26.0.2"
     modules = listOf("javafx.controls")  // add "javafx.fxml" only if you end up using FXML
 }
 

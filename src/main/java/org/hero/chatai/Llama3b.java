@@ -12,6 +12,7 @@ public class Llama3b extends LocalAi {
 
     private static final String AI_API_URL = "http://localhost:11434/api/chat";
     private static String systemPrompt = "You are a helpful assistant running inside a local chat app.";
+    public static final String MODEL_NAME = "llama3.2:3b";
 
     static {
         StringBuilder builder = new StringBuilder();
@@ -30,14 +31,14 @@ public class Llama3b extends LocalAi {
     public Requests.RequestOut chat(Requests.Message message) {
         messages.add(message);
         var requestOut = LocalAi.sentRequest(
-                builtHttpRequest(new Requests.RequestIn("llama3.2:3b", messages, false)));
+                buildHttpRequest(new Requests.RequestIn(MODEL_NAME, messages, false)));
 
         messages.add(requestOut.message());
         return requestOut;
     }
 
 
-    private HttpRequest builtHttpRequest(Requests.RequestIn requestIn) {
+    private HttpRequest buildHttpRequest(Requests.RequestIn requestIn) {
         return HttpRequest.newBuilder()
                 .uri(URI.create(AI_API_URL))
                 .header("Content-Type", "application/json")

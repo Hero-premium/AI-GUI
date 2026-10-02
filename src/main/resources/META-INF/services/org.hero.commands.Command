@@ -1,1 +1,1 @@
-org.hero.commands.getAllSentMessages
+org.hero.commands.GetConversationHistory

@@ -7,7 +7,7 @@ import org.hero.chatgui.Client;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class CommandsRegistry {
+public final class CommandsRegistry {
 
 
     public static final Map<String, Command> COMMANDS;
@@ -55,5 +55,9 @@ public class CommandsRegistry {
         Command commandLine = findCommand(givenCommand);
         if (commandLine == null) return Stream.empty();
         return commandLine.runCommand(ai, client);
+    }
+
+    private CommandsRegistry() {
+        throw new AssertionError("no org.hero.commands.CommandsRegistery instance for you!");
     }
 }

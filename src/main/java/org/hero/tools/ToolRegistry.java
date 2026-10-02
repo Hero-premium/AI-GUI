@@ -45,7 +45,7 @@ public final class ToolRegistry {
      * @param toolName the name of the tool, is the same as its {@code simpleClassName}
      * @return Optional Requests.Message the message - tool returned, {@code Optional.empty()} if the tool was not found
      */
-    public static Optional<Requests.Message> detectAndRunTool(String toolName) {
+    public static Optional<Requests.Message> findAndRunTool(String toolName) {
         return getTool(toolName).map(tool -> new Requests.Message("tool", tool.useTool()));
     }
 

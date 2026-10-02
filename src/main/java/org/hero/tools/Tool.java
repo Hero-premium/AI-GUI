@@ -13,8 +13,16 @@ public abstract class Tool {
      */
     public final String howToUse;
 
-    protected Tool(String howToUse) {
+    public final ToolStuff.ToolData toolsData;
+
+    protected Tool(String howToUse, String name) {
         this.howToUse = Objects.requireNonNull(howToUse, "howToUse must not be null");
+        this.toolsData = ToolStuff.ToolDataBuilder
+                .startToolDataBuilder()
+                .parameter("query", ToolStuff.PropertiesType.STRING, "use this as the search query", true)
+                .buildParameters()
+                .function(name, howToUse)
+                .build();
     }
 
     /**
