@@ -1,5 +1,11 @@
 package org.hero.chatai;
 
+
+import org.hero.tools.Tool;
+import org.hero.tools.ToolRegistry;
+
+
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -28,9 +34,12 @@ public final class Requests {
      *
      * @param model    the name of the model that is meant to receive this request
      * @param messages all the messages that has been sent this conversation, you handle adding/removing messages yourself
-     * @param stream   whether the model will dump all the tokens at once or sent one token at the time, for now we only support false
+     * @param stream   whether the model will dump all the tokens at once or send one token at the time, for now we only support false
      */
-    public record RequestIn(String model, List<Message> messages, boolean stream) {
+    public record RequestIn(String model, List<Message> messages, boolean stream, Collection<Tool> tools) {
+        public RequestIn(String model, List<Message> message, boolean stream) {
+            this(model, message, stream, ToolRegistry.TOOLS.values());
+        }
     }
 
     /**
@@ -44,7 +53,9 @@ public final class Requests {
      * @param total_duration           total time spent handling the request, in nanoseconds
      * @param load_duration            time spent loading the model, in nanoseconds
      * @param prompt_eval_count        number of tokens in the prompt
-     * @param prompt_eval_cached_count number of prompt tokens served from cache instead of being re-evaluated
+     * @param prompt_eval_cached_count number of prompt tokens reported as served from Ollama's KV cache rather than re-evaluated;
+     *                                 listed in the /api/chat reference but undocumented elsewhere and often absent from responses,
+     *                                 so it defaults to 0 when missing. Don't rely on it for accurate cache metrics
      * @param prompt_eval_duration     time spent evaluating the prompt, in nanoseconds
      * @param eval_count               number of tokens generated in the response
      * @param eval_duration            time spent generating the response, in nanoseconds
@@ -67,4 +78,5 @@ public final class Requests {
             return (int) (eval_duration / 1_000_000_000L);
         }
     }
+
 }
