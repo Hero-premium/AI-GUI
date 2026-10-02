@@ -3,11 +3,12 @@ package org.hero.tools;
 import org.hero.chatai.Requests;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * registers tools via serviceLoader, you can find every tool it found in {@link TOOLS} and get them via the tool's name
  */
-public class ToolRegistry {
+public final class ToolRegistry {
     /**
      * an unmodifiable map containing every tool
      */
@@ -15,15 +16,15 @@ public class ToolRegistry {
 
     static {
         Map<String, Tool> map = new HashMap<>();
-        Iterator<Tool> it = ServiceLoader.load(Tool.class).iterator();
-        while (it.hasNext()) {
+        Stream<ServiceLoader.Provider<Tool>> providerStream = ServiceLoader.load(Tool.class).stream();
+
+        providerStream.forEach(provider -> {
             try {
-                Tool tool = it.next();
-                map.put(tool.getClass().getSimpleName(), tool);
+                map.put(provider.type().getSimpleName(), provider.get());
             } catch (ServiceConfigurationError e) {
                 System.err.println("Skipping broken tool: " + e.getMessage());
             }
-        }
+        });
         TOOLS = Map.copyOf(map);
     }
 
@@ -46,5 +47,9 @@ public class ToolRegistry {
      */
     public static Optional<Requests.Message> detectAndRunTool(String toolName) {
         return getTool(toolName).map(tool -> new Requests.Message("tool", tool.useTool()));
+    }
+
+    private ToolRegistry() {
+        throw new AssertionError("no org.hero.tools.ToolRegistry instances for you!");
     }
 }
