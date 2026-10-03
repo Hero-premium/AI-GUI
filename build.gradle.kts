@@ -16,11 +16,12 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("com.google.code.gson:gson:2.14.0")
+    implementation("ch.qos.logback:logback-classic:1.6.3")
 }
 
 javafx {
     version = "26.0.2"
-    modules = listOf("javafx.controls")  // add "javafx.fxml" only if you end up using FXML
+    modules = listOf("javafx.controls")
 }
 
 application {

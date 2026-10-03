@@ -5,15 +5,15 @@ package org.hero.tools;
  */
 public abstract class Tool {
 
-    protected record params(String argumentName, ToolsInformation.PropertiesType type, String description,
-                            boolean isRequired) {
+    protected record Param(String argumentName, ToolsInformation.PropertiesType type, String description,
+                           boolean isRequired) {
     }
 
     public final ToolsInformation.ToolData toolsData;
 
-    protected Tool(String name, String howToUse, params... params) {
+    protected Tool(String name, String howToUse, Param... params) {
         var builder = ToolsInformation.ToolDataBuilder.builder();
-        for (params p : params) {
+        for (Param p : params) {
             builder.parameter(p.argumentName(), p.type(), p.description(), p.isRequired());
         }
         this.toolsData = builder.buildParameters()
@@ -28,5 +28,8 @@ public abstract class Tool {
      */
     protected abstract String useTool();
 
-
+    @Override
+    public String toString(){
+        return "tool " + getClass().getSimpleName();
+    }
 }

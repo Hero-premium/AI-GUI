@@ -1,6 +1,8 @@
 package org.hero.tools;
 
 import org.hero.chatai.Requests;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -9,6 +11,8 @@ import java.util.stream.Stream;
  * registers tools via serviceLoader, you can find every tool it found in {@link TOOLS} and get them via the tool's name
  */
 public final class ToolRegistry {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ToolRegistry.class);
     /**
      * an unmodifiable map containing every tool
      */
@@ -26,9 +30,11 @@ public final class ToolRegistry {
 
         providerStream.forEach(provider -> {
             try {
-                map.put(provider.type().getSimpleName(), provider.get());
+                Tool tool = provider.get();
+                map.put(tool.getClass().getSimpleName(), tool);
+                LOGGER.info("{} has been added", tool);
             } catch (ServiceConfigurationError e) {
-                System.err.println("Skipping broken tool: " + e.getMessage());
+                LOGGER.error("{} could not be loaded", e.getMessage());
             }
         });
         TOOLS = Map.copyOf(map);

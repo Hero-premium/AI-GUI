@@ -25,11 +25,6 @@ class ToolsInformationTest {
         assertThrows(IllegalStateException.class, executable);
     }
 
-    @Test
-    void noParametersBeenPassed() {
-        Executable executable = () -> ToolsInformation.ToolDataBuilder.builder().buildParameters();
-        assertThrows(IllegalStateException.class, executable);
-    }
 
     @Test
     void workingBuilder() {

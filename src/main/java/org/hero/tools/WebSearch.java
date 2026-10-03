@@ -3,7 +3,7 @@ package org.hero.tools;
 public class WebSearch extends Tool {
 
     public WebSearch() {
-        super("WebSearch", "used for search and browsing the internet", new params("query", ToolsInformation.PropertiesType.STRING, "use this as the search query", true));
+        super("WebSearch", "used for search and browsing the internet", new Param("query", ToolsInformation.PropertiesType.STRING, "use this as the search query", true));
     }
 
 

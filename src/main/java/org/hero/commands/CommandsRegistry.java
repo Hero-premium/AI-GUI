@@ -3,11 +3,15 @@ package org.hero.commands;
 import org.hero.chatai.LocalAi;
 import org.hero.chatai.Requests;
 import org.hero.chatgui.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Stream;
 
 public final class CommandsRegistry {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandsRegistry.class);
 
 
     public static final Map<String, Command> COMMANDS;
@@ -20,16 +24,16 @@ public final class CommandsRegistry {
             try {
                 Command command = provider.get();
                 map.put(command.commandLine, command);
+                LOGGER.info("{} has been added", command);
             } catch (ServiceConfigurationError e) {
-                System.err.println("Skipping broken command: " + e.getMessage());
+                LOGGER.error("{} could not be loaded", e.getMessage());
             }
         });
         COMMANDS = Map.copyOf(map);
     }
 
     public static Command findCommand(String givenCommand) {
-        Objects.requireNonNull(givenCommand, "givenCommand must not be null");
-        return COMMANDS.get(givenCommand);
+        return COMMANDS.get(Objects.requireNonNull(givenCommand, "givenCommand must not be null"));
     }
 
     /**
@@ -52,8 +56,13 @@ public final class CommandsRegistry {
      * @return the command return, a stream of messages
      */
     public static Stream<Requests.Message> findAndRunCommand(String givenCommand, LocalAi ai, Client client) {
+        LOGGER.debug("looking for command {}", givenCommand);
         Command commandLine = findCommand(givenCommand);
-        if (commandLine == null) return Stream.empty();
+        if (commandLine == null){
+            LOGGER.debug("could not find command {}", givenCommand);
+            return Stream.empty();
+        }
+        LOGGER.debug("found {}", commandLine);
         return commandLine.runCommand(ai, client);
     }
 

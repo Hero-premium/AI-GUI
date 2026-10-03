@@ -11,7 +11,7 @@ public class ToolsInformation {
 
     /**
      *
-     * @param type this is always "function", don't pass it
+     * @param type     this is always "function", don't pass it
      * @param function
      */
     public record ToolData(String type, Function function) {
@@ -37,7 +37,7 @@ public class ToolsInformation {
 
     /**
      *
-     * @param type the type of parameters the AI will use (string, int, boolean, etc.)
+     * @param type        the type of parameters the AI will use (string, int, boolean, etc.)
      * @param description
      */
     public record Property(PropertiesType type, String description) {

@@ -32,4 +32,8 @@ public abstract class Command {
 
     protected abstract Stream<Requests.Message> runCommand(LocalAi ai, Client client);
 
+    @Override
+    public String toString(){
+        return "command " + getClass().getSimpleName();
+    }
 }

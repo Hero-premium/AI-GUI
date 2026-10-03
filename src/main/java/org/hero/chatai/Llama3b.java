@@ -13,7 +13,7 @@ public class Llama3b extends LocalAi {
 
 
     public Llama3b() {
-        String systemPrompt = "You are a helpful assistant running inside a local chat app.";
+        final String systemPrompt = "You are a helpful assistant running inside a local chat app.";
         messages.add(new Requests.Message("system", systemPrompt));
     }
 
