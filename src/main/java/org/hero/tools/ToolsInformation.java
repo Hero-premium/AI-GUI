@@ -1,12 +1,19 @@
 package org.hero.tools;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.*;
 
 /**
  * contains tools-related records
  */
-public class ToolStuff {
+public class ToolsInformation {
 
+    /**
+     *
+     * @param type this is always "function", don't pass it
+     * @param function
+     */
     public record ToolData(String type, Function function) {
         public ToolData(Function function) {
             this("function", function);
@@ -15,7 +22,7 @@ public class ToolStuff {
 
     /**
      *
-     * @param type       the type of parameters the AI will use (string, int, boolean, etc.)
+     * @param type       this is always "object", don't pass it
      * @param properties
      * @param required
      */
@@ -28,6 +35,11 @@ public class ToolStuff {
     public record Function(String name, String description, Parameters parameters) {
     }
 
+    /**
+     *
+     * @param type the type of parameters the AI will use (string, int, boolean, etc.)
+     * @param description
+     */
     public record Property(PropertiesType type, String description) {
     }
 
@@ -39,25 +51,16 @@ public class ToolStuff {
 
 
         /**
-         * use {@link startToolDataBuilder}
+         * use {@link builder}
          */
         private ToolDataBuilder() {
         }
 
 
-        public static ToolDataBuilder startToolDataBuilder() {
+        public static ToolDataBuilder builder() {
             return new ToolDataBuilder();
         }
 
-        public ToolDataBuilder function(String name, String description) {
-            if (this.parameters == null) throw new IllegalArgumentException("parameters has not been built yet");
-            this.function = new Function(
-                    Objects.requireNonNull(name, "name must not be null"),
-                    Objects.requireNonNull(description, "description must not be null"),
-                    Objects.requireNonNull(parameters, "parameters must not be null")
-            );
-            return this;
-        }
 
         public ToolDataBuilder parameter(String argumentName, PropertiesType type, String description, boolean isRequired) {
             properties.put(Objects.requireNonNull(argumentName, "argumentName must not be null"),
@@ -73,8 +76,16 @@ public class ToolStuff {
 
 
         public ToolDataBuilder buildParameters() {
-            if (properties.isEmpty()) throw new IllegalStateException("no parameters has been passed before this call");
             parameters = new Parameters(properties, required);
+            return this;
+        }
+
+        public ToolDataBuilder function(String name, String description) {
+            if (this.parameters == null) throw new IllegalStateException("parameters have not been built yet");
+            this.function = new Function(
+                    Objects.requireNonNull(name, "name must not be null"),
+                    Objects.requireNonNull(description, "description must not be null"),
+                    parameters);
             return this;
         }
 
@@ -85,14 +96,20 @@ public class ToolStuff {
     }
 
     public enum PropertiesType {
-        ARRAY, INTEGER, NUMBER, OBJECT, STRING, BOOLEAN, NULL,
+        @SerializedName("array") ARRAY,
+        @SerializedName("integer") INTEGER,
+        @SerializedName("number") NUMBER,
+        @SerializedName("object") OBJECT,
+        @SerializedName("string") STRING,
+        @SerializedName("boolean") BOOLEAN,
+        @SerializedName("null") NULL
     }
 
     /**
      * don't instantiate this
      */
-    private ToolStuff() {
-        throw new AssertionError("no org.hero.chatai.Requests.Tools instances for you!");
+    private ToolsInformation() {
+        throw new AssertionError("no org.hero.chatai.ToolStuff instances for you!");
     }
 
 }

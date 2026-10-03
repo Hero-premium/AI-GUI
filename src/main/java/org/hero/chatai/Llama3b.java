@@ -1,7 +1,5 @@
 package org.hero.chatai;
 
-import org.hero.tools.Tool;
-import org.hero.tools.ToolRegistry;
 import org.hero.util.Util;
 
 import java.net.URI;
@@ -11,19 +9,11 @@ public class Llama3b extends LocalAi {
 
 
     private static final String AI_API_URL = "http://localhost:11434/api/chat";
-    private static String systemPrompt = "You are a helpful assistant running inside a local chat app.";
     public static final String MODEL_NAME = "llama3.2:3b";
 
-    static {
-        StringBuilder builder = new StringBuilder();
-        builder.append(systemPrompt).append("\n");
-        for (Tool tool : ToolRegistry.TOOLS.values()) {
-            builder.append(tool.howToUse).append("\n");
-        }
-        systemPrompt = builder.toString();
-    }
 
     public Llama3b() {
+        String systemPrompt = "You are a helpful assistant running inside a local chat app.";
         messages.add(new Requests.Message("system", systemPrompt));
     }
 

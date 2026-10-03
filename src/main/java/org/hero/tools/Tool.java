@@ -1,26 +1,22 @@
 package org.hero.tools;
 
-import java.util.Objects;
-
 /**
  * A tool an AI can use, tools are stateless and unmodifiable so they can be used by the AI as many times with no problem.
  */
 public abstract class Tool {
 
+    protected record params(String argumentName, ToolsInformation.PropertiesType type, String description,
+                            boolean isRequired) {
+    }
 
-    /**
-     * this tells the AI how to use this tool
-     */
-    public final String howToUse;
+    public final ToolsInformation.ToolData toolsData;
 
-    public final ToolStuff.ToolData toolsData;
-
-    protected Tool(String howToUse, String name) {
-        this.howToUse = Objects.requireNonNull(howToUse, "howToUse must not be null");
-        this.toolsData = ToolStuff.ToolDataBuilder
-                .startToolDataBuilder()
-                .parameter("query", ToolStuff.PropertiesType.STRING, "use this as the search query", true)
-                .buildParameters()
+    protected Tool(String name, String howToUse, params... params) {
+        var builder = ToolsInformation.ToolDataBuilder.builder();
+        for (params p : params) {
+            builder.parameter(p.argumentName(), p.type(), p.description(), p.isRequired());
+        }
+        this.toolsData = builder.buildParameters()
                 .function(name, howToUse)
                 .build();
     }

@@ -14,6 +14,12 @@ public final class ToolRegistry {
      */
     public static final Map<String, Tool> TOOLS;
 
+    /**
+     *  an unmodifiable list containing every tool's data meant to be passed to the AI every request
+     *  @see Requests.RequestIn
+     */
+    public static final List<ToolsInformation.ToolData> TOOLS_DATA;
+
     static {
         Map<String, Tool> map = new HashMap<>();
         Stream<ServiceLoader.Provider<Tool>> providerStream = ServiceLoader.load(Tool.class).stream();
@@ -26,6 +32,12 @@ public final class ToolRegistry {
             }
         });
         TOOLS = Map.copyOf(map);
+
+        List<ToolsInformation.ToolData> toolsData = new ArrayList<>();
+        for (Tool tool : TOOLS.values()) {
+            toolsData.add(tool.toolsData);
+        }
+        TOOLS_DATA = List.copyOf(toolsData);
     }
 
 

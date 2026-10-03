@@ -1,11 +1,9 @@
 package org.hero.chatai;
 
 
-import org.hero.tools.Tool;
 import org.hero.tools.ToolRegistry;
+import org.hero.tools.ToolsInformation;
 
-
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -24,21 +22,21 @@ public final class Requests {
      * the message being sent, can be either by the AI or the user
      *
      * @param role    the name of the sender
-     * @param content the content of the message, this is what typically want to show the user
+     * @param content the content of the message.
      */
     public record Message(String role, String content) {
     }
 
     /**
-     * the request the user send you.
+     * the request sent by the user or tools.
      *
      * @param model    the name of the model that is meant to receive this request
      * @param messages all the messages that has been sent this conversation, you handle adding/removing messages yourself
      * @param stream   whether the model will dump all the tokens at once or send one token at the time, for now we only support false
      */
-    public record RequestIn(String model, List<Message> messages, boolean stream, Collection<Tool> tools) {
+    public record RequestIn(String model, List<Message> messages, boolean stream, List<ToolsInformation.ToolData> tools) {
         public RequestIn(String model, List<Message> message, boolean stream) {
-            this(model, message, stream, ToolRegistry.TOOLS.values());
+            this(model, message, stream, ToolRegistry.TOOLS_DATA);
         }
     }
 
