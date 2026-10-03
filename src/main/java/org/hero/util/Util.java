@@ -8,7 +8,7 @@ public class Util {
     public static final Gson gson = new Gson();
 
     private Util() {
-        throw new AssertionError("no  org.hero.util.Util instance for you!");
+        throw new AssertionError("no org.hero.util.Util instance for you!");
     }
 
 

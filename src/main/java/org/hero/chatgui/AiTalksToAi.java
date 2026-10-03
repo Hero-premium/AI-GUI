@@ -28,4 +28,9 @@ public class AiTalksToAi implements Client {
     public void displayMessage(String message) {
         IO.println(message);
     }
+
+    @Override
+    public void toolsDisplay(String toolName) {
+
+    }
 }

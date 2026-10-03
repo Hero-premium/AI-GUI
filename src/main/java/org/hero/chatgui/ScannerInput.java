@@ -29,4 +29,9 @@ public class ScannerInput implements Client {
     public void displayMessage(String message) {
         IO.println(message);
     }
+
+    @Override
+    public void toolsDisplay(String toolName) {
+        IO.println("TOOLS [ " + toolName + " ]");
+    }
 }

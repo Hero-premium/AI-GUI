@@ -67,6 +67,6 @@ public final class CommandsRegistry {
     }
 
     private CommandsRegistry() {
-        throw new AssertionError("no org.hero.commands.CommandsRegistery instance for you!");
+        throw new AssertionError("no org.hero.commands.CommandsRegistry instance for you!");
     }
 }

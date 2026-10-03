@@ -7,6 +7,7 @@ import org.hero.chatgui.Client;
 import org.hero.chatgui.ScannerInput;
 import org.hero.commands.CommandsRegistry;
 import org.hero.tools.ToolRegistry;
+import org.hero.tools.ToolsInformation;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -25,9 +26,12 @@ public class Program {
         if (CommandsRegistry.commandExists(request)) return CommandsRegistry.findAndRunCommand(request, ai, gui);
 
         Requests.RequestOut req = ai.chat(new Requests.Message("user", request));
-        Optional<Requests.Message> message = ToolRegistry.findAndRunTool(req.message().content());
-        if (message.isPresent()) {
-            req = ai.chat(message.get());
+        //Optional<Requests.Message> message = ToolRegistry.findAndRunTool(req.message().content());
+        if (req.message().toolCalls() != null) {
+            for (ToolsInformation.ToolCall toolCalls : req.message().toolCalls()) {
+                gui.toolsDisplay(toolCalls.function().arguments().toString());
+            }
+            //req = ai.chat(message.get());
         }
         return Stream.of(req.message());
     }

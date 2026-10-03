@@ -1,11 +1,16 @@
 package org.hero.chatai;
 
+
 import org.hero.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
 
 public class Llama3b extends LocalAi {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Llama3b.class);
 
 
     private static final String AI_API_URL = "http://localhost:11434/api/chat";
@@ -19,10 +24,13 @@ public class Llama3b extends LocalAi {
 
     @Override
     public Requests.RequestOut chat(Requests.Message message) {
+        LOGGER.debug("message received: {}", message);
         messages.add(message);
         var requestOut = LocalAi.sentRequest(
                 buildHttpRequest(new Requests.RequestIn(MODEL_NAME, messages, false)));
 
+
+        LOGGER.debug("requestOut: {}", requestOut);
         messages.add(requestOut.message());
         return requestOut;
     }

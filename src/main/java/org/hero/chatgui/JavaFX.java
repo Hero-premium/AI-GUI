@@ -24,4 +24,9 @@ public class JavaFX extends Application implements Client {
     public void displayMessage(String message) {
 
     }
+
+    @Override
+    public void toolsDisplay(String toolName) {
+
+    }
 }

@@ -1,6 +1,7 @@
 package org.hero.chatai;
 
 
+import com.google.gson.annotations.SerializedName;
 import org.hero.tools.ToolRegistry;
 import org.hero.tools.ToolsInformation;
 
@@ -23,8 +24,13 @@ public final class Requests {
      *
      * @param role    the name of the sender
      * @param content the content of the message.
+     * @param toolCalls if the AI requested tools this is where they show up
      */
-    public record Message(String role, String content) {
+    public record Message(String role, String content,
+                          @SerializedName("tool_calls") List<ToolsInformation.ToolCall> toolCalls) {
+        public Message(String role, String content) {
+            this(role, content, null);
+        }
     }
 
     /**
@@ -34,7 +40,8 @@ public final class Requests {
      * @param messages all the messages that has been sent this conversation, you handle adding/removing messages yourself
      * @param stream   whether the model will dump all the tokens at once or send one token at the time, for now we only support false
      */
-    public record RequestIn(String model, List<Message> messages, boolean stream, List<ToolsInformation.ToolData> tools) {
+    public record RequestIn(String model, List<Message> messages, boolean stream,
+                            List<ToolsInformation.ToolData> tools) {
         public RequestIn(String model, List<Message> message, boolean stream) {
             this(model, message, stream, ToolRegistry.TOOLS_DATA);
         }
