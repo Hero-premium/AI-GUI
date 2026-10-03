@@ -1,12 +1,14 @@
 package org.hero.chatai;
 
 
+import org.hero.Requests;
 import org.hero.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
+import java.util.List;
 
 public class Llama3b extends LocalAi {
 
@@ -23,9 +25,9 @@ public class Llama3b extends LocalAi {
     }
 
     @Override
-    public Requests.RequestOut chat(Requests.Message message) {
+    public Requests.RequestOut chat(List<Requests.Message> message) {
         LOGGER.debug("message received: {}", message);
-        messages.add(message);
+        messages.addAll(message);
         var requestOut = LocalAi.sentRequest(
                 buildHttpRequest(new Requests.RequestIn(MODEL_NAME, messages, false)));
 

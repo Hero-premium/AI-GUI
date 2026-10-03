@@ -1,5 +1,7 @@
 package org.hero.tools;
 
+import java.util.Map;
+
 /**
  * A tool an AI can use, tools are stateless and unmodifiable so they can be used by the AI as many times with no problem.
  */
@@ -10,7 +12,7 @@ public abstract class Tool {
     }
 
     public final ToolsInformation.ToolData toolsData;
-
+    public final String toolName;
     protected Tool(String name, String howToUse, Param... params) {
         var builder = ToolsInformation.ToolDataBuilder.builder();
         for (Param p : params) {
@@ -19,6 +21,7 @@ public abstract class Tool {
         this.toolsData = builder.buildParameters()
                 .function(name, howToUse)
                 .build();
+        this.toolName = name;
     }
 
     /**
@@ -26,7 +29,7 @@ public abstract class Tool {
      *
      * @return the tool's result
      */
-    protected abstract String useTool();
+    protected abstract String useTool(Map<String, Object> arguments);
 
     @Override
     public String toString(){

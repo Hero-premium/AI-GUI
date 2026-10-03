@@ -1,5 +1,6 @@
 package org.hero.chatai;
 
+import org.hero.Requests;
 import org.hero.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,5 +42,5 @@ public abstract class LocalAi {
         return messages.stream();
     }
 
-    public abstract Requests.RequestOut chat(Requests.Message message);
+    public abstract Requests.RequestOut chat(List<Requests.Message> messages);
 }

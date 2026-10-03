@@ -1,7 +1,7 @@
 package org.hero.commands;
 
 import org.hero.chatai.LocalAi;
-import org.hero.chatai.Requests;
+import org.hero.Requests;
 import org.hero.chatgui.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

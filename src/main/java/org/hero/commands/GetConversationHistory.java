@@ -1,7 +1,7 @@
 package org.hero.commands;
 
 import org.hero.chatai.LocalAi;
-import org.hero.chatai.Requests;
+import org.hero.Requests;
 import org.hero.chatgui.Client;
 
 import java.util.stream.Stream;

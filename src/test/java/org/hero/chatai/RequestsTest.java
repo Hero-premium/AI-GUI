@@ -1,5 +1,6 @@
 package org.hero.chatai;
 
+import org.hero.Requests;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

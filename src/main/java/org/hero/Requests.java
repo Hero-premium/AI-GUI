@@ -1,7 +1,6 @@
-package org.hero.chatai;
+package org.hero;
 
 
-import com.google.gson.annotations.SerializedName;
 import org.hero.tools.ToolRegistry;
 import org.hero.tools.ToolsInformation;
 
@@ -16,20 +15,22 @@ public final class Requests {
      * don't instantiate this
      */
     private Requests() {
-        throw new AssertionError("no org.hero.chatai.Requests instances for you!");
+        throw new AssertionError("no org.hero.Requests instances for you!");
     }
 
     /**
      * the message being sent, can be either by the AI or the user
      *
-     * @param role    the name of the sender
-     * @param content the content of the message.
-     * @param toolCalls if the AI requested tools this is where they show up
+     * @param role       the name of the sender
+     * @param content    the content of the message.
+     * @param tool_calls if the AI requested tools this is where they show up
      */
-    public record Message(String role, String content,
-                          @SerializedName("tool_calls") List<ToolsInformation.ToolCall> toolCalls) {
+    public record Message(String role, String content, List<ToolsInformation.ToolCall> tool_calls, String tool_name) {
+        public Message(String role, String content, String tool_name){
+            this(role, content, null, tool_name);
+        }
         public Message(String role, String content) {
-            this(role, content, null);
+            this(role, content, null, null);
         }
     }
 

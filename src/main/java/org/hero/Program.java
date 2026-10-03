@@ -2,14 +2,12 @@ package org.hero;
 
 import org.hero.chatai.Llama3b;
 import org.hero.chatai.LocalAi;
-import org.hero.chatai.Requests;
 import org.hero.chatgui.Client;
 import org.hero.chatgui.ScannerInput;
 import org.hero.commands.CommandsRegistry;
 import org.hero.tools.ToolRegistry;
-import org.hero.tools.ToolsInformation;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class Program {
@@ -25,13 +23,13 @@ public class Program {
     public static Stream<Requests.Message> chat(String request) {
         if (CommandsRegistry.commandExists(request)) return CommandsRegistry.findAndRunCommand(request, ai, gui);
 
-        Requests.RequestOut req = ai.chat(new Requests.Message("user", request));
-        //Optional<Requests.Message> message = ToolRegistry.findAndRunTool(req.message().content());
-        if (req.message().toolCalls() != null) {
-            for (ToolsInformation.ToolCall toolCalls : req.message().toolCalls()) {
-                gui.toolsDisplay(toolCalls.function().arguments().toString());
+        Requests.RequestOut req = ai.chat(List.of(new Requests.Message("user", request)));
+        List<Requests.Message> toolReplies = ToolRegistry.findAndRunTools(req.message().tool_calls());
+        if (!toolReplies.isEmpty()) {
+            req = ai.chat(toolReplies);
+            for (Requests.Message toolCalls : toolReplies) {
+                gui.toolsDisplay(toolCalls.content());
             }
-            //req = ai.chat(message.get());
         }
         return Stream.of(req.message());
     }

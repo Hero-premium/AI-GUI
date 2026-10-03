@@ -1,7 +1,7 @@
 package org.hero.commands;
 
 import org.hero.chatai.LocalAi;
-import org.hero.chatai.Requests;
+import org.hero.Requests;
 import org.hero.chatgui.Client;
 
 import java.util.Objects;
@@ -33,7 +33,7 @@ public abstract class Command {
     protected abstract Stream<Requests.Message> runCommand(LocalAi ai, Client client);
 
     @Override
-    public String toString(){
+    public String toString() {
         return "command " + getClass().getSimpleName();
     }
 }
