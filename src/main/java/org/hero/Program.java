@@ -3,7 +3,7 @@ package org.hero;
 import org.hero.chatai.Llama3b;
 import org.hero.chatai.LocalAi;
 import org.hero.chatgui.Client;
-import org.hero.chatgui.ScannerInput;
+import org.hero.chatgui.JavaFX;
 import org.hero.commands.CommandsRegistry;
 import org.hero.tools.ToolRegistry;
 
@@ -17,7 +17,7 @@ public class Program {
     private static final int MAX_TOOLS_REQUESTS = 5;
 
     public Program() {
-        gui = new ScannerInput();
+        gui = new JavaFX();
         ai = new Llama3b();
     }
 

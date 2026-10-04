@@ -7,7 +7,7 @@ public class CurrentTime extends Tool {
 
 
     public CurrentTime() {
-        super("CurrentTime", "call this when you need to know about the current date and time, y");
+        super("CurrentTime", "call this when you need to know about the current date and time");
     }
 
     @Override
