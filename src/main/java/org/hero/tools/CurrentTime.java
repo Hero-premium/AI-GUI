@@ -1,9 +1,9 @@
 package org.hero.tools;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
-public class CurrentTime extends Tool{
+public class CurrentTime extends Tool {
 
 
     public CurrentTime() {
@@ -12,6 +12,6 @@ public class CurrentTime extends Tool{
 
     @Override
     protected String useTool(Map<String, Object> tools) {
-        return LocalDate.now().toString();
+        return LocalDateTime.now().toString();
     }
 }

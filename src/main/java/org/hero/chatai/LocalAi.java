@@ -29,7 +29,6 @@ public abstract class LocalAi {
     static Requests.RequestOut sentRequest(HttpRequest request) {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            LOGGER.debug("Sent request: {}", response.body());
             return Util.gson.fromJson(response.body(), Requests.RequestOut.class);
         } catch (ConnectException _) {
             return new Requests.RequestOut("system", "", new Requests.Message("system", "ollama server is down"), true, "", 0, 0, 0, 0, 0, 0, 0);

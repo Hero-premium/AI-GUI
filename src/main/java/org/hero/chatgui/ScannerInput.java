@@ -16,7 +16,7 @@ public class ScannerInput implements Client {
         while (true) {
             if (scanner.hasNextLine()) {
                 String input = scanner.nextLine();
-                Program.chat(input).forEach(message -> displayMessage(message.content()));
+                Program.chat(input).forEach(message -> displayMessage("-- AI --" + message.content()));
                 displayMessage("---- User turn!");
             } else {
                 displayMessage("you have just shut this down");
