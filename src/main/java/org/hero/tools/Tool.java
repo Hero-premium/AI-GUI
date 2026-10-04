@@ -13,6 +13,7 @@ public abstract class Tool {
 
     public final ToolsInformation.ToolData toolsData;
     public final String toolName;
+
     protected Tool(String name, String howToUse, Param... params) {
         var builder = ToolsInformation.ToolDataBuilder.builder();
         for (Param p : params) {
@@ -32,7 +33,7 @@ public abstract class Tool {
     protected abstract String useTool(Map<String, Object> arguments);
 
     @Override
-    public String toString(){
+    public String toString() {
         return "tool " + getClass().getSimpleName();
     }
 }

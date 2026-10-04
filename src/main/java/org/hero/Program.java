@@ -36,7 +36,8 @@ public class Program {
 
             toolReplies = ToolRegistry.findAndRunTools(req.message().tool_calls());
         }
-        if (!toolReplies.isEmpty()) return Stream.of(new Requests.Message("system", "the AI hit a limit and couldn't generate a response, please try again"));
+        if (!toolReplies.isEmpty())
+            return Stream.of(new Requests.Message("system", "the AI hit a limit and couldn't generate a response, please try again"));
         return Stream.of(req.message());
     }
 

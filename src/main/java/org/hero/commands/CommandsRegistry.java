@@ -1,7 +1,7 @@
 package org.hero.commands;
 
-import org.hero.chatai.LocalAi;
 import org.hero.Requests;
+import org.hero.chatai.LocalAi;
 import org.hero.chatgui.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public final class CommandsRegistry {
     public static Stream<Requests.Message> findAndRunCommand(String givenCommand, LocalAi ai, Client client) {
         LOGGER.debug("looking for command {}", givenCommand);
         Command commandLine = findCommand(givenCommand);
-        if (commandLine == null){
+        if (commandLine == null) {
             LOGGER.debug("could not find command {}", givenCommand);
             return Stream.empty();
         }

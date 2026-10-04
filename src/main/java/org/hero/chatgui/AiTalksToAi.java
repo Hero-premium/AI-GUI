@@ -1,9 +1,9 @@
 package org.hero.chatgui;
 
 import org.hero.Program;
+import org.hero.Requests;
 import org.hero.chatai.Llama3b;
 import org.hero.chatai.LocalAi;
-import org.hero.Requests;
 
 import java.util.List;
 

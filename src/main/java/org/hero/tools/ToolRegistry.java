@@ -82,7 +82,6 @@ public final class ToolRegistry {
     }
 
 
-
     private ToolRegistry() {
         throw new AssertionError("no org.hero.tools.ToolRegistry instances for you!");
     }
