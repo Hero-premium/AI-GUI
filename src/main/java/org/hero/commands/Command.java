@@ -4,8 +4,8 @@ import org.hero.Requests;
 import org.hero.chatai.LocalAi;
 import org.hero.chatgui.Client;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * defines what a command is, the AI cannot see commands and doesn't know about them
@@ -30,7 +30,7 @@ public abstract class Command {
     }
 
 
-    protected abstract Stream<Requests.Message> runCommand(LocalAi ai, Client client);
+    protected abstract List<Requests.Message> runCommand(LocalAi ai, Client client);
 
     @Override
     public String toString() {

@@ -8,7 +8,6 @@ import org.hero.commands.CommandsRegistry;
 import org.hero.tools.ToolRegistry;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 public class Program {
 
@@ -21,7 +20,7 @@ public class Program {
         ai = new Llama3b();
     }
 
-    public static Stream<Requests.Message> chat(String request) {
+    public static List<Requests.Message> chat(String request) {
         if (CommandsRegistry.commandExists(request)) return CommandsRegistry.findAndRunCommand(request, ai, gui);
 
         Requests.RequestOut req = ai.chat(List.of(new Requests.Message("user", request)));
@@ -37,8 +36,8 @@ public class Program {
             toolReplies = ToolRegistry.findAndRunTools(req.message().tool_calls());
         }
         if (!toolReplies.isEmpty())
-            return Stream.of(new Requests.Message("system", "the AI hit a limit and couldn't generate a response, please try again"));
-        return Stream.of(req.message());
+            return List.of(new Requests.Message("system", "the AI hit a limit and couldn't generate a response, please try again"));
+        return List.of(req.message());
     }
 
     public void launch() {

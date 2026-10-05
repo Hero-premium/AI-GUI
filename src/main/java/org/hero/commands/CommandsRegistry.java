@@ -55,12 +55,12 @@ public final class CommandsRegistry {
      * @param client       the current client
      * @return the command return, a stream of messages
      */
-    public static Stream<Requests.Message> findAndRunCommand(String givenCommand, LocalAi ai, Client client) {
-        LOGGER.debug("looking for command {}", givenCommand);
+    public static List<Requests.Message> findAndRunCommand(String givenCommand, LocalAi ai, Client client) {
         Command commandLine = findCommand(givenCommand);
+        LOGGER.debug("looking for command {}", givenCommand);
         if (commandLine == null) {
             LOGGER.debug("could not find command {}", givenCommand);
-            return Stream.empty();
+            return List.of();
         }
         LOGGER.debug("found {}", commandLine);
         return commandLine.runCommand(ai, client);

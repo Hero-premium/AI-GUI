@@ -4,7 +4,7 @@ import org.hero.Requests;
 import org.hero.chatai.LocalAi;
 import org.hero.chatgui.Client;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 public class GetConversationHistory extends Command {
 
@@ -18,7 +18,7 @@ public class GetConversationHistory extends Command {
     }
 
     @Override
-    protected Stream<Requests.Message> runCommand(LocalAi ai, Client client) {
+    protected List<Requests.Message> runCommand(LocalAi ai, Client client) {
         return ai.getMessages();
     }
 }

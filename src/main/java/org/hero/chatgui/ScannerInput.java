@@ -5,7 +5,7 @@ import org.hero.Program;
 import java.util.Scanner;
 
 public class ScannerInput implements Client {
-    Scanner scanner;
+    private final Scanner scanner;
 
     public ScannerInput() {
         scanner = new Scanner(System.in);
@@ -16,7 +16,7 @@ public class ScannerInput implements Client {
         while (true) {
             if (scanner.hasNextLine()) {
                 String input = scanner.nextLine();
-                Program.chat(input).forEach(message -> displayMessage("-- AI --" + message.content()));
+                Program.chat(input).forEach(message -> displayMessage(message.role() + " " + message.content()));
                 displayMessage("---- User turn!");
             } else {
                 displayMessage("you have just shut this down");
@@ -31,7 +31,7 @@ public class ScannerInput implements Client {
     }
 
     @Override
-    public void toolsDisplay(String toolName) {
-        IO.println("TOOLS [ " + toolName + " ]");
+    public void toolsDisplay(String tool) {
+        IO.println("TOOLS [ " + tool + " ]");
     }
 }

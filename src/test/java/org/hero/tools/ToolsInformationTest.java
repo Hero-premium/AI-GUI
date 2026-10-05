@@ -29,7 +29,7 @@ class ToolsInformationTest {
     @Test
     void workingBuilder() {
         ToolsInformation.ToolData tool = ToolsInformation.ToolDataBuilder.builder()
-                .parameter("hello", ToolsInformation.PropertiesType.STRING, "kill the wither boss with it", true)
+                .parameter("hello", PropertiesType.STRING, "kill the wither boss with it", true)
                 .buildParameters()
                 .function("a sword", "very powerful")
                 .build();
@@ -39,7 +39,7 @@ class ToolsInformationTest {
     @Test
     void calledWithNulls() {
         Executable executable = () -> ToolsInformation.ToolDataBuilder.builder()
-                .parameter("hello", ToolsInformation.PropertiesType.STRING, "kill the wither boss with it", true)
+                .parameter("hello", PropertiesType.STRING, "kill the wither boss with it", true)
                 .buildParameters()
                 .function("a sword", null)
                 .build();

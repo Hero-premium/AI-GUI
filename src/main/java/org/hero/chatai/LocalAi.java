@@ -12,7 +12,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * the interface every AI configuration is meant to implement
@@ -29,6 +28,7 @@ public abstract class LocalAi {
     static Requests.RequestOut sentRequest(HttpRequest request) {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            LOGGER.debug("requestOut: {}", response);
             return Util.gson.fromJson(response.body(), Requests.RequestOut.class);
         } catch (ConnectException _) {
             return new Requests.RequestOut("system", "", new Requests.Message("system", "ollama server is down"), true, "", 0, 0, 0, 0, 0, 0, 0);
@@ -37,8 +37,8 @@ public abstract class LocalAi {
         }
     }
 
-    public Stream<Requests.Message> getMessages() {
-        return messages.stream();
+    public List<Requests.Message> getMessages() {
+        return List.copyOf(messages);
     }
 
     public abstract Requests.RequestOut chat(List<Requests.Message> messages);

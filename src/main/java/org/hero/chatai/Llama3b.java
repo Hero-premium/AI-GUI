@@ -31,8 +31,6 @@ public class Llama3b extends LocalAi {
         var requestOut = LocalAi.sentRequest(
                 buildHttpRequest(new Requests.RequestIn(MODEL_NAME, messages, false)));
 
-
-        LOGGER.debug("requestOut: {}", requestOut);
         messages.add(requestOut.message());
         return requestOut;
     }

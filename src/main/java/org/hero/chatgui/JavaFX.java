@@ -47,8 +47,8 @@ public class JavaFX extends Application implements Client {
     }
 
     @Override
-    public void toolsDisplay(String toolName) {
-
+    public void toolsDisplay(String tool) {
+        IO.println("TOOLS [ " + tool + " ]");
     }
 
     private Node generateTextField() {
@@ -66,7 +66,7 @@ public class JavaFX extends Application implements Client {
         Task<List<Requests.Message>> task = new Task<>() {
             @Override
             protected List<Requests.Message> call() {
-                return Program.chat(message).toList();
+                return Program.chat(message);
             }
         };
         task.setOnSucceeded(_ ->

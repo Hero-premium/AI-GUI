@@ -1,7 +1,5 @@
 package org.hero.tools;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.*;
 
 /**
@@ -115,16 +113,6 @@ public class ToolsInformation {
             if (this.function == null) throw new IllegalStateException("function has not been built yet");
             return new ToolData(function);
         }
-    }
-
-    public enum PropertiesType {
-        @SerializedName("array") ARRAY,
-        @SerializedName("integer") INTEGER,
-        @SerializedName("number") NUMBER,
-        @SerializedName("object") OBJECT,
-        @SerializedName("string") STRING,
-        @SerializedName("boolean") BOOLEAN,
-        @SerializedName("null") NULL
     }
 
     /**

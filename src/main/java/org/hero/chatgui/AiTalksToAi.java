@@ -32,7 +32,7 @@ public class AiTalksToAi implements Client {
     }
 
     @Override
-    public void toolsDisplay(String toolName) {
+    public void toolsDisplay(String tool) {
 
     }
 }

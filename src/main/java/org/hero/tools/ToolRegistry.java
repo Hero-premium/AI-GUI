@@ -37,7 +37,7 @@ public final class ToolRegistry {
                 map.put(tool.toolName, tool);
                 LOGGER.info("{} has been added", tool);
             } catch (ServiceConfigurationError e) {
-                LOGGER.error("{} could not be loaded", e.getMessage());
+                LOGGER.error("Could not be loaded: {}", e.getMessage(), e);
             }
         });
         TOOLS = Map.copyOf(map);
@@ -74,7 +74,7 @@ public final class ToolRegistry {
             ToolsInformation.FunctionCall function = toolCall.function();
 
             Message message = getTool(function.name())
-                    .map(tool -> new Message(ROLE_TOOL, tool.useTool(function.arguments()), function.name()))
+                    .map(tool -> new Message(ROLE_TOOL, tool.toolUse(function.arguments()), function.name()))
                     .orElseGet(() -> new Message(ROLE_TOOL, "unknown tool", function.name()));
             messages.add(message);
         }
