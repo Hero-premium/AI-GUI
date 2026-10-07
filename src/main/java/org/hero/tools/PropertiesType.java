@@ -16,7 +16,7 @@ public enum PropertiesType {
 
     private final Class<?> clazz;
 
-    PropertiesType(Class<?> clazz) {
+   PropertiesType(Class<?> clazz) {
         this.clazz = clazz;
     }
 

@@ -2,6 +2,7 @@ package org.hero.chatai;
 
 
 import org.hero.Requests;
+import org.hero.Roles;
 import org.hero.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class Llama3b extends LocalAi {
 
     public Llama3b() {
         final String systemPrompt = "You are a helpful assistant running inside a local chat app.";
-        messages.add(new Requests.Message("system", systemPrompt));
+        messages.add(new Requests.Message(Roles.SYSTEM, systemPrompt));
     }
 
     @Override

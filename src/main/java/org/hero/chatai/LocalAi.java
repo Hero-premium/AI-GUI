@@ -1,6 +1,7 @@
 package org.hero.chatai;
 
 import org.hero.Requests;
+import org.hero.Roles;
 import org.hero.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public abstract class LocalAi {
             LOGGER.debug("requestOut: {}", response);
             return Util.gson.fromJson(response.body(), Requests.RequestOut.class);
         } catch (ConnectException _) {
-            return new Requests.RequestOut("system", "", new Requests.Message("system", "ollama server is down"), true, "", 0, 0, 0, 0, 0, 0, 0);
+            return new Requests.RequestOut("system", "", new Requests.Message(Roles.SYSTEM, "ollama server is down"), true, "", 0, 0, 0, 0, 0, 0, 0);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

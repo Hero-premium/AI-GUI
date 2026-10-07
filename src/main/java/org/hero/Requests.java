@@ -25,12 +25,12 @@ public final class Requests {
      * @param content    the content of the message.
      * @param tool_calls if the AI requested tools this is where they show up
      */
-    public record Message(String role, String content, List<ToolsInformation.ToolCall> tool_calls, String tool_name) {
-        public Message(String role, String content, String tool_name) {
+    public record Message(Roles role, String content, List<ToolsInformation.ToolCall> tool_calls, String tool_name) {
+        public Message(Roles role, String content, String tool_name) {
             this(role, content, null, tool_name);
         }
 
-        public Message(String role, String content) {
+        public Message(Roles role, String content) {
             this(role, content, null, null);
         }
     }

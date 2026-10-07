@@ -2,18 +2,17 @@ package org.hero.tools;
 
 import org.hero.Requests;
 import org.hero.Requests.Message;
+import org.hero.Roles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * registers tools via serviceLoader, you can find every tool it found in {@link TOOLS} and get them via the tool's name
  */
 public final class ToolRegistry {
 
-    private static final String ROLE_TOOL = "tool";
     private static final Logger LOGGER = LoggerFactory.getLogger(ToolRegistry.class);
     /**
      * an unmodifiable map containing every tool
@@ -29,23 +28,19 @@ public final class ToolRegistry {
 
     static {
         Map<String, Tool> map = new HashMap<>();
-        Stream<ServiceLoader.Provider<Tool>> providerStream = ServiceLoader.load(Tool.class).stream();
-
-        providerStream.forEach(provider -> {
-            try {
-                Tool tool = provider.get();
-                map.put(tool.toolName, tool);
-                LOGGER.info("{} has been added", tool);
-            } catch (ServiceConfigurationError e) {
-                LOGGER.error("Could not be loaded: {}", e.getMessage(), e);
-            }
-        });
-        TOOLS = Map.copyOf(map);
-
         List<ToolsInformation.ToolData> toolsData = new ArrayList<>();
-        for (Tool tool : TOOLS.values()) {
-            toolsData.add(tool.toolsData);
+        try {
+            ServiceLoader.load(Tool.class).stream()
+                    .forEach(provider -> {
+                        Tool tool = provider.get();
+                        map.put(tool.toolName, tool);
+                        toolsData.add(tool.toolsData);
+                        LOGGER.info("{} has been added", tool);
+                    });
+        } catch (ServiceConfigurationError e) {
+            LOGGER.error("Could not be loaded: {}", e.getMessage(), e);
         }
+        TOOLS = Map.copyOf(map);
         TOOLS_DATA = List.copyOf(toolsData);
     }
 
@@ -74,8 +69,8 @@ public final class ToolRegistry {
             ToolsInformation.FunctionCall function = toolCall.function();
 
             Message message = getTool(function.name())
-                    .map(tool -> new Message(ROLE_TOOL, tool.toolUse(function.arguments()), function.name()))
-                    .orElseGet(() -> new Message(ROLE_TOOL, "unknown tool", function.name()));
+                    .map(tool -> new Message(Roles.TOOL, tool.toolUse(function.arguments()), function.name()))
+                    .orElseGet(() -> new Message(Roles.TOOL, "unknown tool", function.name()));
             messages.add(message);
         }
         return List.copyOf(messages);
