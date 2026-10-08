@@ -4,19 +4,35 @@ public interface Client {
 
 
     /**
-     * prepares and runs the nessaray methods for the application to start
+     * prepares and runs the necessary methods for the application to start
      */
     void launchApplication();
 
     /**
-     * this is to display a message on the screen either by the ai or user
+     * this is to display a message on the screen that was sent by the user
+     *
      * @param message the thing to display
      */
-    void displayMessage(String message);
+    void displayUserMessage(String message);
 
     /**
      * this is to display the tools separately, typically above normal messages in a small box
-     * @param tool the name and the return of the tool
+     *
+     * @param message the name and the return of the tool
      */
-    void toolsDisplay(String tool);
+    void displayToolsMessage(String message);
+
+    /**
+     * this is to display a message on the screen that was sent by the Ai/assistant
+     *
+     * @param message the thing to display
+     */
+    void displayAIMessage(String message);
+
+    /**
+     * this is to display a message on the screen that was sent by the system
+     *
+     * @param message the thing to display
+     */
+    void displaySystemMessage(String message);
 }

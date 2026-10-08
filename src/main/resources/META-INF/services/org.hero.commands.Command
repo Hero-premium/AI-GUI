@@ -1,1 +1,2 @@
 org.hero.commands.GetConversationHistory
+org.hero.commands.GetAllCommands

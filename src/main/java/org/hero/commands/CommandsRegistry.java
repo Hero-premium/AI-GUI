@@ -18,17 +18,20 @@ public final class CommandsRegistry {
 
     static {
         Map<String, Command> map = new HashMap<>();
-        Stream<ServiceLoader.Provider<Command>> providerStream = ServiceLoader.load(Command.class).stream();
-
-        providerStream.forEach(provider -> {
-            try {
-                Command command = provider.get();
-                map.put(command.commandLine, command);
-                LOGGER.info("{} has been added", command);
-            } catch (ServiceConfigurationError e) {
-                LOGGER.error("{} could not be loaded", e.getMessage());
-            }
-        });
+        try {
+            Stream<ServiceLoader.Provider<Command>> tools = ServiceLoader.load(Command.class).stream();
+            tools.forEach(provider -> {
+                try {
+                    Command command = provider.get();
+                    map.put(command.commandLine, command);
+                    LOGGER.info("{} has been added", command);
+                } catch (ServiceConfigurationError e) {
+                    LOGGER.error("Could not be loaded: {}", e.getMessage(), e);
+                }
+            });
+        } catch (ServiceConfigurationError e) {
+            LOGGER.error("no commands were loaded: {}", e.getMessage(), e);
+        }
         COMMANDS = Map.copyOf(map);
     }
 
@@ -53,7 +56,7 @@ public final class CommandsRegistry {
      * @param givenCommand the command to execute
      * @param ai           the current running AI
      * @param client       the current client
-     * @return the command return, a stream of messages
+     * @return the command return, a list of messages
      */
     public static List<Requests.Message> findAndRunCommand(String givenCommand, LocalAi ai, Client client) {
         Command commandLine = findCommand(givenCommand);
@@ -63,7 +66,8 @@ public final class CommandsRegistry {
             return List.of();
         }
         LOGGER.debug("found {}", commandLine);
-        return commandLine.runCommand(ai, client);
+        List<Requests.Message> messages = commandLine.runCommand(ai, client);
+        return messages == null ? List.of() : messages;
     }
 
     private CommandsRegistry() {

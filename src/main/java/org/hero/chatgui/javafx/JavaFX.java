@@ -1,60 +1,82 @@
 package org.hero.chatgui.javafx;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-
 import org.hero.Program;
-import org.hero.Requests;
 import org.hero.chatgui.Client;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.Locale;
 
-public class JavaFX extends Application implements Client {
+public class JavaFX implements Client {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaFX.class);
-    private final VBox root = new VBox();
 
-    @Override
+    private final VBox messages = new VBox(5);
+    private final BorderPane root = new BorderPane();
+    private ScrollPane scrollPane;
+
     public void start(Stage primaryStage) {
-        Scene scene = new Scene(new Pane(), 800, 600);
-        scene.setRoot(root);
+        scrollPane = new ScrollPane(messages);
+        messages.setPadding(new Insets(10));
+        scrollPane.setFitToWidth(true);
+        messages.heightProperty().addListener((
+                _, _, _) -> scrollPane.setVvalue(1.0));
 
-        TextField textField = generateTextField();
-        root.setAlignment(Pos.BOTTOM_CENTER);
-        root.getChildren().add(textField);
+        root.setCenter(scrollPane);
+        root.setBottom(generateTextField());
 
-        primaryStage.setScene(scene);
+        primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.setTitle("AI GUI");
         primaryStage.show();
     }
 
+    private void addChild(String message, Pos pos) {
+        HBox row = new HBox(new GuiMessage(message).displayMessage());
+        row.setAlignment(pos);
+        Platform.runLater(() -> messages.getChildren().add(row));
+    }
+
     @Override
     public void launchApplication() {
-        launch();
     }
 
     @Override
-    public void displayMessage(String message) {
+    public void displayUserMessage(String message) {
         IO.println(message);
-        List<Node> children = root.getChildren();
-        children.add(children.size() - 1 , new GuiMessage(message).displayMessage());
+        addChild(message, Pos.CENTER_LEFT);
     }
 
     @Override
-    public void toolsDisplay(String tool) {
-        IO.println("TOOLS [ " + tool + " ]");
-        List<Node> children = root.getChildren();
-        children.add(children.size() - 1 , new GuiMessage("TOOLS [ " + tool + " ]").displayMessage());
+    public void displayToolsMessage(String message) {
+        IO.println("TOOLS [ " + message + " ]");
+        addChild("TOOLS [ " + message + " ]", Pos.CENTER_RIGHT);
+    }
+
+
+    @Override
+    public void displayAIMessage(String message) {
+        IO.println(message);
+        addChild(message, Pos.CENTER_RIGHT);
+    }
+
+    @Override
+    public void displaySystemMessage(String message) {
+        IO.println("IMPORTANT: " + message.toUpperCase(Locale.ROOT));
+        addChild("IMPORTANT: " + message.toUpperCase(Locale.ROOT), Pos.CENTER);
     }
 
     private TextField generateTextField() {
@@ -68,17 +90,53 @@ public class JavaFX extends Application implements Client {
     }
 
     private void sendAndDisplayText(String message) {
-        displayMessage(message);
-        Task<List<Requests.Message>> task = new Task<>() {
+        Task<Void> task = new Task<>() {
             @Override
-            protected List<Requests.Message> call() {
-                return Program.chat(message);
+            protected Void call() {
+                Program.chat(message);
+                return null;
             }
         };
-        task.setOnSucceeded(_ ->
-                task.getValue().forEach(message1 -> displayMessage(message1.content()))
-        );
         task.setOnFailed(_ -> LOGGER.error("chat failed", task.getException()));
         Thread.startVirtualThread(task);
     }
+
+    public static class JavaFXLauncher extends Application {
+        private static final Logger LOGGER = LoggerFactory.getLogger(JavaFXLauncher.class);
+        private volatile static JavaFX javaFX;
+        public static final Object lock = new Object();
+
+        public static JavaFX getJavaFX() {
+            synchronized (lock) {
+                while (javaFX == null) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            return javaFX;
+        }
+
+        @Override
+        public void start(Stage primaryStage) {
+            LOGGER.debug("launched");
+            javaFX = new JavaFX();
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+            LOGGER.debug(javaFX.toString());
+            javaFX.start(primaryStage);
+        }
+
+        public static void launch() {
+            new Thread(() -> Application.launch(JavaFXLauncher.class), "javafx-launcher").start();
+            LOGGER.info("Launching JavaFX");
+        }
+
+    }
+
+
 }

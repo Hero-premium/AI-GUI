@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * registers tools via serviceLoader, you can find every tool it found in {@link TOOLS} and get them via the tool's name
@@ -30,15 +31,20 @@ public final class ToolRegistry {
         Map<String, Tool> map = new HashMap<>();
         List<ToolsInformation.ToolData> toolsData = new ArrayList<>();
         try {
-            ServiceLoader.load(Tool.class).stream()
-                    .forEach(provider -> {
-                        Tool tool = provider.get();
-                        map.put(tool.toolName, tool);
-                        toolsData.add(tool.toolsData);
-                        LOGGER.info("{} has been added", tool);
-                    });
+            Stream<ServiceLoader.Provider<Tool>> tools = ServiceLoader.load(Tool.class).stream();
+            tools.forEach(provider -> {
+                try {
+                    Tool tool = provider.get();
+                    map.put(tool.toolName, tool);
+                    toolsData.add(tool.toolsData);
+                    LOGGER.info("{} has been added", tool);
+                } catch (ServiceConfigurationError e) {
+                    LOGGER.error("Could not be loaded: {}", e.getMessage(), e);
+                }
+            });
+
         } catch (ServiceConfigurationError e) {
-            LOGGER.error("Could not be loaded: {}", e.getMessage(), e);
+            LOGGER.error("no tools were loaded: {}", e.getMessage(), e);
         }
         TOOLS = Map.copyOf(map);
         TOOLS_DATA = List.copyOf(toolsData);
@@ -59,7 +65,7 @@ public final class ToolRegistry {
      * Search for a tool with the specified name and runs it then returns its result.
      *
      * @param toolData contains data about the tool most importantly its name and parameters
-     * @return Optional Requests.Message the message - tool returned, {@code Optional.empty()} if the tool was not found
+     * @return a list containing the replies of the requested tools
      */
     public static List<Message> findAndRunTools(List<ToolsInformation.ToolCall> toolData) {
         if (toolData == null) return List.of();

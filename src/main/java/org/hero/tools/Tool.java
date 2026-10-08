@@ -48,6 +48,10 @@ public abstract class Tool {
 
     @SuppressWarnings("LoggingSimilarMessage")
     String toolUse(Map<String, Object> tools) {
+        if (tools == null) {
+            LOGGER.warn("ai misused the tool, {}", "TOOL ERROR, NULL BEEN PASSED");
+            return "TOOL ERROR, NULL BEEN PASSED";
+        }
         if (isRequiredParamMissing(tools)) {
             LOGGER.warn("ai misused the tool, {}", "TOOL ERROR, MISSING A REQUIRED PARAMETER");
             return "TOOL ERROR, MISSING A REQUIRED PARAMETER";

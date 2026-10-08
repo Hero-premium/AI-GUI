@@ -18,22 +18,33 @@ public class AiTalksToAi implements Client {
     @Override
     public void launchApplication() {
         while (true) {
-            displayMessage("AI 1- " + ai1Input);
+            displayAIMessage(ai1Input);
             String ai2Input = ai.chat(List.of(new Requests.Message(Roles.USER, ai1Input))).message().content();
-            displayMessage("AI 2- " + ai2Input);
-            Program.chat(ai2Input).forEach(message -> builder.append(message.content()));
+            displayUserMessage(ai2Input);
+            Program.chat(ai2Input);
             ai1Input = builder.toString();
             builder.setLength(0);
         }
     }
 
     @Override
-    public void displayMessage(String message) {
-        IO.println(message);
+    public void displayUserMessage(String message) {
+         builder.append(message);
+        IO.println("AI 2- " + message);
     }
 
     @Override
-    public void toolsDisplay(String tool) {
+    public void displayToolsMessage(String message) {
+        IO.println("TOOL [ " + message + " ]");
+    }
 
+    @Override
+    public void displayAIMessage(String message) {
+        IO.println("AI 1" + message );
+    }
+
+    @Override
+    public void displaySystemMessage(String message) {
+        IO.println("SYSTEM [ " + message + " ]");
     }
 }

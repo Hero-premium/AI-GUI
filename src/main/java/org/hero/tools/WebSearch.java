@@ -9,12 +9,10 @@ public class WebSearch extends Tool {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSearch.class);
 
-    private static final Param param1 = new Param("query", PropertiesType.STRING,
-            "the query that will be used to get your search result back", true);
-
-
     public WebSearch() {
-        super("WebSearch", "use only when the user explicitly asks you to fetch an information from the internet", param1);
+        super("WebSearch", "use only when the user explicitly asks you to fetch an information from the internet"
+                , new Param("query", PropertiesType.STRING,
+                        "the query that will be used to get your search result back", true));
     }
 
     // this will become a real search tool at some point
