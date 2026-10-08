@@ -4,6 +4,11 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
+val minJava = 25
+if (JavaVersion.current() < JavaVersion.toVersion(minJava)) {
+    throw GradleException("AI-GUI needs JDK $minJava or newer (found ${JavaVersion.current()}).")
+}
+
 group = "org.hero"
 version = "1.0-SNAPSHOT"
 
