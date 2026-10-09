@@ -2,9 +2,10 @@ plugins {
     id("java")
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
+    kotlin("jvm")
 }
 
-val minJava = 25
+val minJava = 26
 if (JavaVersion.current() < JavaVersion.toVersion(minJava)) {
     throw GradleException("AI-GUI needs JDK $minJava or newer (found ${JavaVersion.current()}).")
 }
@@ -22,6 +23,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("com.google.code.gson:gson:2.14.0")
     implementation("ch.qos.logback:logback-classic:1.6.3")
+    testImplementation(kotlin("test"))
 }
 
 javafx {
@@ -35,4 +37,7 @@ application {
 
 tasks.test {
     useJUnitPlatform()
+}
+kotlin {
+    jvmToolchain(26)
 }

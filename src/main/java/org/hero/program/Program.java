@@ -1,10 +1,12 @@
-package org.hero;
+package org.hero.program;
 
+import org.hero.Requests;
 import org.hero.Requests.Message;
+import org.hero.Roles;
 import org.hero.chatai.Llama3b;
 import org.hero.chatai.LocalAi;
 import org.hero.chatgui.Client;
-import org.hero.chatgui.javafx.JavaFX;
+import org.hero.chatgui.javafx.JavaFXLauncher;
 import org.hero.commands.CommandsRegistry;
 import org.hero.tools.ToolRegistry;
 import org.slf4j.Logger;
@@ -13,15 +15,17 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class Program {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Program.class);
 
-    private static LocalAi ai;
-    private static Client gui;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Program.class);
     private static final int MAX_TOOLS_REQUESTS = 5;
 
+    private final QueueHelper queueHelper = new QueueHelper();
+    private LocalAi ai;
+    private Client gui;
+
+
     public Program() {
-        JavaFX.JavaFXLauncher.launch();
-        gui = JavaFX.JavaFXLauncher.getJavaFX();
+        gui = JavaFXLauncher.launchJavaFX().setProgram(this);
         ai = new Llama3b();
     }
 
@@ -29,15 +33,27 @@ public class Program {
         gui.launchApplication();
     }
 
-    public static void chat(String request) {
+    /**
+     * call this to chat with the AI, it handles tools and commands and queue
+     *
+     * @param request the String of what the user wants to tell the AI
+     */
+    public void chat(String request) {
         gui.displayUserMessage(request);
         if (handleCommands(request)) return;
+        if (ai.isThinking()) {
+            queueHelper.addToQueue(request);
+            return;
+        }
         Requests.RequestOut req = handleTools(request);
         if (req == null) return;
-        displayMessage(req);
+        displayMessage(req.message());
+        if (queueHelper.isQueued()) {
+            chat(queueHelper.getNext());
+        }
     }
 
-    private static Requests.RequestOut handleTools(String request) {
+    private Requests.RequestOut handleTools(String request) {
         Requests.RequestOut req = ai.chat(List.of(new Message(Roles.USER, request)));
         List<Message> toolReplies = ToolRegistry.findAndRunTools(req.message().tool_calls());
 
@@ -57,16 +73,16 @@ public class Program {
         return req;
     }
 
-    private static void displayMessage(Requests.RequestOut req) {
-        switch (req.message().role()) {
-            case USER -> gui.displayUserMessage(req.message().content());
-            case TOOL -> gui.displayToolsMessage(req.message().content());
-            case ASSISTANT -> gui.displayAIMessage(req.message().content());
-            case SYSTEM -> gui.displaySystemMessage(req.message().content());
+    private void displayMessage(Message message) {
+        switch (message.role()) {
+            case USER -> gui.displayUserMessage(message.content());
+            case TOOL -> gui.displayToolsMessage(message.content());
+            case ASSISTANT -> gui.displayAIMessage(message.content());
+            case SYSTEM -> gui.displaySystemMessage(message.content());
         }
     }
 
-    private static boolean handleCommands(String request) {
+    private boolean handleCommands(String request) {
         if (CommandsRegistry.commandExists(request)) {
             for (Message message : CommandsRegistry.findAndRunCommand(request, ai, gui)) {
                 gui.displayAIMessage(message.content());

@@ -1,6 +1,6 @@
 package org.hero.chatgui;
 
-import org.hero.Program;
+import org.hero.program.Program;
 import org.hero.Requests;
 import org.hero.Roles;
 import org.hero.chatai.Llama3b;
@@ -12,6 +12,7 @@ public class AiTalksToAi implements Client {
 
 
     private final StringBuilder builder = new StringBuilder();
+    private Program program;
     LocalAi ai = new Llama3b();
     private String ai1Input = "we need to make a new programming language with unique features, keep your responds short ";
 
@@ -21,7 +22,7 @@ public class AiTalksToAi implements Client {
             displayAIMessage(ai1Input);
             String ai2Input = ai.chat(List.of(new Requests.Message(Roles.USER, ai1Input))).message().content();
             displayUserMessage(ai2Input);
-            Program.chat(ai2Input);
+            program.chat(ai2Input);
             ai1Input = builder.toString();
             builder.setLength(0);
         }
@@ -46,5 +47,11 @@ public class AiTalksToAi implements Client {
     @Override
     public void displaySystemMessage(String message) {
         IO.println("SYSTEM [ " + message + " ]");
+    }
+
+    @Override
+    public Client setProgram(Program program) {
+        this.program = program;
+        return this;
     }
 }

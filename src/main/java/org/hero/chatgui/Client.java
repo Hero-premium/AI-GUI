@@ -1,5 +1,8 @@
 package org.hero.chatgui;
 
+
+import org.hero.program.Program;
+
 public interface Client {
 
 
@@ -35,4 +38,6 @@ public interface Client {
      * @param message the thing to display
      */
     void displaySystemMessage(String message);
+
+    Client setProgram(Program program);
 }

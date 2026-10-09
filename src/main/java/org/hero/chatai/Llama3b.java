@@ -29,7 +29,7 @@ public class Llama3b extends LocalAi {
     public Requests.RequestOut chat(List<Requests.Message> message) {
         LOGGER.debug("message received: {}", message);
         messages.addAll(message);
-        var requestOut = LocalAi.sentRequest(
+        var requestOut = sendRequest(
                 buildHttpRequest(new Requests.RequestIn(MODEL_NAME, messages, false)));
 
         messages.add(requestOut.message());

@@ -1,11 +1,12 @@
 package org.hero.chatgui;
 
-import org.hero.Program;
+import org.hero.program.Program;
 
 import java.util.Scanner;
 
 public class ScannerInput implements Client {
     private final Scanner scanner;
+    private Program program;
 
     public ScannerInput() {
         scanner = new Scanner(System.in);
@@ -16,7 +17,7 @@ public class ScannerInput implements Client {
         while (true) {
             if (scanner.hasNextLine()) {
                 String input = scanner.nextLine();
-                Program.chat(input);
+                program.chat(input);
                 displaySystemMessage("User turn!");
                 } else {
                 displaySystemMessage("you have just shut this down");
@@ -43,5 +44,11 @@ public class ScannerInput implements Client {
     @Override
     public void displaySystemMessage(String message) {
         IO.println("system: " + message);
+    }
+
+    @Override
+    public Client setProgram(Program program) {
+        this.program = program;
+        return this;
     }
 }

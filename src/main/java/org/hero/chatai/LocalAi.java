@@ -21,17 +21,21 @@ public abstract class LocalAi {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
+    private boolean isThinking = false;
 
 
-    private static final HttpClient client = HttpClient.newHttpClient();
+    private final HttpClient client = HttpClient.newHttpClient();
     protected final List<Requests.Message> messages = new ArrayList<>();
 
-    static Requests.RequestOut sentRequest(HttpRequest request) {
+    Requests.RequestOut sendRequest(HttpRequest request) {
+        isThinking = true;
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             LOGGER.debug("requestOut: {}", response);
+            isThinking = false;
             return Util.gson.fromJson(response.body(), Requests.RequestOut.class);
         } catch (ConnectException _) {
+            isThinking = false;
             return new Requests.RequestOut("system", "", new Requests.Message(Roles.SYSTEM, "ollama server is down"), true, "", 0, 0, 0, 0, 0, 0, 0);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -43,4 +47,8 @@ public abstract class LocalAi {
     }
 
     public abstract Requests.RequestOut chat(List<Requests.Message> messages);
+
+    public boolean isThinking() {
+        return isThinking;
+    }
 }

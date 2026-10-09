@@ -1,6 +1,5 @@
 package org.hero.chatgui.javafx;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -13,7 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import org.hero.Program;
+import org.hero.program.Program;
 import org.hero.chatgui.Client;
 
 import org.slf4j.Logger;
@@ -24,18 +23,19 @@ import java.util.Locale;
 public class JavaFX implements Client {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaFX.class);
+    private Program program;
 
     private final VBox messages = new VBox(5);
-    private final BorderPane root = new BorderPane();
-    private ScrollPane scrollPane;
+    private final ScrollPane scrollPane;
 
-    public void start(Stage primaryStage) {
+    JavaFX(Stage primaryStage) {
         scrollPane = new ScrollPane(messages);
         messages.setPadding(new Insets(10));
         scrollPane.setFitToWidth(true);
         messages.heightProperty().addListener((
                 _, _, _) -> scrollPane.setVvalue(1.0));
 
+        BorderPane root = new BorderPane();
         root.setCenter(scrollPane);
         root.setBottom(generateTextField());
 
@@ -79,6 +79,12 @@ public class JavaFX implements Client {
         addChild("IMPORTANT: " + message.toUpperCase(Locale.ROOT), Pos.CENTER);
     }
 
+    @Override
+    public Client setProgram(Program program) {
+        this.program = program;
+        return this;
+    }
+
     private TextField generateTextField() {
         TextField textField = new TextField();
         textField.setOnAction(_ -> {
@@ -93,50 +99,11 @@ public class JavaFX implements Client {
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() {
-                Program.chat(message);
+                program.chat(message);
                 return null;
             }
         };
         task.setOnFailed(_ -> LOGGER.error("chat failed", task.getException()));
         Thread.startVirtualThread(task);
     }
-
-    public static class JavaFXLauncher extends Application {
-        private static final Logger LOGGER = LoggerFactory.getLogger(JavaFXLauncher.class);
-        private volatile static JavaFX javaFX;
-        public static final Object lock = new Object();
-
-        public static JavaFX getJavaFX() {
-            synchronized (lock) {
-                while (javaFX == null) {
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-            return javaFX;
-        }
-
-        @Override
-        public void start(Stage primaryStage) {
-            LOGGER.debug("launched");
-            javaFX = new JavaFX();
-            synchronized (lock) {
-                lock.notifyAll();
-            }
-            LOGGER.debug(javaFX.toString());
-            javaFX.start(primaryStage);
-        }
-
-        public static void launch() {
-            new Thread(() -> Application.launch(JavaFXLauncher.class), "javafx-launcher").start();
-            LOGGER.info("Launching JavaFX");
-        }
-
-    }
-
-
 }

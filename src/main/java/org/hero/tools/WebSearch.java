@@ -17,7 +17,7 @@ public class WebSearch extends Tool {
 
     // this will become a real search tool at some point
     @Override
-    protected String useTool(Map<String, Object> tools) {
+    protected String useTool(Map<String, Object> arguments) {
         return "TOOL ERROR, SOMETHING WENT WRONG -> java.lang.IllegalAccessException tool is bugged, don't use it ";
     }
 }
