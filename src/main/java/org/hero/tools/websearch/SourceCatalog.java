@@ -25,4 +25,8 @@ public class SourceCatalog {
     public static String runWebSearch(String source, String query) {
         return getSource(source).map(search -> search.search(query)).orElseGet(() -> "UNKNOWN SEARCH SOURCE: " + source);
     }
+
+    private SourceCatalog() {
+        throw new AssertionError("no org.hero.tools.websearch.SourceCatalog instance for you!");
+    }
 }

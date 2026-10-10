@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
@@ -24,13 +23,13 @@ public abstract class LocalAi {
     private boolean isThinking = false;
 
 
-    private final HttpClient client = HttpClient.newHttpClient();
+
     protected final List<Requests.Message> messages = new ArrayList<>();
 
     Requests.RequestOut sendRequest(HttpRequest request) {
         isThinking = true;
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = Util.client.send(request, HttpResponse.BodyHandlers.ofString());
             LOGGER.debug("requestOut: {}", response);
             return Util.gson.fromJson(response.body(), Requests.RequestOut.class);
         } catch (ConnectException _) {
