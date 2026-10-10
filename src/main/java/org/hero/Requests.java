@@ -24,6 +24,7 @@ public final class Requests {
      * @param role       the name of the sender
      * @param content    the content of the message.
      * @param tool_calls if the AI requested tools this is where they show up
+     * @param tool_name  the name of the tool that generated this response if it was tool generated.
      */
     public record Message(Roles role, String content, List<ToolsInformation.ToolCall> tool_calls, String tool_name) {
         public Message(Roles role, String content, String tool_name) {
@@ -41,6 +42,7 @@ public final class Requests {
      * @param model    the name of the model that is meant to receive this request
      * @param messages all the messages that has been sent this conversation, you handle adding/removing messages yourself
      * @param stream   whether the model will dump all the tokens at once or send one token at the time, for now we only support false
+     * @param tools    every available tool
      */
     public record RequestIn(String model, List<Message> messages, boolean stream,
                             List<ToolsInformation.ToolData> tools) {

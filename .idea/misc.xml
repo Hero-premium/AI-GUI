@@ -2,6 +2,13 @@
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="KubernetesApiProvider">{}</component>
+  <component name="PrintToLogpointModuleInspectionState">
+    <option name="disabledModuleNames">
+      <set>
+        <option value="AI-GUI.main" />
+      </set>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_26" default="true" project-jdk-name="oracle-26" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>

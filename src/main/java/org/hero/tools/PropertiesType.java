@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public enum PropertiesType {
+
     @SerializedName("array") ARRAY(List.class),
     @SerializedName("integer") INTEGER(Long.class),
     @SerializedName("number") NUMBER(Double.class),

@@ -49,12 +49,14 @@ public abstract class Tool {
     @SuppressWarnings("LoggingSimilarMessage")
     String toolUse(Map<String, Object> tools) {
         // if it takes no params don't validate anything
-        if (params.length == 0) return useTool(tools);
+        // map.of to stop nulls
+        if (params.length == 0) return useTool(Map.of());
 
         if (tools == null) {
             LOGGER.warn("ai misused the tool, {}", "TOOL ERROR, NULL BEEN PASSED");
             return "TOOL ERROR, NULL BEEN PASSED";
         }
+
         if (isRequiredParamMissing(tools)) {
             LOGGER.warn("ai misused the tool, {}", "TOOL ERROR, MISSING A REQUIRED PARAMETER");
             return "TOOL ERROR, MISSING A REQUIRED PARAMETER";

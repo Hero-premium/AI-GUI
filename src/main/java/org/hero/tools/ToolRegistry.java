@@ -46,7 +46,7 @@ public final class ToolRegistry {
         } catch (ServiceConfigurationError e) {
             LOGGER.error("no tools were loaded: {}", e.getMessage(), e);
         }
-        TOOLS = Map.copyOf(map);
+        TOOLS = Collections.unmodifiableMap(map);
         TOOLS_DATA = List.copyOf(toolsData);
     }
 
@@ -82,7 +82,9 @@ public final class ToolRegistry {
         return List.copyOf(messages);
     }
 
-
+    /**
+     * don't instantiate this
+     */
     private ToolRegistry() {
         throw new AssertionError("no org.hero.tools.ToolRegistry instances for you!");
     }
