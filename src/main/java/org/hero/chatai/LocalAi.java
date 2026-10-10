@@ -28,6 +28,7 @@ public abstract class LocalAi {
     protected final List<Requests.Message> messages = new ArrayList<>();
 
     Requests.RequestOut sendRequest(HttpRequest request) {
+        isThinking = true;
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             LOGGER.debug("requestOut: {}", response);

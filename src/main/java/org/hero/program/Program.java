@@ -8,15 +8,11 @@ import org.hero.chatai.LocalAi;
 import org.hero.chatgui.Client;
 import org.hero.commands.CommandsRegistry;
 import org.hero.tools.ToolRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 public class Program {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Program.class);
     private static final int MAX_TOOLS_REQUESTS = 5;
 
     private final QueueHelper queueHelper = new QueueHelper();
