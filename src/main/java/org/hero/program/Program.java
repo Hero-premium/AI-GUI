@@ -6,12 +6,12 @@ import org.hero.Roles;
 import org.hero.chatai.Llama3b;
 import org.hero.chatai.LocalAi;
 import org.hero.chatgui.Client;
-import org.hero.chatgui.javafx.JavaFXLauncher;
 import org.hero.commands.CommandsRegistry;
 import org.hero.tools.ToolRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 public class Program {
@@ -20,16 +20,17 @@ public class Program {
     private static final int MAX_TOOLS_REQUESTS = 5;
 
     private final QueueHelper queueHelper = new QueueHelper();
+
     private LocalAi ai;
     private Client gui;
 
 
-    public Program() {
-        gui = JavaFXLauncher.launchJavaFX().setProgram(this);
-        ai = new Llama3b();
+    public Program(Client client) {
+        this.gui = client.setProgram(this);
+        this.ai = new Llama3b();
     }
 
-    public void launch() {
+    void launch() {
         gui.launchApplication();
     }
 

@@ -70,6 +70,9 @@ public final class CommandsRegistry {
         return messages == null ? List.of() : messages;
     }
 
+    /**
+     * no instantiating
+     */
     private CommandsRegistry() {
         throw new AssertionError("no org.hero.commands.CommandsRegistry instance for you!");
     }

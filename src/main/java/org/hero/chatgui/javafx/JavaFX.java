@@ -12,7 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import org.hero.program.Program;
 import org.hero.chatgui.Client;
 
 import org.slf4j.Logger;
@@ -20,10 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 
-public class JavaFX implements Client {
+public class JavaFX extends Client {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaFX.class);
-    private Program program;
 
     private final VBox messages = new VBox(5);
     private final ScrollPane scrollPane;
@@ -77,12 +75,6 @@ public class JavaFX implements Client {
     public void displaySystemMessage(String message) {
         IO.println("IMPORTANT: " + message.toUpperCase(Locale.ROOT));
         addChild("IMPORTANT: " + message.toUpperCase(Locale.ROOT), Pos.CENTER);
-    }
-
-    @Override
-    public Client setProgram(Program program) {
-        this.program = program;
-        return this;
     }
 
     private TextField generateTextField() {

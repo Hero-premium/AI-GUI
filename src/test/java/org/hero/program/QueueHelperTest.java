@@ -28,5 +28,6 @@ class QueueHelperTest {
         final QueueHelper queueHelper = new QueueHelper();
         queueHelper.addToQueue("test");
         assertTrue(queueHelper.isQueued());
+        assertThrows(NullPointerException.class, () -> queueHelper.addToQueue(null));
     }
 }

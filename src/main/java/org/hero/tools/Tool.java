@@ -48,6 +48,9 @@ public abstract class Tool {
 
     @SuppressWarnings("LoggingSimilarMessage")
     String toolUse(Map<String, Object> tools) {
+        // if it takes no params don't validate anything
+        if (params.length == 0) return useTool(tools);
+
         if (tools == null) {
             LOGGER.warn("ai misused the tool, {}", "TOOL ERROR, NULL BEEN PASSED");
             return "TOOL ERROR, NULL BEEN PASSED";
@@ -70,7 +73,7 @@ public abstract class Tool {
 
 
         if ((object != null || p.isRequired()) && !p.type().getType().isInstance(object)) {
-            String typeToString = "";
+            String typeToString = "UNKNOWN";
             for (PropertiesType propertiesType : PropertiesType.values()) {
                 if (propertiesType.getType().isInstance(object)) {
                     typeToString = propertiesType.toString();

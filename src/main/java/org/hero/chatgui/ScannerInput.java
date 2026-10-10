@@ -1,12 +1,10 @@
 package org.hero.chatgui;
 
-import org.hero.program.Program;
 
 import java.util.Scanner;
 
-public class ScannerInput implements Client {
+public class ScannerInput extends Client {
     private final Scanner scanner;
-    private Program program;
 
     public ScannerInput() {
         scanner = new Scanner(System.in);
@@ -44,11 +42,5 @@ public class ScannerInput implements Client {
     @Override
     public void displaySystemMessage(String message) {
         IO.println("system: " + message);
-    }
-
-    @Override
-    public Client setProgram(Program program) {
-        this.program = program;
-        return this;
     }
 }

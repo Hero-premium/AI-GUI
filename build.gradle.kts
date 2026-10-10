@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
+    id("com.gradleup.shadow") version "9.6.1"
     kotlin("jvm")
 }
 
@@ -32,7 +33,7 @@ javafx {
 }
 
 application {
-    mainClass.set("org.hero.Main")
+    mainClass.set("org.hero.program.Main")
 }
 
 tasks.test {
@@ -40,4 +41,24 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(26)
+}
+
+tasks.jar {
+    archiveClassifier.set("plain")
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+
+    manifest {
+        attributes["Main-Class"] = "org.hero.program.Main"
+    }
+
+    mergeServiceFiles()
+
+    exclude(
+        "META-INF/*.SF",
+        "META-INF/*.DSA",
+        "META-INF/*.RSA"
+    )
 }
