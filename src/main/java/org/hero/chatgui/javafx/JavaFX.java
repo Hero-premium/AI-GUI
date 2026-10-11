@@ -30,8 +30,7 @@ public class JavaFX extends Client {
         scrollPane = new ScrollPane(messages);
         messages.setPadding(new Insets(10));
         scrollPane.setFitToWidth(true);
-        messages.heightProperty().addListener((
-                _, _, _) -> scrollPane.setVvalue(1.0));
+        messages.heightProperty().addListener((_, _, _) -> scrollPane.setVvalue(1.0));
 
         BorderPane root = new BorderPane();
         root.setCenter(scrollPane);

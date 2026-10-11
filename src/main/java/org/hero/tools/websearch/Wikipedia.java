@@ -1,17 +1,21 @@
 package org.hero.tools.websearch;
 
+import com.google.gson.JsonSyntaxException;
 import org.hero.util.Util;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.nio.charset.StandardCharsets;
-import java.rmi.ServerException;
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.Map;
 
 public class Wikipedia extends Source {
@@ -30,6 +34,9 @@ public class Wikipedia extends Source {
          *              order, so sort by {@link Page#index()} before use.
          */
         record Query(Map<String, Page> pages) {
+            Query {
+                if (pages == null) pages = Map.of();
+            }
         }
 
         /**
@@ -53,22 +60,45 @@ public class Wikipedia extends Source {
         super("Wikipedia");
     }
 
-
+    /**
+     * performs the searching, handles formating, error handling, and safety of the responde
+     *
+     * @param query the query to search about
+     * @return the result of the search, usually 2 or 3 paragraphs
+     */
     @Override
     public String search(String query) {
-        String result;
+        String result = "something went wrong";
         try {
             HttpResponse<String> response = Util.client.send(buildRequest(query), HttpResponse.BodyHandlers.ofString());
-            StringBuilder stringBuilder = new StringBuilder();
-            Util.gson.fromJson(response.body(), WikipediaResponse.class).query().pages().values().forEach( page -> stringBuilder.append(page.extract).append("\n"));
-            result = stringBuilder.toString();
-        } catch (ServerException _) {
-            result = "server error";
-        } catch (IOException | InterruptedException e) {
-            result = "something went wrong";
-            LOGGER.error(result, e.getMessage(), e);
+            result = filterAndBuildResponse(response.body());
+        } catch (ConnectException _) {
+            result = "couldn’t reach Wikipedia";
+        } catch (HttpTimeoutException _) {
+            result = "connection timed out";
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.error(e.getMessage(), e);
+        } catch (IOException | JsonSyntaxException e) {
+            LOGGER.error(e.getMessage(), e);
         }
         return result;
+    }
+
+    @NotNull
+    static String filterAndBuildResponse(String response) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Util.gson.fromJson(response, WikipediaResponse.class)
+                .query().pages().values()
+                .stream()
+                .filter(page -> page.title() != null && page.extract() != null)
+                .filter(page -> page.extract().length() >= 50)
+                .sorted(Comparator.comparingInt(WikipediaResponse.Page::index))
+                .limit(2)
+                .forEach(page -> stringBuilder.append(page.title()).append("\n\n").append(page.extract()).append("\n"));
+
+        String stringBuilderToString = stringBuilder.toString();
+        return stringBuilderToString.isEmpty() ? "no results were found" : stringBuilderToString;
     }
 
     private HttpRequest buildRequest(String query) {

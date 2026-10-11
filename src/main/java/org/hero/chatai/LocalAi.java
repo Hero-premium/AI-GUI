@@ -32,7 +32,8 @@ public abstract class LocalAi {
             HttpResponse<String> response = Util.client.send(request, HttpResponse.BodyHandlers.ofString());
             LOGGER.debug("requestOut: {}", response);
             return Util.gson.fromJson(response.body(), Requests.RequestOut.class);
-        } catch (ConnectException _) {
+        } catch (ConnectException e) {
+            LOGGER.debug("connection refused: ", e);
             return new Requests.RequestOut("system", "", new Requests.Message(Roles.SYSTEM, "ollama server is down"), true, "", 0, 0, 0, 0, 0, 0, 0);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
