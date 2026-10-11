@@ -26,6 +26,9 @@ public class Wikipedia extends Source {
      * Only the fields this project uses are declared; Gson ignores the rest.
      */
     record WikipediaResponse(Query query) {
+        WikipediaResponse {
+            if (query == null) query = new Query(Map.of());
+        }
 
         /**
          * The {@code query} object of the response.
@@ -48,6 +51,10 @@ public class Wikipedia extends Source {
          * @param index   search rank, 1 is the best match
          */
         record Page(String title, String extract, int index) {
+            Page {
+                if (title == null) title = "";
+                if (extract == null) extract = "";
+            }
         }
     }
 
@@ -61,7 +68,7 @@ public class Wikipedia extends Source {
     }
 
     /**
-     * performs the searching, handles formating, error handling, and safety of the responde
+     * performs the searching, handles formating, error handling, and safety of the response
      *
      * @param query the query to search about
      * @return the result of the search, usually 2 or 3 paragraphs

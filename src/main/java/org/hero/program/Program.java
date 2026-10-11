@@ -22,9 +22,11 @@ public class Program {
 
 
     public Program(Client client) {
+        SQLite.init();
         this.gui = client.setProgram(this);
         this.ai = new Llama3b();
     }
+
 
     void launch() {
         gui.launchApplication();

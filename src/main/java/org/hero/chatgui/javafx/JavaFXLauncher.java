@@ -2,6 +2,7 @@ package org.hero.chatgui.javafx;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.hero.program.SQLite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,5 +37,10 @@ public class JavaFXLauncher extends Application {
         synchronized (lock) {
             lock.notifyAll();
         }
+    }
+
+    @Override
+    public void stop() {
+        SQLite.close();
     }
 }
