@@ -2,7 +2,7 @@ package org.hero.chatgui.javafx;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.hero.program.SQLite;
+import org.hero.program.sqlite.SQLite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +41,6 @@ public class JavaFXLauncher extends Application {
 
     @Override
     public void stop() {
-        SQLite.close();
+        SQLite.closeAll();
     }
 }

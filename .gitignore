@@ -6,6 +6,7 @@ build/
 .kotlin
 *.db
 *.sqlite
+
 ### IntelliJ IDEA ###
 .idea
 .idea/modules.xml

@@ -25,7 +25,8 @@ public class Wikipedia extends Source {
      * when used with {@code generator=search} and {@code prop=extracts}.
      * Only the fields this project uses are declared; Gson ignores the rest.
      */
-    record WikipediaResponse(Query query) {
+    @SuppressWarnings("ConstantConditions")
+    record WikipediaResponse(@NotNull Query query) {
         WikipediaResponse {
             if (query == null) query = new Query(Map.of());
         }
@@ -36,7 +37,7 @@ public class Wikipedia extends Source {
          * @param pages search hits keyed by page ID. Map order is not search
          *              order, so sort by {@link Page#index()} before use.
          */
-        record Query(Map<String, Page> pages) {
+        record Query(@NotNull Map<String, Page> pages) {
             Query {
                 if (pages == null) pages = Map.of();
             }
@@ -50,7 +51,7 @@ public class Wikipedia extends Source {
          *                (e.g. disambiguation pages) and may contain {@code \n}
          * @param index   search rank, 1 is the best match
          */
-        record Page(String title, String extract, int index) {
+        record Page(@NotNull String title, @NotNull String extract, int index) {
             Page {
                 if (title == null) title = "";
                 if (extract == null) extract = "";
@@ -98,7 +99,6 @@ public class Wikipedia extends Source {
         Util.gson.fromJson(response, WikipediaResponse.class)
                 .query().pages().values()
                 .stream()
-                .filter(page -> page.title() != null && page.extract() != null)
                 .filter(page -> page.extract().length() >= 50)
                 .sorted(Comparator.comparingInt(WikipediaResponse.Page::index))
                 .limit(2)

@@ -17,18 +17,20 @@ public class Program {
 
     private final QueueHelper queueHelper = new QueueHelper();
 
+    private final Client gui;
     private LocalAi ai;
-    private Client gui;
 
+    public void setAi(LocalAi ai) {
+        this.ai = ai;
+    }
 
     public Program(Client client) {
-        SQLite.init();
         this.gui = client.setProgram(this);
         this.ai = new Llama3b();
     }
 
 
-    void launch() {
+     void launch() {
         gui.launchApplication();
     }
 
@@ -90,4 +92,6 @@ public class Program {
         }
         return false;
     }
+
+
 }
