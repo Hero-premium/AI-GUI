@@ -28,7 +28,7 @@ public abstract class LocalAi {
         isThinking = true;
         try {
             HttpResponse<String> response = Util.client.send(request, HttpResponse.BodyHandlers.ofString());
-            LOGGER.debug("requestOut: {}", response);
+            LOGGER.debug("requestOut: {}", response.body());
             return Util.gson.fromJson(response.body(), Requests.RequestOut.class);
         } catch (ConnectException e) {
             LOGGER.debug("connection refused: ", e);

@@ -25,7 +25,7 @@ public class Program {
     }
 
     public Program(Client client) {
-        this.gui = client.setProgram(this);
+        this.gui = client.getClient().setProgram(this);
         this.ai = new Llama3b();
     }
 
