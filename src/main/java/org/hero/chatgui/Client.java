@@ -47,4 +47,8 @@ public abstract class Client {
         this.program = Objects.requireNonNull(program, "program must not be null");
         return this;
     }
+
+    public Client getClient() {
+        return this;
+    }
 }

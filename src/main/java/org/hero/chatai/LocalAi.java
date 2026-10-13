@@ -22,8 +22,6 @@ public abstract class LocalAi {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
     private boolean isThinking = false;
 
-
-
     protected final List<Requests.Message> messages = new ArrayList<>();
 
     Requests.RequestOut sendRequest(HttpRequest request) {

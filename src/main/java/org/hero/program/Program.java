@@ -40,6 +40,7 @@ public class Program {
      * @param request the String of what the user wants to tell the AI
      */
     public void chat(String request) {
+        if (request.isEmpty()) return;
         gui.displayUserMessage(request);
         if (handleCommands(request)) return;
         if (ai.isThinking()) {

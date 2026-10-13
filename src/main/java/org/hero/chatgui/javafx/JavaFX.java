@@ -24,9 +24,9 @@ public class JavaFX extends Client {
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaFX.class);
 
     private final VBox messages = new VBox(5);
-    private final ScrollPane scrollPane;
+    private ScrollPane scrollPane;
 
-    JavaFX(Stage primaryStage) {
+    public JavaFX(Stage primaryStage) {
         scrollPane = new ScrollPane(messages);
         messages.setPadding(new Insets(10));
         scrollPane.setFitToWidth(true);
@@ -39,6 +39,10 @@ public class JavaFX extends Client {
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.setTitle("AI GUI");
         primaryStage.show();
+    }
+
+    public JavaFX() {
+        // NO OP so JavaFXLauncher can be call the one with stage
     }
 
     private void addChild(String message, Pos pos) {
@@ -96,5 +100,10 @@ public class JavaFX extends Client {
         };
         task.setOnFailed(_ -> LOGGER.error("chat failed", task.getException()));
         Thread.startVirtualThread(task);
+    }
+
+    @Override
+    public Client getClient() {
+        return JavaFXLauncher.launchJavaFX();
     }
 }
