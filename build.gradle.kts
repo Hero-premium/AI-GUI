@@ -26,6 +26,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.14.0")
     implementation("ch.qos.logback:logback-classic:1.6.3")
     implementation("org.xerial:sqlite-jdbc:3.53.2.1")
+    implementation("com.ezylang:EvalEx:3.7.0")
     compileOnly("org.jetbrains:annotations:26.1.0")
 }
 

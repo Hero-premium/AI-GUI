@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * all commands are registered here, also combinations methods for finding and running them safely.
+ * all commands are registered here, also methods for finding and running them safely.
  */
 public final class CommandsRegistry {
 
@@ -24,8 +24,8 @@ public final class CommandsRegistry {
     static {
         Map<String, Command> map = new HashMap<>();
         try {
-            Stream<ServiceLoader.Provider<Command>> tools = ServiceLoader.load(Command.class).stream();
-            tools.forEach(provider -> {
+            Stream<ServiceLoader.Provider<Command>> commands = ServiceLoader.load(Command.class).stream();
+            commands.forEach(provider -> {
                 try {
                     Command command = provider.get();
                     map.put(command.commandLine, command);

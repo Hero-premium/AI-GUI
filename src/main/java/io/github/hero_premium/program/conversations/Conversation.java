@@ -23,12 +23,12 @@ public class Conversation {
             )
             """);
     private static final Logger LOGGER = LoggerFactory.getLogger(Conversation.class);
+    static final String systemPrompt = "You are running inside a local chat app.";
 
     private final QueueHelper queueHelper = new QueueHelper();
     private final List<Requests.Message> messageList = new ArrayList<>();
-
     public final String title;
-    static final String systemPrompt = "You are running inside a local chat app.";
+
     Conversation(String title) {
         this.title = Objects.requireNonNull(title, "title must not be null");
         messageList.add(new Requests.Message(Roles.SYSTEM, systemPrompt));

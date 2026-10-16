@@ -20,14 +20,14 @@ public final class SourceCatalog {
     }
 
     /**
-     * runs the webSearch and return the result, returns UNKNOWN SEARCH SOURCE: with the invalid search source name
+     * runs the webSearch and return the result, returns INVALID SEARCH SOURCE: with the invalid search source name
      *
      * @param source the name of the source, sources found in {@link #SOURCES}
      * @param query  the search query used for the search
      * @return the search result, or the error message if something went wrong
      */
     public static String runWebSearch(String source, String query) {
-        return getSource(source).map(search -> search.search(query)).orElseGet(() -> "UNKNOWN SEARCH SOURCE: " + source);
+        return getSource(source).map(search -> search.search(query)).orElseGet(() -> "INVALID SEARCH SOURCE: " + source);
     }
 
     /**

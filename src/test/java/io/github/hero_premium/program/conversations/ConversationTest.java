@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ConversationTest {
 
     private static Requests.Message msg(Roles role, String content) {
-        return new Requests.Message(role, content, null, null);
+        return new Requests.Message(role, content);
     }
 
     private static Requests.RequestOut reply(Requests.Message message) {
@@ -121,7 +121,7 @@ class ConversationTest {
 
     @Test
     void getNext() {
-        // ASSUMPTION: FIFO, returns a single Message from the queued list
+
         Conversation c = new Conversation("next");
         FakeAi ai = new FakeAi();
         ai.thinking = true;
@@ -131,7 +131,7 @@ class ConversationTest {
         assertEquals("first", c.getNext().content());
         assertEquals("second", c.getNext().content());
 
-        // ASSUMPTION: what an empty queue does depends on QueueHelper, adjust this
-        // assertNull(c.getNext());
+
+         assertNull(c.getNext());
     }
 }
