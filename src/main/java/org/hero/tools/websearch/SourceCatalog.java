@@ -1,9 +1,6 @@
 package org.hero.tools.websearch;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class SourceCatalog {
 
@@ -18,7 +15,7 @@ public class SourceCatalog {
     }
 
     private static Optional<Source> getSource(String source) {
-        source = source.toLowerCase();
+        source = source.toLowerCase(Locale.ROOT);
         return Optional.ofNullable(SOURCES.get(source));
     }
 

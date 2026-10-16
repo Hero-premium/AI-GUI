@@ -5,32 +5,41 @@ import org.hero.Requests.Message;
 import org.hero.Roles;
 import org.hero.chatai.Llama3b;
 import org.hero.chatai.LocalAi;
+import org.hero.chatai.LocalAiRegistry;
 import org.hero.chatgui.Client;
 import org.hero.commands.CommandsRegistry;
+import org.hero.program.conversations.ConversationsManager;
+import org.hero.program.conversations.QueueHelper;
 import org.hero.tools.ToolRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class Program {
 
     private static final int MAX_TOOLS_REQUESTS = 5;
 
     private final QueueHelper queueHelper = new QueueHelper();
-
+    private final ConversationsManager conversationsManager = new ConversationsManager();
     private final Client gui;
     private LocalAi ai;
 
     public void setAi(LocalAi ai) {
-        this.ai = ai;
+        this.ai = Objects.requireNonNull(ai, "ai must not be null");
     }
 
-    public Program(Client client) {
-        this.gui = client.getClient().setProgram(this);
+    public Program(@NotNull Client client) {
+        Objects.requireNonNull(client, "client must not be null");
+        Client varClient = Objects.requireNonNull(client.getClient(), "client.getClient() must not return null");
+        this.gui = Objects.requireNonNull(varClient.setProgram(this), "client.setProgram(Program) must not return null");
         this.ai = new Llama3b();
     }
 
 
-     void launch() {
+    void launch() {
         gui.launchApplication();
     }
 
@@ -39,7 +48,7 @@ public class Program {
      *
      * @param request the String of what the user wants to tell the AI
      */
-    public void chat(String request) {
+    public void chat(@NotNull String request) {
         if (request.isEmpty()) return;
         gui.displayUserMessage(request);
         if (handleCommands(request)) return;
@@ -47,7 +56,8 @@ public class Program {
             queueHelper.addToQueue(request);
             return;
         }
-        Requests.RequestOut req = handleTools(request);
+        Requests.RequestOut req = ai.chat(List.of(new Message(Roles.USER, request)));
+        req = handleTools(req);
         if (req == null) return;
         displayMessage(req.message());
         if (queueHelper.isQueued()) {
@@ -55,8 +65,7 @@ public class Program {
         }
     }
 
-    private Requests.RequestOut handleTools(String request) {
-        Requests.RequestOut req = ai.chat(List.of(new Message(Roles.USER, request)));
+    private Requests.@Nullable RequestOut handleTools(Requests.@NotNull RequestOut req) {
         List<Message> toolReplies = ToolRegistry.findAndRunTools(req.message().tool_calls());
 
         for (int i = 0; i < MAX_TOOLS_REQUESTS; i++) {
@@ -75,7 +84,7 @@ public class Program {
         return req;
     }
 
-    private void displayMessage(Message message) {
+    private void displayMessage(@NotNull Message message) {
         switch (message.role()) {
             case USER -> gui.displayUserMessage(message.content());
             case TOOL -> gui.displayToolsMessage(message.content());
@@ -94,5 +103,8 @@ public class Program {
         return false;
     }
 
+    public Map<String, LocalAi> getAllAis() {
+        return LocalAiRegistry.AIS;
+    }
 
 }

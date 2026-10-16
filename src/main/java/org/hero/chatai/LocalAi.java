@@ -12,17 +12,22 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * the interface every AI configuration is meant to implement
  */
 public abstract class LocalAi {
 
-
+    public final String modelName;
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
     private boolean isThinking = false;
 
     protected final List<Requests.Message> messages = new ArrayList<>();
+
+    protected LocalAi(String modelName) {
+        this.modelName = Objects.requireNonNull(modelName, "modelName must not be null");
+    }
 
     Requests.RequestOut sendRequest(HttpRequest request) {
         isThinking = true;

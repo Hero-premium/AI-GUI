@@ -20,25 +20,31 @@ public class SQLite {
     @NotNull
     private final String url;
 
-    public SQLite(@NotNull @Language("SQL") String table) {
+    public SQLite(@NotNull @Language("SQL") String table)  {
         this(table, "jdbc:sqlite:sqlite.db");
     }
 
     public SQLite(@NotNull @Language("SQL") String table, @NotNull String url) {
         this.url = Objects.requireNonNull(url, "url must not be null");
         tryCatch(() -> {
-            open(Objects.requireNonNull(table, "table must not be null"));
+            open();
             return null;
         });
+        createTable(Objects.requireNonNull(table, "table must not be null"));
     }
 
-    protected synchronized void open(String table) throws SQLException {
+    protected synchronized void open() throws SQLException {
         if (connections.containsKey(url)) return;
         Connection connection = DriverManager.getConnection(url);
-        try (var statement = connection.createStatement()) {
-            statement.execute(table);
-        }
         connections.put(url, connection);
+    }
+
+    private synchronized void createTable(String table) {
+        try (var statement = connections.get(url).createStatement()) {
+            statement.execute(table);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private synchronized <T> T runAction(SQLiteAction<T> action) {
@@ -46,7 +52,8 @@ public class SQLite {
         return tryCatch(action);
     }
 
-    private static <T> T tryCatch(SQLiteAction<T> action) {
+    public static <T> T tryCatch(@NotNull SQLiteAction<T> action) {
+        Objects.requireNonNull(action, "action must not be null");
         try {
             return action.execute();
         } catch (SQLException e) {

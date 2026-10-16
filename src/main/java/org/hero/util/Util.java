@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import java.net.http.HttpClient;
 
-public class Util {
+public final class Util {
 
     /**
      * used to turn Java code into JSON and vise versa
@@ -16,6 +16,5 @@ public class Util {
     private Util() {
         throw new AssertionError("no org.hero.util.Util instance for you!");
     }
-
 
 }

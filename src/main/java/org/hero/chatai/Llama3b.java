@@ -14,13 +14,10 @@ import java.util.List;
 public class Llama3b extends LocalAi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Llama3b.class);
-
-
     private static final String AI_API_URL = "http://localhost:11434/api/chat";
-    public static final String MODEL_NAME = "llama3.2:3b";
-
 
     public Llama3b() {
+        super("llama3.2:3b");
         final String systemPrompt = "You are a helpful assistant running inside a local chat app.";
         messages.add(new Requests.Message(Roles.SYSTEM, systemPrompt));
     }
@@ -30,7 +27,7 @@ public class Llama3b extends LocalAi {
         LOGGER.debug("message received: {}", message);
         messages.addAll(message);
         var requestOut = sendRequest(
-                buildHttpRequest(new Requests.RequestIn(MODEL_NAME, messages, false)));
+                buildHttpRequest(new Requests.RequestIn(modelName, messages, false)));
 
         messages.add(requestOut.message());
         return requestOut;
