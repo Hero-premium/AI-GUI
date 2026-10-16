@@ -11,7 +11,7 @@ if (JavaVersion.current() < JavaVersion.toVersion(minJava)) {
     throw GradleException("AI-GUI needs JDK $minJava or newer (found ${JavaVersion.current()}).")
 }
 
-group = "org.hero"
+group = "io.github.hero_premium"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -35,7 +35,7 @@ javafx {
 }
 
 application {
-    mainClass.set("org.hero.program.Main")
+    mainClass.set("io.github.hero_premium.program.Main")
 }
 
 tasks.test {
@@ -53,7 +53,7 @@ tasks.shadowJar {
     archiveClassifier.set("")
 
     manifest {
-        attributes["Main-Class"] = "org.hero.program.Main"
+        attributes["Main-Class"] = "io.github.hero_premium.program.Main"
     }
 
     mergeServiceFiles()
