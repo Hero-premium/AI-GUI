@@ -28,10 +28,9 @@ public class Conversation {
     private final List<Requests.Message> messageList = new ArrayList<>();
 
     public final String title;
-
+    static final String systemPrompt = "You are running inside a local chat app.";
     Conversation(String title) {
         this.title = Objects.requireNonNull(title, "title must not be null");
-        final String systemPrompt = "You are running inside a local chat app.";
         messageList.add(new Requests.Message(Roles.SYSTEM, systemPrompt));
     }
 

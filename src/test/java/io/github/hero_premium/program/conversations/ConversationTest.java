@@ -28,6 +28,7 @@ class ConversationTest {
         protected FakeAi() {
             super("FakeAi");
         }
+
         @Override
         public Requests.RequestOut chat(List<Requests.Message> messages) {
             lastReceived = List.copyOf(messages);
@@ -46,21 +47,22 @@ class ConversationTest {
         Conversation conversation = new Conversation("normal");
         FakeAi ai = new FakeAi();
         assertNotNull(conversation.chat(List.of(msg(Roles.USER, "hi")), ai));
-        assertEquals(2, conversation.getMessages().size());
-        assertEquals(Roles.USER, conversation.getMessages().get(0).role());
-        assertEquals(Roles.ASSISTANT, conversation.getMessages().get(1).role());
+        assertEquals(3, conversation.getMessages().size());
+        assertEquals(Roles.SYSTEM, conversation.getMessages().get(0).role());
+        assertEquals(Roles.USER, conversation.getMessages().get(1).role());
+        assertEquals(Roles.ASSISTANT, conversation.getMessages().get(2).role());
         assertEquals("hi", ai.lastReceived.getLast().content());
 
         conversation = new Conversation("system");
         conversation.chat(List.of(msg(Roles.SYSTEM, "sys"), msg(Roles.USER, "hi")), new FakeAi());
-        assertTrue(conversation.getMessages().stream().noneMatch(m -> m.role() == Roles.SYSTEM));
+        assertTrue(conversation.getMessages().stream().skip(1).noneMatch(m -> m.role() == Roles.SYSTEM));
 
         conversation = new Conversation("thinking");
         ai = new FakeAi();
         ai.thinking = true;
         assertNull(conversation.chat(List.of(msg(Roles.USER, "hi")), ai));
         assertTrue(conversation.isQueued());
-        assertTrue(conversation.getMessages().isEmpty());
+        assertEquals(1, conversation.getMessages().size());
         assertNull(ai.lastReceived);
 
         conversation = new Conversation("error");
@@ -72,8 +74,9 @@ class ConversationTest {
         // multiple messages in one call (tool usage) are all stored in order
         conversation = new Conversation("multi");
         conversation.chat(List.of(msg(Roles.USER, "a"), msg(Roles.TOOL, "b")), new FakeAi());
-        assertEquals("a", conversation.getMessages().get(0).content());
-        assertEquals("b", conversation.getMessages().get(1).content());
+        assertEquals(Conversation.systemPrompt, conversation.getMessages().getFirst().content());
+        assertEquals("a", conversation.getMessages().get(1).content());
+        assertEquals("b", conversation.getMessages().get(2).content());
 
         // null checks
         Conversation nullCheck = new Conversation("nulls");
@@ -83,9 +86,9 @@ class ConversationTest {
 
     @Test
     void getMessages() {
-        // empty at the start
+        // only system prompt at the start
         Conversation c = new Conversation("empty");
-        assertTrue(c.getMessages().isEmpty());
+        assertEquals(1, c.getMessages().size());
 
         // returns a copy that can't be modified
         c.chat(List.of(msg(Roles.USER, "hi")), new FakeAi());
