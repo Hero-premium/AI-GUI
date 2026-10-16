@@ -1,6 +1,7 @@
 package io.github.hero_premium.program.conversations;
 
 import io.github.hero_premium.program.sqlite.SQLite;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,15 +16,23 @@ public class ConversationsManager {
             )
             """);
     private static final List<Conversation> conversations = new ArrayList<>();
-    private Conversation currentConversation;
+    @NotNull
+    private Conversation currentConversation = new Conversation("untitled");
 
-    public Conversation getCurrentConversation() {
-        if (Objects.isNull(currentConversation)) {
-            throw new IllegalStateException("Current conversation is null");
-        }
+    /**
+     * @return the current conversation
+     * @throws IllegalStateException if the current conversation is null
+     */
+    public @NotNull Conversation getCurrentConversation() {
         return currentConversation;
     }
 
+    /**
+     * starts a new conversation and returns it
+     *
+     * @param title the title of this conversation
+     * @return the new conversation created
+     */
     public Conversation newConversation(String title) {
         currentConversation = new Conversation(title);
         conversations.add(currentConversation);
@@ -31,6 +40,20 @@ public class ConversationsManager {
     }
 
     public void setCurrentConversation(int index) {
-        currentConversation = conversations.get(index);
+        setCurrentConversation(conversations.get(index));
+    }
+
+    /**
+     * sets current conversation to the conversation provided
+     *
+     * @param conversation the new current conversation
+     * @throws NullPointerException on null input
+     */
+    public void setCurrentConversation(@NotNull Conversation conversation) {
+        this.currentConversation = Objects.requireNonNull(conversation, "conversation must not be null");
+    }
+
+    public int lastConversationIndex() {
+        return conversations.size() - 1;
     }
 }

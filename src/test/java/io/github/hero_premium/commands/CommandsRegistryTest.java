@@ -1,7 +1,6 @@
 package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.chatai.LocalAi;
 import io.github.hero_premium.chatgui.Client;
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +21,8 @@ class CommandsRegistryTest {
 
     @Test
     void commandExists() {
-        assertFalse(CommandsRegistry.commandExists("aCommandThatDoesntExist"));
-        assertTrue(CommandsRegistry.commandExists("/getAllCommands"));
+        assertFalse(CommandsRegistry.isACommand("aCommandThatDoesntExist"));
+        assertTrue(CommandsRegistry.isACommand("/getAllCommands"));
     }
 
     @Test
@@ -49,15 +48,9 @@ class CommandsRegistryTest {
             public void displaySystemMessage(String message) {
             }
         };
-        LocalAi localAi = new LocalAi("") {
-            @Override
-            public Requests.RequestOut chat(List<Requests.Message> messages) {
-                return null;
-            }
-        };
 
         List<Requests.Message> message = CommandsRegistry.findAndRunCommand(
-                "aCommandThatDoesntExist", localAi, client);
+                "aCommandThatDoesntExist", null, client);
         assertEquals(0, message.size());
     }
 }

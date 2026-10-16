@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -19,11 +19,10 @@ import java.util.Objects;
  */
 public abstract class LocalAi {
 
-    public final String modelName;
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
-    private boolean isThinking = false;
 
-    protected final List<Requests.Message> messages = new ArrayList<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
+    public final String modelName;
+    private boolean isThinking = false;
 
     protected LocalAi(String modelName) {
         this.modelName = Objects.requireNonNull(modelName, "modelName must not be null");
@@ -43,10 +42,6 @@ public abstract class LocalAi {
         } finally {
             isThinking = false;
         }
-    }
-
-    public List<Requests.Message> getMessages() {
-        return List.copyOf(messages);
     }
 
     public abstract Requests.RequestOut chat(List<Requests.Message> messages);

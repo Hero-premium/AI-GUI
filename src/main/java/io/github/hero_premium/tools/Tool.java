@@ -16,7 +16,7 @@ public abstract class Tool {
                            boolean isRequired) {
     }
 
-    private final Logger LOGGER = LoggerFactory.getLogger(Tool.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Tool.class);
     public final ToolsInformation.ToolData toolsData;
     public final String toolName;
     protected final Param[] params;

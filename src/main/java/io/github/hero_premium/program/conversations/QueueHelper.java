@@ -1,12 +1,14 @@
 package io.github.hero_premium.program.conversations;
 
+import io.github.hero_premium.Requests.Message;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class QueueHelper {
 
-    private final List<String> inQueue = new ArrayList<>();
+    private final List<Message> inQueue = new ArrayList<>();
 
     /**
      *
@@ -23,13 +25,13 @@ public class QueueHelper {
      * @return the earlies option in the queue, null if nothing was queued, call {@link #isQueued()} to be null safe
      * @see #isQueued()
      */
-    public String getNext() {
+    public Message getNext() {
         if (!inQueue.isEmpty()) return inQueue.removeFirst();
         return null;
     }
 
 
-    public void addToQueue(String message) {
-        inQueue.add(Objects.requireNonNull(message, "message must not be null"));
+    public void addToQueue(List<Message> messages) {
+        inQueue.addAll(Objects.requireNonNull(messages, "messages must not be null"));
     }
 }

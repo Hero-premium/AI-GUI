@@ -2,10 +2,7 @@ package io.github.hero_premium.chatai;
 
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.Roles;
 import io.github.hero_premium.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -13,24 +10,16 @@ import java.util.List;
 
 public class Llama3b extends LocalAi {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Llama3b.class);
     private static final String AI_API_URL = "http://localhost:11434/api/chat";
 
     public Llama3b() {
         super("llama3.2:3b");
-        final String systemPrompt = "You are running inside a local chat app.";
-        messages.add(new Requests.Message(Roles.SYSTEM, systemPrompt));
     }
 
     @Override
     public Requests.RequestOut chat(List<Requests.Message> message) {
-        LOGGER.debug("message received: {}", message);
-        messages.addAll(message);
-        var requestOut = sendRequest(
-                buildHttpRequest(new Requests.RequestIn(modelName, messages, false)));
-
-        messages.add(requestOut.message());
-        return requestOut;
+        return sendRequest(
+                buildHttpRequest(new Requests.RequestIn(modelName, message, false)));
     }
 
 

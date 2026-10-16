@@ -1,34 +1,25 @@
 package io.github.hero_premium.chatgui;
 
-import io.github.hero_premium.Requests;
-import io.github.hero_premium.Roles;
-import io.github.hero_premium.chatai.Llama3b;
-import io.github.hero_premium.chatai.LocalAi;
+import io.github.hero_premium.program.Program;
 
-import java.util.List;
-
+// this class is under reconstruction
 public class AiTalksToAi extends Client {
 
-
-    private final StringBuilder builder = new StringBuilder();
-    LocalAi ai = new Llama3b();
+    Program program2 = new Program(this);
     private String ai1Input = "we need to make a new programming language with unique features, keep your responds short ";
+    private String ai2Input = "";
 
     @Override
     public void launchApplication() {
         while (true) {
-            displayAIMessage(ai1Input);
-            String ai2Input = ai.chat(List.of(new Requests.Message(Roles.USER, ai1Input))).message().content();
-            displayUserMessage(ai2Input);
+            program2.chat(ai1Input);
             program.chat(ai2Input);
-            ai1Input = builder.toString();
-            builder.setLength(0);
         }
     }
 
+
     @Override
     public void displayUserMessage(String message) {
-        builder.append(message);
         IO.println("AI 2- " + message);
     }
 

@@ -8,8 +8,8 @@ import io.github.hero_premium.chatai.LocalAi;
 import io.github.hero_premium.chatai.LocalAiRegistry;
 import io.github.hero_premium.chatgui.Client;
 import io.github.hero_premium.commands.CommandsRegistry;
+import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.program.conversations.ConversationsManager;
-import io.github.hero_premium.program.conversations.QueueHelper;
 import io.github.hero_premium.tools.ToolRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,6 @@ public class Program {
 
     private static final int MAX_TOOLS_REQUESTS = 5;
 
-    private final QueueHelper queueHelper = new QueueHelper();
     private final ConversationsManager conversationsManager = new ConversationsManager();
     private final Client gui;
     private LocalAi ai;
@@ -49,23 +48,22 @@ public class Program {
      * @param request the String of what the user wants to tell the AI
      */
     public void chat(@NotNull String request) {
-        if (request.isEmpty()) return;
+        if (request.isBlank()) return;
         gui.displayUserMessage(request);
-        if (handleCommands(request)) return;
-        if (ai.isThinking()) {
-            queueHelper.addToQueue(request);
-            return;
-        }
-        Requests.RequestOut req = ai.chat(List.of(new Message(Roles.USER, request)));
-        req = handleTools(req);
+        Conversation conversation = conversationsManager.getCurrentConversation();
+        if (handleCommands(request, conversation)) return;
+
+        Requests.RequestOut req = conversation.chat(List.of(new Message(Roles.USER, request)), ai);
+        if (req == null) return;
+        req = handleTools(req, conversation);
         if (req == null) return;
         displayMessage(req.message());
-        if (queueHelper.isQueued()) {
-            chat(queueHelper.getNext());
+        if (conversation.isQueued()) {
+            chat(conversation.getNext().content());
         }
     }
 
-    private Requests.@Nullable RequestOut handleTools(Requests.@NotNull RequestOut req) {
+    private Requests.@Nullable RequestOut handleTools(Requests.@NotNull RequestOut req, Conversation conversation) {
         List<Message> toolReplies = ToolRegistry.findAndRunTools(req.message().tool_calls());
 
         for (int i = 0; i < MAX_TOOLS_REQUESTS; i++) {
@@ -73,7 +71,7 @@ public class Program {
             for (Message toolCalls : toolReplies) {
                 gui.displayToolsMessage(toolCalls.tool_name() + " " + toolCalls.content());
             }
-            req = ai.chat(toolReplies);
+            req = conversation.chat(toolReplies, ai);
 
             toolReplies = ToolRegistry.findAndRunTools(req.message().tool_calls());
         }
@@ -93,9 +91,9 @@ public class Program {
         }
     }
 
-    private boolean handleCommands(String request) {
-        if (CommandsRegistry.commandExists(request)) {
-            for (Message message : CommandsRegistry.findAndRunCommand(request, ai, gui)) {
+    private boolean handleCommands(String request, Conversation conversation) {
+        if (CommandsRegistry.isACommand(request)) {
+            for (Message message : CommandsRegistry.findAndRunCommand(request, conversation, gui)) {
                 gui.displayAIMessage(message.content());
             }
             return true;

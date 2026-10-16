@@ -20,13 +20,13 @@ Make sure the Ollama server is running before you start.
 
 ## Extending
 
-**Use a different AI or server.** Add a class in `org.hero.chatai` that extends `LocalAi` and implements `chat` with the right server URL. Then select it in `Program.java` (currently `new Llama3b()`).
+**Use a different AI or server.** Add a class in `io.github.hero_premium.chatai` that extends `LocalAi` and implements `chat` with the right server URL. Then select it in `Program.java` (currently `new Llama3b()`).
 
-**Add a tool.** Create a class in `org.hero.tools` that extends `Tool`, then add its fully qualified name to
-`src/main/resources/META-INF/services/org.hero.tools.Tool`. The AI can then see and call it.
+**Add a tool.** Create a class in `io.github.hero_premium.tools` that extends `Tool`, then add its fully qualified name to
+`src/main/resources/META-INF/services/io.github.hero_premium.tools.Tool`. The AI can then see and call it.
 
-**Add a command.** Same steps, but in `org.hero.commands`, extending `Command`, and registered in
-`src/main/resources/META-INF/services/org.hero.commands.Command`.
+**Add a command.** Same steps, but in `io.github.hero_premium.commands`, extending `Command`, and registered in
+`src/main/resources/META-INF/services/io.github.hero_premium.commands.Command`.
 
 Commands are more powerful than tools: they get access to the current GUI and the AI.
 

@@ -1,8 +1,8 @@
 package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.chatai.LocalAi;
 import io.github.hero_premium.chatgui.Client;
+import io.github.hero_premium.program.conversations.Conversation;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +30,7 @@ public abstract class Command {
     }
 
 
-    protected abstract List<Requests.Message> runCommand(LocalAi ai, Client client);
+    protected abstract List<Requests.Message> runCommand(Conversation conversation, Client client);
 
     @Override
     public String toString() {

@@ -1,8 +1,8 @@
 package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.chatai.LocalAi;
 import io.github.hero_premium.chatgui.Client;
+import io.github.hero_premium.program.conversations.Conversation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public final class CommandsRegistry {
      * @param givenCommand the command line of the command
      * @return the command, null if the command doesn't exist
      * @throws NullPointerException if givenCommand was null
-     * @see #findAndRunCommand(String, LocalAi, Client)
+     * @see #findAndRunCommand(String, Conversation, Client)
      */
     public static Command findCommand(String givenCommand) {
         return COMMANDS.get(Objects.requireNonNull(givenCommand, "givenCommand must not be null"));
@@ -65,7 +65,7 @@ public final class CommandsRegistry {
      * @return true if the line is a command, otherwise false
      * @throws NullPointerException if givenCommand was null
      */
-    public static boolean commandExists(String givenCommand) {
+    public static boolean isACommand(String givenCommand) {
         return findCommand(givenCommand) != null;
     }
 
@@ -73,11 +73,11 @@ public final class CommandsRegistry {
      * runs the given command and returns the result as a list of messages, returns an empty list if the command was invalid or if the command returned null
      *
      * @param givenCommand the command to execute
-     * @param ai           the current running AI
+     * @param conversation           the current running conversation
      * @param client       the current client
      * @return the command return, a list of messages
      */
-    public static List<Requests.Message> findAndRunCommand(String givenCommand, LocalAi ai, Client client) {
+    public static List<Requests.Message> findAndRunCommand(String givenCommand, Conversation conversation, Client client) {
         Command commandLine = findCommand(givenCommand);
         LOGGER.debug("looking for command {}", givenCommand);
         if (commandLine == null) {
@@ -85,7 +85,7 @@ public final class CommandsRegistry {
             return List.of();
         }
         LOGGER.debug("found {}", commandLine);
-        List<Requests.Message> messages = commandLine.runCommand(ai, client);
+        List<Requests.Message> messages = commandLine.runCommand(conversation, client);
         return messages == null ? List.of() : messages;
     }
 }
