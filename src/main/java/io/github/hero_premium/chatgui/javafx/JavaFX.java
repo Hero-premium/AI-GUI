@@ -55,26 +55,22 @@ public class JavaFX extends Client {
 
     @Override
     public void displayUserMessage(String message) {
-        IO.println(message);
         addChild(message, Pos.CENTER_LEFT);
     }
 
     @Override
     public void displayToolsMessage(String message) {
-        IO.println("TOOLS [ " + message + " ]");
         addChild("TOOLS [ " + message + " ]", Pos.CENTER_RIGHT);
     }
 
 
     @Override
     public void displayAIMessage(String message) {
-        IO.println(message);
         addChild(message, Pos.CENTER_RIGHT);
     }
 
     @Override
     public void displaySystemMessage(String message) {
-        IO.println("IMPORTANT: " + message.toUpperCase(Locale.ROOT));
         addChild("IMPORTANT: " + message.toUpperCase(Locale.ROOT), Pos.CENTER);
     }
 

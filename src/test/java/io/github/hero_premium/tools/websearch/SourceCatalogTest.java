@@ -11,6 +11,6 @@ class SourceCatalogTest {
         String result;
 
         result = SourceCatalog.runWebSearch("source", "null");
-        assertEquals("UNKNOWN SEARCH SOURCE: source", result);
+        assertEquals("INVALID SEARCH SOURCE: source", result);
     }
 }

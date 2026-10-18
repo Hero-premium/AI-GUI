@@ -85,7 +85,7 @@ public final class CommandsRegistry {
             return List.of();
         }
         LOGGER.debug("found {}", commandLine);
-        List<Requests.Message> messages = commandLine.runCommand(conversation, client);
+        List<Requests.Message> messages = commandLine.runCommand(conversation, client, givenCommand);
         return messages == null ? List.of() : messages;
     }
 }

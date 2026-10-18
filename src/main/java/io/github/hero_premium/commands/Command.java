@@ -30,7 +30,7 @@ public abstract class Command {
     }
 
 
-    protected abstract List<Requests.Message> runCommand(Conversation conversation, Client client);
+    protected abstract List<Requests.Message> runCommand(Conversation conversation, Client client, String  arguments);
 
     @Override
     public String toString() {

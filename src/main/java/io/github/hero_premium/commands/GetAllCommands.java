@@ -16,7 +16,7 @@ public class GetAllCommands extends Command {
     }
 
     @Override
-    protected List<Requests.Message> runCommand(Conversation conversation, Client client) {
+    protected List<Requests.Message> runCommand(Conversation conversation, Client client, String arguments) {
         List<Requests.Message> messages = new ArrayList<>();
         for (Command command : CommandsRegistry.COMMANDS.values()) {
             messages.add(new Requests.Message(Roles.ASSISTANT, command.toString()));

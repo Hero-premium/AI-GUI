@@ -20,17 +20,27 @@ public class SQLite {
     @NotNull
     private final String url;
 
+    /**
+     *
+     * @deprecated still under construction, don't call it
+     */
+    @Deprecated
     public SQLite(@NotNull @Language("SQL") String table) {
         this(table, "jdbc:sqlite:sqlite.db");
     }
 
+    /**
+     *
+     * @deprecated still under construction, don't call it
+     */
+    @Deprecated
     public SQLite(@NotNull @Language("SQL") String table, @NotNull String url) {
         this.url = Objects.requireNonNull(url, "url must not be null");
-        tryCatch(() -> {
-            open();
-            return null;
-        });
-        createTable(Objects.requireNonNull(table, "table must not be null"));
+//        tryCatch(() -> {
+//            open();
+//            return null;
+//        });
+//        createTable(Objects.requireNonNull(table, "table must not be null"));
     }
 
     protected synchronized void open() throws SQLException {

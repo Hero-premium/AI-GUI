@@ -19,7 +19,7 @@ public class GetConversationHistory extends Command {
     }
 
     @Override
-    protected List<Requests.Message> runCommand(Conversation conversation, Client client) {
+    protected List<Requests.Message> runCommand(Conversation conversation, Client client, String arguments) {
         for (Requests.Message message : conversation.getMessages()) {
             String content = message.content().isEmpty() ? message.tool_calls().toString() : message.content();
             client.displayAIMessage(content);

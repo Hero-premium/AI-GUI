@@ -21,7 +21,6 @@ public class ConversationsManager {
 
     /**
      * @return the current conversation
-     * @throws IllegalStateException if the current conversation is null
      */
     public @NotNull Conversation getCurrentConversation() {
         return currentConversation;

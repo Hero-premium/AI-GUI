@@ -30,6 +30,6 @@ Make sure the Ollama server is running before you start.
 
 Commands are more powerful than tools: they get access to the current GUI and the AI.
 
-## Roadmap
+## Maintainability
 
-More tools and commands are coming.
+Maintenance is not guaranteed. Updates may come, but don’t count on them or on replies to issues.
