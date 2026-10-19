@@ -21,15 +21,15 @@ public final class ToolRegistry {
     public static final Map<String, Tool> TOOLS;
 
     /**
-     * an unmodifiable list containing every tool's data meant to be passed to the AI every request
+     * an unmodifiable set containing every tool's data meant to be passed to the AI every request
      *
      * @see Requests.RequestIn
      */
-    public static final List<ToolsInformation.ToolData> TOOLS_DATA;
+    public static final Set<ToolsInformation.ToolData> TOOLS_DATA;
 
     static {
         Map<String, Tool> map = new HashMap<>();
-        List<ToolsInformation.ToolData> toolsData = new ArrayList<>();
+        Set<ToolsInformation.ToolData> toolsData = new HashSet<>();
         try {
             Stream<ServiceLoader.Provider<Tool>> tools = ServiceLoader.load(Tool.class).stream();
             tools.forEach(provider -> {
@@ -47,7 +47,7 @@ public final class ToolRegistry {
             LOGGER.error("no tools were loaded: {}", e.getMessage(), e);
         }
         TOOLS = Collections.unmodifiableMap(map);
-        TOOLS_DATA = List.copyOf(toolsData);
+        TOOLS_DATA = Collections.unmodifiableSet(toolsData);
     }
 
 

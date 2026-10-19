@@ -9,9 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Conversation {
     private static final SQLite sqlite = new SQLite("""
@@ -25,7 +23,7 @@ public class Conversation {
     private static final Logger LOGGER = LoggerFactory.getLogger(Conversation.class);
     static final String systemPrompt = "You are running inside a local chat app.";
 
-    private final QueueHelper queueHelper = new QueueHelper();
+    private final Deque<Requests.Message> queueHelper = new ArrayDeque<>();
     private final List<Requests.Message> messageList = new ArrayList<>();
     public final String title;
 
@@ -56,7 +54,7 @@ public class Conversation {
         Objects.requireNonNull(ai, "ai must not be null");
         LOGGER.debug("received message {}", messages.getLast());
         if (ai.isThinking()) {
-            queueHelper.addToQueue(messages);
+            queueHelper.addAll(messages);
             return null;
         }
         saveMessage(messages);
@@ -70,10 +68,10 @@ public class Conversation {
     }
 
     public boolean isQueued() {
-        return queueHelper.isQueued();
+        return !queueHelper.isEmpty();
     }
 
     public Requests.Message getNext() {
-        return queueHelper.getNext();
+        return queueHelper.poll();
     }
 }

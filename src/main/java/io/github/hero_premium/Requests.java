@@ -5,6 +5,7 @@ import io.github.hero_premium.tools.ToolRegistry;
 import io.github.hero_premium.tools.ToolsInformation;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * a class meant to hold requests related records
@@ -45,7 +46,7 @@ public final class Requests {
      * @param tools    every available tool
      */
     public record RequestIn(String model, List<Message> messages, boolean stream,
-                            List<ToolsInformation.ToolData> tools) {
+                            Set<ToolsInformation.ToolData> tools) {
         public RequestIn(String model, List<Message> message, boolean stream) {
             this(model, message, stream, ToolRegistry.TOOLS_DATA);
         }
