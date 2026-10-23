@@ -74,7 +74,7 @@ class ConversationTest {
         // multiple messages in one call (tool usage) are all stored in order
         conversation = new Conversation("multi");
         conversation.chat(List.of(msg(Roles.USER, "a"), msg(Roles.TOOL, "b")), new FakeAi());
-        assertEquals(Conversation.systemPrompt, conversation.getMessages().getFirst().content());
+        assertEquals(Conversation.DEFAULT_SYSTEM_PROMPT, conversation.getMessages().getFirst().content());
         assertEquals("a", conversation.getMessages().get(1).content());
         assertEquals("b", conversation.getMessages().get(2).content());
 

@@ -1,6 +1,5 @@
 package io.github.hero_premium.program.sqlite;
 
-import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,35 +11,33 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ *
+ * @deprecated still under construction, don't call it
+ */
+@Deprecated
 public class SQLite {
 
+    public static final String DEFAULT_URL = "jdbc:sqlite:sqlite.db";
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLite.class);
     private static final Map<String, Connection> connections = new ConcurrentHashMap<>();
 
     @NotNull
     private final String url;
 
-    /**
-     *
-     * @deprecated still under construction, don't call it
-     */
-    @Deprecated
-    public SQLite(@NotNull @Language("SQL") String table) {
-        this(table, "jdbc:sqlite:sqlite.db");
+
+    public SQLite(@NotNull SQLiteData.Table table) {
+        this(table, DEFAULT_URL);
     }
 
-    /**
-     *
-     * @deprecated still under construction, don't call it
-     */
-    @Deprecated
-    public SQLite(@NotNull @Language("SQL") String table, @NotNull String url) {
+
+    public SQLite(@NotNull SQLiteData.Table table, @NotNull String url) {
         this.url = Objects.requireNonNull(url, "url must not be null");
-//        tryCatch(() -> {
-//            open();
-//            return null;
-//        });
-//        createTable(Objects.requireNonNull(table, "table must not be null"));
+        tryCatch(() -> {
+            open();
+            return null;
+        });
+        createTable(Objects.requireNonNull(table, "table must not be null"));
     }
 
     protected synchronized void open() throws SQLException {
@@ -49,9 +46,9 @@ public class SQLite {
         connections.put(url, connection);
     }
 
-    private synchronized void createTable(String table) {
+    private synchronized void createTable(SQLiteData.Table table) {
         try (var statement = connections.get(url).createStatement()) {
-            statement.execute(table);
+            statement.execute("CREATE TABLE IF NOT EXISTS " + table.toString());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -67,6 +64,7 @@ public class SQLite {
         try {
             return action.execute();
         } catch (SQLException e) {
+            LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

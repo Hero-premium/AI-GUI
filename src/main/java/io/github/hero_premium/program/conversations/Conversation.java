@@ -4,6 +4,7 @@ import io.github.hero_premium.Requests;
 import io.github.hero_premium.Roles;
 import io.github.hero_premium.chatai.LocalAi;
 import io.github.hero_premium.program.sqlite.SQLite;
+import io.github.hero_premium.program.sqlite.SQLiteData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -12,24 +13,25 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class Conversation {
-    private static final SQLite sqlite = new SQLite("""
-            CREATE TABLE IF NOT EXISTS conversation (
-            id INTEGER PRIMARY KEY ,
-            title TEXT ,
-            messages TEXT , --jsons
-            date DATE
-            )
-            """);
+    private static final SQLite sqlite = new SQLite(new SQLiteData.Table(
+            "conversations",
+            new SQLiteData.Column("id", SQLiteData.ColumnType.INTEGER),
+            new SQLiteData.Column("messages", SQLiteData.ColumnType.TEXT)
+    ));
     private static final Logger LOGGER = LoggerFactory.getLogger(Conversation.class);
-    static final String systemPrompt = "You are running inside a local chat app.";
+    static final String DEFAULT_SYSTEM_PROMPT = "You are running inside a local chat app.";
 
-    private final Deque<Requests.Message> queueHelper = new ArrayDeque<>();
+    private final Deque<Requests.Message> queue = new ArrayDeque<>();
     private final List<Requests.Message> messageList = new ArrayList<>();
     public final String title;
 
-    Conversation(String title) {
+    Conversation(String title, String systemPrompt) {
         this.title = Objects.requireNonNull(title, "title must not be null");
         messageList.add(new Requests.Message(Roles.SYSTEM, systemPrompt));
+    }
+
+    Conversation(String title) {
+        this(title, DEFAULT_SYSTEM_PROMPT);
     }
 
     private void saveMessage(@NotNull List<Requests.Message> messages) {
@@ -54,7 +56,7 @@ public class Conversation {
         Objects.requireNonNull(ai, "ai must not be null");
         LOGGER.debug("received message {}", messages.getLast());
         if (ai.isThinking()) {
-            queueHelper.addAll(messages);
+            queue.addAll(messages);
             return null;
         }
         saveMessage(messages);
@@ -68,10 +70,10 @@ public class Conversation {
     }
 
     public boolean isQueued() {
-        return !queueHelper.isEmpty();
+        return !queue.isEmpty();
     }
 
     public Requests.Message getNext() {
-        return queueHelper.poll();
+        return queue.poll();
     }
 }
