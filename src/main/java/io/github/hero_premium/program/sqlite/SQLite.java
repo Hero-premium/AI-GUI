@@ -26,12 +26,12 @@ public class SQLite {
     private final String url;
 
 
-    public SQLite(@NotNull SQLiteData.Table table) {
+    public SQLite(@NotNull Table table) {
         this(table, DEFAULT_URL);
     }
 
 
-    public SQLite(@NotNull SQLiteData.Table table, @NotNull String url) {
+    public SQLite(@NotNull Table table, @NotNull String url) {
         this.url = Objects.requireNonNull(url, "url must not be null");
         tryCatch(() -> {
             open();
@@ -46,7 +46,7 @@ public class SQLite {
         connections.put(url, connection);
     }
 
-    private synchronized void createTable(SQLiteData.Table table) {
+    private synchronized void createTable(Table table) {
         try (var statement = connections.get(url).createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS " + table.toString());
         } catch (SQLException e) {

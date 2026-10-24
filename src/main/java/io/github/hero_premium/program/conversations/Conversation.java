@@ -4,7 +4,7 @@ import io.github.hero_premium.Requests;
 import io.github.hero_premium.Roles;
 import io.github.hero_premium.chatai.LocalAi;
 import io.github.hero_premium.program.sqlite.SQLite;
-import io.github.hero_premium.program.sqlite.SQLiteData;
+import io.github.hero_premium.program.sqlite.Table;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -13,13 +13,14 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class Conversation {
-    private static final SQLite sqlite = new SQLite(new SQLiteData.Table(
-            "conversations",
-            new SQLiteData.Column("id", SQLiteData.ColumnType.INTEGER),
-            new SQLiteData.Column("messages", SQLiteData.ColumnType.TEXT)
-    ));
+    private static final SQLite sqlite = new SQLite(Table.tableBuilder()
+            .name("conversations")
+            .column(new Table.Column("id", Table.ColumnType.INTEGER))
+            .column(new Table.Column("messages", Table.ColumnType.TEXT))
+            .build()
+    );
     private static final Logger LOGGER = LoggerFactory.getLogger(Conversation.class);
-    static final String DEFAULT_SYSTEM_PROMPT = "You are running inside a local chat app.";
+    static final String DEFAULT_SYSTEM_PROMPT = "You are a fridge";
 
     private final Deque<Requests.Message> queue = new ArrayDeque<>();
     private final List<Requests.Message> messageList = new ArrayList<>();
