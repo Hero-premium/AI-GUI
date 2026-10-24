@@ -15,6 +15,7 @@ public final class Table {
     /// use {@link Table#tableBuilder()}
     private Table(String name, Set<Column> columns) {
         this.columns = Objects.requireNonNull(columns);
+        name = "\"" + name + "\"";
         this.name = Objects.requireNonNull(name);
     }
 
@@ -27,13 +28,6 @@ public final class Table {
         return String.join(" ", name, sj.toString());
     }
 
-    public String name() {
-        return name;
-    }
-
-    public Set<Column> columns() {
-        return columns;
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -57,6 +51,7 @@ public final class Table {
 
         private String name;
         private final Set<Column> columns = new LinkedHashSet<>();
+        private boolean used = false;
 
         public TableBuilder name(@NotNull String name) {
             if (this.name != null) throw new IllegalStateException("name already set");
@@ -72,20 +67,42 @@ public final class Table {
         }
 
         public Table build() {
+            if (used) {
+                throw new IllegalStateException("this builder cannot be reused");
+            }
             if (name == null) {
                 throw new IllegalStateException("name must be provided before build");
             }
             if (columns.isEmpty()) {
                 throw new IllegalStateException("columns must not be empty");
             }
+            used = true;
             return new Table(name, Collections.unmodifiableSet(columns));
         }
     }
 
     public record Column(String name, ColumnType value) {
+        public Column {
+            Objects.requireNonNull(name, "name must not be null");
+            name = "\"" + name + "\"";
+            Objects.requireNonNull(value, "value must not be null");
+        }
+
         @Override
         public @NotNull String toString() {
             return String.join(" ", name, value.toString());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (Column) obj;
+            return Objects.equals(this.name.toLowerCase(Locale.ROOT), that.name.toLowerCase(Locale.ROOT));
+        }
+
+        @Override
+        public int hashCode() {   return Objects.hash(name.toLowerCase(Locale.ROOT));
         }
     }
 

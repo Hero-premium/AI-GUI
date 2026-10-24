@@ -14,7 +14,7 @@ class TableTest {
                 .name("hi")
                 .column(new Table.Column("cat", Table.ColumnType.TEXT))
                 .build();
-        assertEquals("hi (cat TEXT)", table.toString());
+        assertEquals("\"hi\" (\"cat\" TEXT)", table.toString());
     }
 
     @Test
@@ -22,9 +22,10 @@ class TableTest {
         assertThrows(IllegalArgumentException.class, () -> Table.tableBuilder()
                 .name("hi")
                 .column(new Table.Column("cat", Table.ColumnType.TEXT))
-                .column(new Table.Column("cat", Table.ColumnType.TEXT))
+                .column(new Table.Column("cat", Table.ColumnType.INTEGER))
                 .build());
     }
+
     @Test
     void moreThanOneColumn() {
         Table table = Table.tableBuilder()
@@ -32,7 +33,30 @@ class TableTest {
                 .column(new Table.Column("cat", Table.ColumnType.TEXT))
                 .column(new Table.Column("dog", Table.ColumnType.INTEGER))
                 .build();
-        assertEquals("hi (cat TEXT, dog INTEGER)", table.toString());
+        assertEquals("\"hi\" (\"cat\" TEXT, \"dog\" INTEGER)", table.toString());
     }
 
+    @Test
+    void doubleBuild() {
+        Table.TableBuilder builder = Table.tableBuilder();
+        builder.name("hi")
+                .column(new Table.Column("cat", Table.ColumnType.TEXT))
+                .column(new Table.Column("dog", Table.ColumnType.INTEGER));
+        builder.build();
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    void buildWithNoName() {
+        assertThrows(IllegalStateException.class, () -> Table.tableBuilder()
+                .column(new Table.Column("hi", Table.ColumnType.INTEGER))
+                .build());
+    }
+
+    @Test
+    void buildWithNoColumns() {
+        assertThrows(IllegalStateException.class, () -> Table.tableBuilder()
+                .name("bat is my pet bats name")
+                .build());
+    }
 }
