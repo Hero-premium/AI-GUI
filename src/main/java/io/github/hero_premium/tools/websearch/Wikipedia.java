@@ -17,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Wikipedia extends Source {
 
@@ -93,22 +95,27 @@ public class Wikipedia extends Source {
         return result;
     }
 
-    @NotNull
-    static String filterAndBuildResponse(String response) {
-        StringBuilder stringBuilder = new StringBuilder();
-        Util.gson.fromJson(response, WikipediaResponse.class)
+
+    static @NotNull String filterAndBuildResponse(String response) {
+        String result = Util.gson.fromJson(response, WikipediaResponse.class)
                 .query().pages().values()
                 .stream()
                 .filter(page -> page.extract().length() >= 50)
                 .sorted(Comparator.comparingInt(WikipediaResponse.Page::index))
                 .limit(2)
-                .forEach(page -> stringBuilder.append(page.title()).append("\n\n").append(page.extract()).append("\n"));
+                .map(Wikipedia::appendResponse)
+                .collect(Collectors.joining());
 
-        String stringBuilderToString = stringBuilder.toString();
-        return stringBuilderToString.isEmpty() ? "no results were found" : stringBuilderToString;
+        return result.isEmpty() ? "no results were found" : result;
     }
 
-    private HttpRequest buildRequest(String query) {
+    private static @NotNull String appendResponse(WikipediaResponse.@NotNull Page page) {
+        return page.title() + "\n\n" + page.extract() + "\n";
+    }
+
+
+    private HttpRequest buildRequest(@NotNull String query) {
+        Objects.requireNonNull(query, "query cannot be null");
         return HttpRequest.newBuilder()
                 .header("User-Agent", "AI-GUI/0.1 (https://github.com/Hero-premium/AI-GUI)")
                 .timeout(Duration.ofSeconds(15))

@@ -84,7 +84,7 @@ public final class Table {
     public record Column(String name, ColumnType value) {
         public Column {
             Objects.requireNonNull(name, "name must not be null");
-            name = "\"" + name + "\"";
+            name = "\"" + name.toLowerCase(Locale.ROOT) + "\"";
             Objects.requireNonNull(value, "value must not be null");
         }
 
@@ -102,7 +102,8 @@ public final class Table {
         }
 
         @Override
-        public int hashCode() {   return Objects.hash(name.toLowerCase(Locale.ROOT));
+        public int hashCode() {
+            return Objects.hash(name.toLowerCase(Locale.ROOT));
         }
     }
 

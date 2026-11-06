@@ -3,6 +3,7 @@ package io.github.hero_premium.tools;
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Requests.Message;
 import io.github.hero_premium.Roles;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public final class ToolRegistry {
      * @param tool the name of the tool, is the same as its {@code simpleClassName}
      * @return Optional the tool asked for, {@code Optional.empty()} if the tool was not found
      */
-    public static Optional<Tool> getTool(String tool) {
+    public static @NotNull Optional<Tool> getTool(String tool) {
         return Optional.ofNullable(TOOLS.get(tool));
     }
 
