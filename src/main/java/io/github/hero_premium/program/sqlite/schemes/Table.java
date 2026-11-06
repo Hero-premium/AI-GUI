@@ -1,4 +1,4 @@
-package io.github.hero_premium.program.sqlite;
+package io.github.hero_premium.program.sqlite.schemes;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +17,7 @@ public final class Table {
     /// use {@link Table#tableBuilder()}
     private Table(String name, Set<Column> columns) {
         this.columns = Objects.requireNonNull(columns);
-        name = "\"" + name + "\"";
-        this.name = Objects.requireNonNull(name);
+        this.name = SchemesUtil.validateName(name);
     }
 
     @Override
@@ -57,7 +56,7 @@ public final class Table {
 
         public TableBuilder name(@NotNull String name) {
             if (this.name != null) throw new IllegalStateException("name already set");
-            this.name = Objects.requireNonNull(name, "name must not be null");
+            this.name = name;
             return this;
         }
 
@@ -84,10 +83,9 @@ public final class Table {
         }
     }
 
-    private record Column(String name, ColumnType value) {
+    private record Column(@NotNull String name,@NotNull ColumnType value) {
         private Column {
-            Objects.requireNonNull(name, "name must not be null");
-            name = "\"" + name.toLowerCase(Locale.ROOT) + "\"";
+            name = SchemesUtil.validateName(name);
             Objects.requireNonNull(value, "value must not be null");
         }
 
@@ -101,12 +99,12 @@ public final class Table {
             if (obj == this) return true;
             if (obj == null || obj.getClass() != this.getClass()) return false;
             var that = (Column) obj;
-            return Objects.equals(this.name.toLowerCase(Locale.ROOT), that.name.toLowerCase(Locale.ROOT));
+            return Objects.equals(this.name, that.name);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(name.toLowerCase(Locale.ROOT));
+            return Objects.hash(name);
         }
     }
 

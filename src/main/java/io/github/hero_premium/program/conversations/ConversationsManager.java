@@ -1,7 +1,7 @@
 package io.github.hero_premium.program.conversations;
 
 import io.github.hero_premium.program.sqlite.SQLite;
-import io.github.hero_premium.program.sqlite.Table;
+import io.github.hero_premium.program.sqlite.schemes.Table;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

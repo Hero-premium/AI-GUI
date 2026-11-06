@@ -5,7 +5,7 @@ import io.github.hero_premium.Requests.Message;
 import io.github.hero_premium.Roles;
 import io.github.hero_premium.chatai.LocalAi;
 import io.github.hero_premium.program.sqlite.SQLite;
-import io.github.hero_premium.program.sqlite.Table;
+import io.github.hero_premium.program.sqlite.schemes.Table;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;

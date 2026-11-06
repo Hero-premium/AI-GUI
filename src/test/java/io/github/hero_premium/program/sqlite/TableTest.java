@@ -1,5 +1,6 @@
 package io.github.hero_premium.program.sqlite;
 
+import io.github.hero_premium.program.sqlite.schemes.Table;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
