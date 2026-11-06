@@ -4,17 +4,11 @@ A JavaFX chat GUI that coordinates local AI models (such as Ollama's) with AI to
 
 ## Requirements
 
-- JDK 26 or newer
+- JDK 25 or newer
 - [Ollama](https://ollama.com) running locally (default `http://localhost:11434`)
 - The default model: `ollama pull llama3.2:3b`
 
 ## Quick start
-
-```
-git clone https://github.com/Hero-premium/ai-gui
-cd ai-gui
-./gradlew run
-```
 
 Make sure the Ollama server is running before you start.
 
@@ -32,4 +26,4 @@ Commands are more powerful than tools: they get access to the current GUI and th
 
 ## Maintainability
 
-Maintenance is not guaranteed. Updates may come, but don’t count on them or on replies to issues.
+Maintenance is not guaranteed. Updates may come, but don’t count on them.

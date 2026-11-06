@@ -6,13 +6,13 @@ plugins {
     kotlin("jvm")
 }
 
-val minJava = 26
+val minJava = 25
 if (JavaVersion.current() < JavaVersion.toVersion(minJava)) {
     throw GradleException("AI-GUI needs JDK $minJava or newer (found ${JavaVersion.current()}).")
 }
 
 group = "io.github.hero_premium"
-version = "1.0-SNAPSHOT"
+version = "v0.1.0"
 
 repositories {
     mavenCentral()
@@ -43,7 +43,7 @@ tasks.test {
     useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(26)
+    jvmToolchain(minJava)
 }
 
 tasks.jar {
