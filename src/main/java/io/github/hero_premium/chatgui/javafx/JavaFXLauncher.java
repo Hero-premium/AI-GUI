@@ -1,6 +1,5 @@
 package io.github.hero_premium.chatgui.javafx;
 
-import io.github.hero_premium.program.sqlite.SQLite;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -37,10 +36,5 @@ public class JavaFXLauncher extends Application {
         synchronized (lock) {
             lock.notifyAll();
         }
-    }
-
-    @Override
-    public void stop() {
-        SQLite.closeAll();
     }
 }

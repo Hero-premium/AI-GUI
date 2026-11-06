@@ -8,15 +8,15 @@ class SQLiteTest {
 
     @Test
     void tryCatch() {
-        assertThrows(NullPointerException.class, () -> SQLite.tryCatch(null));
+        assertThrows(NullPointerException.class, () -> SQLiteUtil.tryCatch(null));
 
-        assertDoesNotThrow(() -> SQLite.tryCatch(() -> null));
+        assertDoesNotThrow(() -> SQLiteUtil.tryCatch(() -> null));
 
         String result;
-        result = SQLite.tryCatch(() -> returnSomething("Hello"));
+        result = SQLiteUtil.tryCatch(() -> returnSomething("Hello"));
         assertEquals("Hello", result);
 
-        result = SQLite.tryCatch(() -> "Hello");
+        result = SQLiteUtil.tryCatch(() -> "Hello");
         assertEquals("Hello", result);
     }
 

@@ -1,6 +1,8 @@
 package io.github.hero_premium.program;
 
 import io.github.hero_premium.chatgui.Client;
+import io.github.hero_premium.program.sqlite.SQLite;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +13,8 @@ public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static final String DEFAULT_CLIENT = "io.github.hero_premium.chatgui.javafx.JavaFX";
 
-    static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+     static void main(String @NotNull [] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        addShutdownHook();
         if (args.length == 0) {
             LOGGER.info("No arguments provided");
             LOGGER.debug("falling back to the default client {}", DEFAULT_CLIENT);
@@ -22,12 +25,19 @@ public class Main {
         new Program(createClient(args[0])).launch();
     }
 
-    private static Client createClient(String className) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    private static @NotNull Client createClient(String className) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         Class<?> aClass = Class.forName(className);
 
         Class<? extends Client> subclass = aClass.asSubclass(Client.class);
         Constructor<? extends Client> constructor = subclass.getDeclaredConstructor();
         constructor.setAccessible(true);
         return constructor.newInstance();
+    }
+
+    private static void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            LOGGER.info("closing SQLite connections...");
+            SQLite.closeAll();
+        }));
     }
 }
