@@ -51,6 +51,6 @@ class CommandsRegistryTest {
 
         List<Requests.Message> message = CommandsRegistry.findAndRunCommand(
                 "aCommandThatDoesntExist", null, client);
-        assertEquals(0, message.size());
+        assertEquals("invalid command, use /getAllCommands for all commands", message.getFirst().content());
     }
 }

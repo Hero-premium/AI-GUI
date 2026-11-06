@@ -1,8 +1,11 @@
 package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
+import io.github.hero_premium.Roles;
 import io.github.hero_premium.chatgui.Client;
 import io.github.hero_premium.program.conversations.Conversation;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,15 +80,21 @@ public final class CommandsRegistry {
      * @param client       the current client
      * @return the command return, a list of messages
      */
-    public static List<Requests.Message> findAndRunCommand(String givenCommand, Conversation conversation, Client client) {
-        Command commandLine = findCommand(givenCommand);
+    public static @NotNull List<Requests.Message> findAndRunCommand(String givenCommand, Conversation conversation, Client client) {
+        Command command = findCommand(givenCommand);
         LOGGER.debug("looking for command {}", givenCommand);
-        if (commandLine == null) {
+        if (command == null) {
             LOGGER.debug("could not find command {}", givenCommand);
-            return List.of();
+            return List.of(new Requests.Message(Roles.SYSTEM, "invalid command, use /getAllCommands for all commands"));
         }
-        LOGGER.debug("found {}", commandLine);
-        List<Requests.Message> messages = commandLine.runCommand(conversation, client, givenCommand);
+        LOGGER.debug("found {}", command);
+        List<Requests.Message> messages = command.runCommand(conversation, client, parseCommand(command, givenCommand));
         return messages == null ? List.of() : messages;
+    }
+
+    @Contract(value = "_, _ -> new", pure = true)
+    private static String @NotNull [] parseCommand(Command command, String givenCommand) {
+        // TODO add parser
+        return new String[]{givenCommand};
     }
 }

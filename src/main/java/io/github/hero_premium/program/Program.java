@@ -91,11 +91,10 @@ public class Program {
         }
     }
 
-    private boolean handleCommands(String request, Conversation conversation) {
-        if (CommandsRegistry.isACommand(request)) {
-            for (Message message : CommandsRegistry.findAndRunCommand(request, conversation, gui)) {
-                gui.displayAIMessage(message.content());
-            }
+    private boolean handleCommands(@NotNull String request, Conversation conversation) {
+        if (!request.startsWith("/")) return false;
+        for (Message message : CommandsRegistry.findAndRunCommand(request, conversation, gui)) {
+            gui.displayAIMessage(message.content());
             return true;
         }
         return false;
