@@ -12,7 +12,7 @@ class TableTest {
         Table table;
         table = Table.tableBuilder()
                 .name("hi")
-                .column(new Table.Column("cat", Table.ColumnType.TEXT))
+                .column("cat", Table.ColumnType.TEXT)
                 .build();
         assertEquals("\"hi\" (\"cat\" TEXT)", table.toString());
     }
@@ -21,8 +21,8 @@ class TableTest {
     void moreThanOneColumnWithTheSameName() {
         assertThrows(IllegalArgumentException.class, () -> Table.tableBuilder()
                 .name("hi")
-                .column(new Table.Column("cat", Table.ColumnType.TEXT))
-                .column(new Table.Column("cat", Table.ColumnType.INTEGER))
+                .column("cat", Table.ColumnType.TEXT)
+                .column("cat", Table.ColumnType.INTEGER)
                 .build());
     }
 
@@ -30,8 +30,8 @@ class TableTest {
     void moreThanOneColumn() {
         Table table = Table.tableBuilder()
                 .name("hi")
-                .column(new Table.Column("cat", Table.ColumnType.TEXT))
-                .column(new Table.Column("dog", Table.ColumnType.INTEGER))
+                .column("cat", Table.ColumnType.TEXT)
+                .column("dog", Table.ColumnType.INTEGER)
                 .build();
         assertEquals("\"hi\" (\"cat\" TEXT, \"dog\" INTEGER)", table.toString());
     }
@@ -40,16 +40,16 @@ class TableTest {
     void doubleBuild() {
         Table.TableBuilder builder = Table.tableBuilder();
         builder.name("hi")
-                .column(new Table.Column("cat", Table.ColumnType.TEXT))
-                .column(new Table.Column("dog", Table.ColumnType.INTEGER));
-        builder.build();
+                .column("cat", Table.ColumnType.TEXT)
+                .column("dog", Table.ColumnType.INTEGER)
+                .build();
         assertThrows(IllegalStateException.class, builder::build);
     }
 
     @Test
     void buildWithNoName() {
         assertThrows(IllegalStateException.class, () -> Table.tableBuilder()
-                .column(new Table.Column("hi", Table.ColumnType.INTEGER))
+                .column("hi", Table.ColumnType.INTEGER)
                 .build());
     }
 

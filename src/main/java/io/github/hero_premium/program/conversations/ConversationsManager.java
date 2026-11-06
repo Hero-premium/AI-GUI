@@ -12,8 +12,8 @@ public class ConversationsManager {
 
     private static final SQLite sqLite = new SQLite(Table.tableBuilder()
             .name("conversations")
-            .column(new Table.Column("id", Table.ColumnType.INTEGER))
-            .column(new Table.Column("conversation", Table.ColumnType.TEXT))
+            .column("id", Table.ColumnType.INTEGER)
+            .column("conversation", Table.ColumnType.TEXT)
             .build()
     );
 

@@ -1,5 +1,6 @@
 package io.github.hero_premium.program.sqlite;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -8,7 +9,8 @@ public final class Table {
     public final String name;
     private final Set<Column> columns;
 
-    public static TableBuilder tableBuilder() {
+    @Contract(" -> new")
+    public static @NotNull TableBuilder tableBuilder() {
         return new TableBuilder();
     }
 
@@ -59,7 +61,8 @@ public final class Table {
             return this;
         }
 
-        public TableBuilder column(@NotNull Column column) {
+        public TableBuilder column(String name, ColumnType value) {
+            Column column = new Column(name, value);
             if (!columns.add(Objects.requireNonNull(column, "column must not be null"))) {
                 throw new IllegalArgumentException("this column has already been added");
             }
@@ -81,8 +84,8 @@ public final class Table {
         }
     }
 
-    public record Column(String name, ColumnType value) {
-        public Column {
+    private record Column(String name, ColumnType value) {
+        private Column {
             Objects.requireNonNull(name, "name must not be null");
             name = "\"" + name.toLowerCase(Locale.ROOT) + "\"";
             Objects.requireNonNull(value, "value must not be null");
