@@ -1,5 +1,6 @@
 package io.github.hero_premium.program.sqlite;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ class SQLiteUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteUtil.class);
 
-    public static <T> T tryCatch(@NotNull SQLiteAction<T> action) {
+     static <T> T tryCatch(@NotNull SQLiteAction<T> action) {
         Objects.requireNonNull(action, "action must not be null");
         try {
             return action.execute();
@@ -19,6 +20,11 @@ class SQLiteUtil {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    @Contract(pure = true)
+     static @NotNull String quoteString(String str) {
+        return "\"" + str + "\"";
     }
 
     /**

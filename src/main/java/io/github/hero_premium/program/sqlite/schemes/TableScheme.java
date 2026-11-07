@@ -5,17 +5,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public final class Table {
+public final class TableScheme {
     public final String name;
-    private final Set<Column> columns;
+    public final Set<Column> columns;
 
     @Contract(" -> new")
     public static @NotNull TableBuilder tableBuilder() {
         return new TableBuilder();
     }
 
-    /// use {@link Table#tableBuilder()}
-    private Table(String name, Set<Column> columns) {
+    /// use {@link TableScheme#tableBuilder()}
+    private TableScheme(String name, Set<Column> columns) {
         this.columns = Objects.requireNonNull(columns);
         this.name = SchemesUtil.validateName(name);
     }
@@ -34,7 +34,7 @@ public final class Table {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (Table) obj;
+        var that = (TableScheme) obj;
         return Objects.equals(this.name, that.name) &&
                 Objects.equals(this.columns, that.columns);
     }
@@ -46,7 +46,7 @@ public final class Table {
 
 
     public static class TableBuilder {
-        /// use {@link Table#tableBuilder()}
+        /// use {@link TableScheme#tableBuilder()}
         private TableBuilder() {
         }
 
@@ -68,7 +68,7 @@ public final class Table {
             return this;
         }
 
-        public Table build() {
+        public TableScheme build() {
             if (used) {
                 throw new IllegalStateException("this builder cannot be reused");
             }
@@ -79,12 +79,12 @@ public final class Table {
                 throw new IllegalStateException("columns must not be empty");
             }
             used = true;
-            return new Table(name, Collections.unmodifiableSet(columns));
+            return new TableScheme(name, Collections.unmodifiableSet(columns));
         }
     }
 
-    private record Column(@NotNull String name,@NotNull ColumnType value) {
-        private Column {
+    public record Column(@NotNull String name, @NotNull ColumnType value) {
+        public Column {
             name = SchemesUtil.validateName(name);
             Objects.requireNonNull(value, "value must not be null");
         }
@@ -109,10 +109,15 @@ public final class Table {
     }
 
     public enum ColumnType {
-        INTEGER,
-        REAL,
-        TEXT,
-        BLOB,
-        NUMERIC
+        INTEGER(Long.class),
+        REAL(Double.class),
+        TEXT(String.class),
+        BLOB(byte[].class);
+
+        public final Class<?> type;
+
+        ColumnType(Class<?> type) {
+            this.type = type;
+        }
     }
 }

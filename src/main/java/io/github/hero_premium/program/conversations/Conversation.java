@@ -1,11 +1,12 @@
 package io.github.hero_premium.program.conversations;
 
-import io.github.hero_premium.Requests.RequestOut;
 import io.github.hero_premium.Requests.Message;
+import io.github.hero_premium.Requests.RequestOut;
 import io.github.hero_premium.Roles;
 import io.github.hero_premium.chatai.LocalAi;
-import io.github.hero_premium.program.sqlite.SQLite;
-import io.github.hero_premium.program.sqlite.schemes.Table;
+import io.github.hero_premium.program.sqlite.SQLiteTable;
+import io.github.hero_premium.program.sqlite.schemes.TableScheme;
+import io.github.hero_premium.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -32,14 +33,14 @@ public class Conversation {
     @NotNull
     public final String title;
     @NotNull
-    private final SQLite sqlite;
+    private final SQLiteTable sqlite;
 
     Conversation(@NotNull String title, @NotNull String systemPrompt) {
         this.title = Objects.requireNonNull(title, "title must not be null");
-        this.sqlite = new SQLite(Table.tableBuilder()
-                .name("conversation" + title)
-                .column("id", Table.ColumnType.INTEGER)
-                .column("messages", Table.ColumnType.TEXT)
+        this.sqlite = new SQLiteTable(TableScheme.tableBuilder()
+                .name("conversation " + title)
+                .column("id", TableScheme.ColumnType.INTEGER)
+                .column("messages", TableScheme.ColumnType.TEXT)
                 .build()
         );
         messageList.add(new Message(Roles.SYSTEM, Objects.requireNonNull(systemPrompt, "systemPrompt must not be null")));
@@ -54,7 +55,7 @@ public class Conversation {
             Objects.requireNonNull(m, "a message in the messages was null");
             if (m.role() != Roles.SYSTEM) {
                 this.messageList.add(m);
-                sqlite.getClass(); // add to database here 😭
+                sqlite.save(Map.of((TableScheme.Column) sqlite.tableScheme.columns.toArray()[1], Util.gson.toJson(Objects.requireNonNull(m))));
             }
         }
     }

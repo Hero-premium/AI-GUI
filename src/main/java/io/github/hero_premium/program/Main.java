@@ -1,7 +1,7 @@
 package io.github.hero_premium.program;
 
 import io.github.hero_premium.chatgui.Client;
-import io.github.hero_premium.program.sqlite.SQLite;
+import io.github.hero_premium.program.sqlite.SQLiteTable;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class Main {
     private static void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             LOGGER.info("closing SQLite connections...");
-            SQLite.closeAll();
+            SQLiteTable.closeAll();
         }));
     }
 }

@@ -1,7 +1,7 @@
 package io.github.hero_premium.program.conversations;
 
-import io.github.hero_premium.program.sqlite.SQLite;
-import io.github.hero_premium.program.sqlite.schemes.Table;
+import io.github.hero_premium.program.sqlite.SQLiteTable;
+import io.github.hero_premium.program.sqlite.schemes.TableScheme;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -10,10 +10,10 @@ import java.util.Objects;
 
 public class ConversationsManager {
 
-    private static final SQLite sqLite = new SQLite(Table.tableBuilder()
+    private static final SQLiteTable SQ_LITE_TABLE = new SQLiteTable(TableScheme.tableBuilder()
             .name("conversations")
-            .column("id", Table.ColumnType.INTEGER)
-            .column("conversation", Table.ColumnType.TEXT)
+            .column("id", TableScheme.ColumnType.INTEGER)
+            .column("conversation", TableScheme.ColumnType.TEXT)
             .build()
     );
 

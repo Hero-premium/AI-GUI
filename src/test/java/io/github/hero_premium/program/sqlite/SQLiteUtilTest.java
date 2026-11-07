@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SQLiteTest {
+class SQLiteUtilTest {
 
     @Test
     void tryCatch() {
@@ -12,15 +12,8 @@ class SQLiteTest {
 
         assertDoesNotThrow(() -> SQLiteUtil.tryCatch(() -> null));
 
-        String result;
-        result = SQLiteUtil.tryCatch(() -> returnSomething("Hello"));
-        assertEquals("Hello", result);
-
-        result = SQLiteUtil.tryCatch(() -> "Hello");
+        String result = SQLiteUtil.tryCatch(() -> "Hello");
         assertEquals("Hello", result);
     }
 
-    private <T> T returnSomething(T value) {
-        return value;
-    }
 }
