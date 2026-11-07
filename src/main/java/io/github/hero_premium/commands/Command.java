@@ -24,7 +24,7 @@ public abstract class Command {
      * @throws NullPointerException     if commandLine was null
      * @throws IllegalArgumentException if the command given does not start with /
      */
-    protected Command(String commandLine) {
+    public Command(String commandLine) {
         this.commandLine = Objects.requireNonNull(commandLine, "commandLine must not be null");
         if (!commandLine.startsWith("/")) throw new IllegalArgumentException("commandLine must start with /");
     }

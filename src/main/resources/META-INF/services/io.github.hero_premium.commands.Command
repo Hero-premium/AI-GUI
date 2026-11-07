@@ -1,2 +1,3 @@
 io.github.hero_premium.commands.GetConversationHistory
 io.github.hero_premium.commands.GetAllCommands
+io.github.hero_premium.commands.SaveChatTranscript
