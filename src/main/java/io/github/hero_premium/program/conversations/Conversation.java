@@ -55,7 +55,7 @@ public class Conversation {
             Objects.requireNonNull(m, "a message in the messages was null");
             if (m.role() != Roles.SYSTEM) {
                 this.messageList.add(m);
-                sqlite.save(Map.of((TableScheme.Column) sqlite.tableScheme.columns.toArray()[1], Util.gson.toJson(Objects.requireNonNull(m))));
+                sqlite.save(Map.of(sqlite.tableScheme.columns.get(1), Util.gson.toJson(Objects.requireNonNull(m))));
             }
         }
     }

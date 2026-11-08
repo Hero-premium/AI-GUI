@@ -65,7 +65,7 @@ public class SQLiteTable {
                 () -> LOGGER.error("this connection is closed, cannot save to table"));
     }
 
-    // used for tests, temporarily, do not call
+    /// used for tests, temporarily, do not call
     Object runAction(@NotNull @Language("sql") String sql) {
         return ConnectionsPool.get(url).map(connection -> connection.runAction(sql))
                 .orElseGet(() -> {

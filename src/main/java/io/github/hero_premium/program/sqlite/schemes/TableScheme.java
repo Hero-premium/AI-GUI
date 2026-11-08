@@ -7,7 +7,7 @@ import java.util.*;
 
 public final class TableScheme {
     public final String name;
-    public final Set<Column> columns;
+    public final List<Column> columns;
 
     @Contract(" -> new")
     public static @NotNull TableBuilder tableBuilder() {
@@ -15,7 +15,7 @@ public final class TableScheme {
     }
 
     /// use {@link TableScheme#tableBuilder()}
-    private TableScheme(String name, Set<Column> columns) {
+    private TableScheme(String name, List<Column> columns) {
         this.columns = Objects.requireNonNull(columns);
         this.name = SchemesUtil.validateName(name);
     }
@@ -79,7 +79,7 @@ public final class TableScheme {
                 throw new IllegalStateException("columns must not be empty");
             }
             used = true;
-            return new TableScheme(name, Collections.unmodifiableSet(columns));
+            return new TableScheme(name, List.copyOf(columns));
         }
     }
 
