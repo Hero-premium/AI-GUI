@@ -27,6 +27,7 @@ public class SaveChatTranscript extends Command {
             String json = Util.gson.toJson(conversation.getMessages());
             fileWriter.write(json);
             result = "saved transcript successfully";
+            LOGGER.info(result);
         } catch (IOException e) {
             result = "failed to create transcript";
             LOGGER.error(result, e);

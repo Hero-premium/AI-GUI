@@ -3,6 +3,10 @@ package io.github.hero_premium;
 
 import io.github.hero_premium.tools.ToolRegistry;
 import io.github.hero_premium.tools.ToolsInformation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
@@ -11,6 +15,8 @@ import java.util.Set;
  * a class meant to hold requests related records
  */
 public final class Requests {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Requests.class);
 
     /**
      * don't instantiate this
@@ -28,6 +34,7 @@ public final class Requests {
      * @param tool_name  the name of the tool that generated this response if it was tool generated.
      */
     public record Message(Roles role, String content, List<ToolsInformation.ToolCall> tool_calls, String tool_name) {
+
         public Message(Roles role, String content, String tool_name) {
             this(role, content, null, tool_name);
         }
@@ -69,11 +76,12 @@ public final class Requests {
      * @param prompt_eval_duration     time spent evaluating the prompt, in nanoseconds
      * @param eval_count               number of tokens generated in the response
      * @param eval_duration            time spent generating the response, in nanoseconds
+     * @param error                    if something went wrong while generating this response otherwise it's null
      */
     public record RequestOut(
             String model,
             String created_at,
-            Message message,
+            @NotNull Message message,
             boolean done,
             String done_reason,
             long total_duration,
@@ -82,8 +90,35 @@ public final class Requests {
             int prompt_eval_cached_count,
             long prompt_eval_duration,
             int eval_count,
-            long eval_duration
+            long eval_duration,
+            @Nullable String error
     ) {
+        @SuppressWarnings("ConstantConditions")
+        public RequestOut {
+            if (error != null) {
+                LOGGER.error(error);
+            }
+            if (message == null) {
+                message = new Message(Roles.SYSTEM, "failed to generate a response");
+            }
+        }
+
+        public RequestOut(String model,
+                          String created_at,
+                          Message message,
+                          boolean done,
+                          String done_reason,
+                          long total_duration,
+                          long load_duration,
+                          int prompt_eval_count,
+                          int prompt_eval_cached_count,
+                          long prompt_eval_duration,
+                          int eval_count,
+                          long eval_duration) {
+            this(model, created_at, message, done, done_reason, total_duration, load_duration,
+                    prompt_eval_count, prompt_eval_cached_count, prompt_eval_duration, eval_count, eval_duration, null);
+        }
+
         public int getEvalDurationInSeconds() {
             return (int) (eval_duration / 1_000_000_000L);
         }

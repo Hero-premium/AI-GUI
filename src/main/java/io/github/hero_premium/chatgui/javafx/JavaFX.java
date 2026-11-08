@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,12 +88,15 @@ public class JavaFX extends Client {
     private void sendAndDisplayText(String message) {
         Task<Void> task = new Task<>() {
             @Override
-            protected Void call() {
+            protected @Nullable Void call() {
                 program.chat(message);
                 return null;
             }
         };
-        task.setOnFailed(_ -> LOGGER.error("chat failed", task.getException()));
+        task.setOnFailed(_ -> {
+            LOGGER.error("chat failed", task.getException());
+            displaySystemMessage("something went wrong while generating this message");
+        });
         Thread.startVirtualThread(task);
     }
 
