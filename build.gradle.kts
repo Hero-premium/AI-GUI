@@ -4,6 +4,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
     id("com.gradleup.shadow") version "9.6.1"
     kotlin("jvm")
+    jacoco
 }
 
 val minJava = 25
@@ -16,6 +17,10 @@ version = "v0.1.0"
 
 repositories {
     mavenCentral()
+}
+
+jacoco {
+    toolVersion = "0.8.15"
 }
 
 dependencies {
@@ -41,7 +46,9 @@ application {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 }
+
 kotlin {
     jvmToolchain(minJava)
 }
@@ -50,18 +57,26 @@ tasks.jar {
     archiveClassifier.set("plain")
 }
 
-tasks.shadowJar {
-    archiveClassifier.set("")
-
-    manifest {
-        attributes["Main-Class"] = "io.github.hero_premium.program.Main"
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        html.required = true
+        xml.required = true
     }
-
-    mergeServiceFiles()
-
-    exclude(
-        "META-INF/*.SF",
-        "META-INF/*.DSA",
-        "META-INF/*.RSA"
-    )
 }
+
+    tasks.shadowJar {
+        archiveClassifier.set("")
+
+        manifest {
+            attributes["Main-Class"] = "io.github.hero_premium.program.Main"
+        }
+
+        mergeServiceFiles()
+
+        exclude(
+            "META-INF/*.SF",
+            "META-INF/*.DSA",
+            "META-INF/*.RSA"
+        )
+    }
