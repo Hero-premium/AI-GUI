@@ -47,6 +47,11 @@ class CommandsRegistryTest {
             @Override
             public void displaySystemMessage(String message) {
             }
+
+            @Override
+            public void endLine() {
+
+            }
         };
 
         List<Requests.Message> message = CommandsRegistry.findAndRunCommand(

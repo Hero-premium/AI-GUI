@@ -21,9 +21,17 @@ public class GetConversationHistory extends Command {
     @Override
     protected List<Requests.Message> runCommand(Conversation conversation, Client client, String[] arguments) {
         for (Requests.Message message : conversation.getMessages()) {
-            String content = message.content().isEmpty() ? message.tool_calls().toString() : message.content();
+            boolean noMessage = message.content() == null || message.content().isEmpty();
+
+            if (noMessage &&
+                    (message.tool_calls() == null || message.tool_calls().isEmpty())) continue;
+
+            String content;
+            if (!noMessage) content = message.content();
+            else content = message.tool_calls().toString();
+
             client.displayAIMessage(content);
         }
-        return List.of(new Requests.Message(Roles.SYSTEM, ""));
+        return List.of(new Requests.Message(Roles.USER_FACING, ""));
     }
 }

@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
-
+//TODO make this compatible with streams
 public class JavaFX extends Client {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaFX.class);
@@ -76,7 +76,12 @@ public class JavaFX extends Client {
         addChild("IMPORTANT: " + message.toUpperCase(Locale.ROOT), Pos.CENTER);
     }
 
-    private TextField generateTextField() {
+    @Override
+    public void endLine() {
+
+    }
+
+    private @NotNull TextField generateTextField() {
         TextField textField = new TextField();
         textField.setOnAction(_ -> {
             sendAndDisplayText(textField.getText());

@@ -4,6 +4,7 @@ package io.github.hero_premium.clients;
 import io.github.hero_premium.program.Program;
 
 //FIXME double display bug
+//TODO make this compatible with streams
 public class AiTalksToAi extends Client {
 
     public static final int MAX_TURNS = 100;
@@ -68,6 +69,11 @@ public class AiTalksToAi extends Client {
     @Override
     public void displaySystemMessage(String message) {
         IO.println("SYSTEM [ " + message + " ]");
+    }
+
+    @Override
+    public void endLine() {
+        IO.println();
     }
 
     private enum Turns {

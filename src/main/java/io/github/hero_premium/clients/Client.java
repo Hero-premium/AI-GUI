@@ -42,6 +42,12 @@ public abstract class Client {
      */
     public abstract void displaySystemMessage(String message);
 
+    /**
+     * used alongside streaming mode to indicate the end of a message,
+     * for example you keep appending with {@link IO#print(Object)} then at the end of message call {@link IO#print(Object)}
+     * for CLI based applications
+     */
+    public abstract void endLine();
 
     public Client setProgram(Program program) {
         this.program = Objects.requireNonNull(program, "program must not be null");

@@ -2,7 +2,7 @@ package io.github.hero_premium.clients;
 
 
 import java.util.Scanner;
-
+//TODO make this compatible with streams
 public class ScannerInput extends Client {
     private final Scanner scanner;
 
@@ -42,5 +42,10 @@ public class ScannerInput extends Client {
     @Override
     public void displaySystemMessage(String message) {
         IO.println("system: " + message);
+    }
+
+    @Override
+    public void endLine() {
+
     }
 }
