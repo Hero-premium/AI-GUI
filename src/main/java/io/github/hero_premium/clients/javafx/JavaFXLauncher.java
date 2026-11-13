@@ -1,4 +1,4 @@
-package io.github.hero_premium.chatgui.javafx;
+package io.github.hero_premium.clients.javafx;
 
 import javafx.application.Application;
 import javafx.stage.Stage;

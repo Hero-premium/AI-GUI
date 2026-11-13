@@ -2,7 +2,7 @@ package io.github.hero_premium.program.conversations;
 
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Roles;
-import io.github.hero_premium.chatai.LocalAi;
+import io.github.hero_premium.localais.LocalAi;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

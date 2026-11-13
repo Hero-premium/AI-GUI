@@ -47,7 +47,7 @@ class SQLiteConnection {
                 ps.setObject(i++, toAdd);
                 LOGGER.debug("added {}", toAdd);
             }
-            LOGGER.debug(String.valueOf(ps.executeUpdate()));
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -1,4 +1,4 @@
-package io.github.hero_premium.chatai;
+package io.github.hero_premium.localais;
 
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Roles;

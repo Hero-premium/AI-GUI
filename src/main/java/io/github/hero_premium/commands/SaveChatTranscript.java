@@ -2,7 +2,7 @@ package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Roles;
-import io.github.hero_premium.chatgui.Client;
+import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.util.Util;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +24,7 @@ public class SaveChatTranscript extends Command {
     protected List<Requests.Message> runCommand(@NotNull Conversation conversation, Client client, String[] arguments) {
         String result;
         try (FileWriter fileWriter = new FileWriter("transcript.JSON")) {
-            String json = Util.gson.toJson(conversation.getMessages());
-            fileWriter.write(json);
+            fileWriter.write(Util.gson.toJson(conversation.getMessages()));
             result = "saved transcript successfully";
             LOGGER.info(result);
         } catch (IOException e) {

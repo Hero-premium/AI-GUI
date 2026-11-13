@@ -3,9 +3,10 @@ package io.github.hero_premium.program.conversations;
 import io.github.hero_premium.Requests.Message;
 import io.github.hero_premium.Requests.RequestOut;
 import io.github.hero_premium.Roles;
-import io.github.hero_premium.chatai.LocalAi;
+import io.github.hero_premium.localais.LocalAi;
 import io.github.hero_premium.program.sqlite.SQLiteTable;
 import io.github.hero_premium.program.sqlite.schemes.TableScheme;
+import io.github.hero_premium.util.RequestOutBuilder;
 import io.github.hero_premium.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,15 +21,17 @@ public class Conversation {
     static final String DEFAULT_SYSTEM_PROMPT = """
             You are running on a local device.
             always admit uncertainty.
-            do not use tools unless the user asks explicitly or the tool description allows.
-            always follow the tools description.
-            tools results are always right and truthful unless the tool description says otherwise.
+            do not use functions unless the user asks explicitly or the function description allows.
+            always follow the functions description.
+            functions results are always right and truthful unless the function description says otherwise.
             be honest with the user.
             keep responses helpful and short.
             do not help with harmful requests.
             """;
+
     private final Deque<Message> queue = new ArrayDeque<>();
     private final List<Message> messageList = new ArrayList<>();
+    private final RequestOutBuilder requestOutBuilder = new RequestOutBuilder();
 
     @NotNull
     public final String title;
@@ -76,9 +79,9 @@ public class Conversation {
             return null;
         }
         saveMessage(messages);
-        RequestOut requestOut = ai.chat(messageList);
-        saveMessage(List.of(requestOut.message()));
-        return requestOut;
+        RequestOut aiReply = ai.chat(messageList);
+        saveAiMessage(aiReply);
+        return aiReply;
     }
 
     public List<Message> getMessages() {

@@ -1,4 +1,4 @@
-package io.github.hero_premium.chatgui.javafx;
+package io.github.hero_premium.clients.javafx;
 
 import javafx.scene.control.Label;
 
@@ -11,7 +11,7 @@ class GuiMessage {
         this.message = Objects.requireNonNull(message, "message must not be null");
     }
 
-    Label displayMessage() {
+    Label getLabel() {
         Label label = new Label(message);
         label.setWrapText(true);
         return label;

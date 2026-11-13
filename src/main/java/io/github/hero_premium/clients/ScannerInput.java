@@ -1,4 +1,4 @@
-package io.github.hero_premium.chatgui;
+package io.github.hero_premium.clients;
 
 
 import java.util.Scanner;

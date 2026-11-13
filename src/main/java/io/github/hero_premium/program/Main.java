@@ -1,6 +1,6 @@
 package io.github.hero_premium.program;
 
-import io.github.hero_premium.chatgui.Client;
+import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.program.sqlite.SQLiteTable;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

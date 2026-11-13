@@ -33,14 +33,20 @@ public final class Requests {
      * @param tool_calls if the AI requested tools this is where they show up
      * @param tool_name  the name of the tool that generated this response if it was tool generated.
      */
-    public record Message(Roles role, String content, List<ToolsInformation.ToolCall> tool_calls, String tool_name) {
+    public record Message(Roles role, @Nullable String content, @Nullable String thinking,
+                          @Nullable List<ToolsInformation.ToolCall> tool_calls,
+                          @Nullable String tool_name) {
 
         public Message(Roles role, String content, String tool_name) {
-            this(role, content, null, tool_name);
+            this(role, content, null, null, tool_name);
         }
 
         public Message(Roles role, String content) {
-            this(role, content, null, null);
+            this(role, content, null, null, null);
+        }
+
+        public Message(Roles role, String content, List<ToolsInformation.ToolCall> tool_calls) {
+            this(role, content, null, tool_calls, null);
         }
     }
 

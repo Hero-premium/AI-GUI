@@ -1,4 +1,4 @@
-package io.github.hero_premium.chatai;
+package io.github.hero_premium.localais;
 
 
 import io.github.hero_premium.Requests;
@@ -19,7 +19,7 @@ public class Llama3b extends LocalAi {
     @Override
     public Requests.RequestOut chat(List<Requests.Message> message) {
         return sendRequest(
-                buildHttpRequest(new Requests.RequestIn(modelName, message, false)));
+                buildHttpRequest(new Requests.RequestIn(modelName, message)));
     }
 
 

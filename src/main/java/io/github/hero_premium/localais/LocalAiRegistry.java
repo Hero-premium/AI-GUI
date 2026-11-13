@@ -1,4 +1,4 @@
-package io.github.hero_premium.chatai;
+package io.github.hero_premium.localais;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

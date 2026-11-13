@@ -1,6 +1,6 @@
-package io.github.hero_premium.chatgui.javafx;
+package io.github.hero_premium.clients.javafx;
 
-import io.github.hero_premium.chatgui.Client;
+import io.github.hero_premium.clients.Client;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class JavaFX extends Client {
     private final VBox messages = new VBox(5);
     private ScrollPane scrollPane;
 
-    public JavaFX(Stage primaryStage) {
+    public JavaFX(@NotNull Stage primaryStage) {
         scrollPane = new ScrollPane(messages);
         messages.setPadding(new Insets(10));
         scrollPane.setFitToWidth(true);
@@ -45,7 +46,7 @@ public class JavaFX extends Client {
     }
 
     private void addChild(String message, Pos pos) {
-        HBox row = new HBox(new GuiMessage(message).displayMessage());
+        HBox row = new HBox(new GuiMessage(message).getLabel());
         row.setAlignment(pos);
         Platform.runLater(() -> messages.getChildren().add(row));
     }
@@ -71,7 +72,7 @@ public class JavaFX extends Client {
     }
 
     @Override
-    public void displaySystemMessage(String message) {
+    public void displaySystemMessage(@NotNull String message) {
         addChild("IMPORTANT: " + message.toUpperCase(Locale.ROOT), Pos.CENTER);
     }
 

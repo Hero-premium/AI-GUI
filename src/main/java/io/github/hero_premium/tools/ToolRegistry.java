@@ -4,6 +4,7 @@ import io.github.hero_premium.Requests;
 import io.github.hero_premium.Requests.Message;
 import io.github.hero_premium.Roles;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public final class ToolRegistry {
     /**
      * Search for a tool with the specified name and returns it.
      *
-     * @param tool the name of the tool, is the same as its {@code simpleClassName}
+     * @param tool the name of the tool.
      * @return Optional the tool asked for, {@code Optional.empty()} if the tool was not found
      */
     public static @NotNull Optional<Tool> getTool(String tool) {
@@ -68,7 +69,7 @@ public final class ToolRegistry {
      * @param toolData contains data about the tool most importantly its name and parameters
      * @return a list containing the replies of the requested tools
      */
-    public static List<Message> findAndRunTools(List<ToolsInformation.ToolCall> toolData) {
+    public static @NotNull List<Message> findAndRunTools(@Nullable List<ToolsInformation.ToolCall> toolData) {
         if (toolData == null) return List.of();
         List<Message> messages = new ArrayList<>();
 

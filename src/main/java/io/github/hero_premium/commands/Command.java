@@ -1,7 +1,7 @@
 package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.chatgui.Client;
+import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.program.conversations.Conversation;
 
 import java.util.List;

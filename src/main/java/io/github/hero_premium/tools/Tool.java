@@ -1,5 +1,7 @@
 package io.github.hero_premium.tools;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,19 +48,19 @@ public abstract class Tool {
         return "tool " + getClass().getSimpleName();
     }
 
-    @SuppressWarnings("LoggingSimilarMessage")
+
     String toolUse(Map<String, Object> tools) {
         // if it takes no params don't validate anything
         // map.of to stop nulls
         if (params.length == 0) return useTool(Map.of());
 
         if (tools == null) {
-            LOGGER.warn("ai misused the tool, {}", "TOOL ERROR, NULL BEEN PASSED");
+            LOGGER.warn("ai misused the tool, TOOL ERROR, NULL BEEN PASSED");
             return "TOOL ERROR, NULL BEEN PASSED";
         }
 
         if (isRequiredParamMissing(tools)) {
-            LOGGER.warn("ai misused the tool, {}", "TOOL ERROR, MISSING A REQUIRED PARAMETER");
+            LOGGER.warn("ai misused the tool, TOOL ERROR, MISSING A REQUIRED PARAMETER");
             return "TOOL ERROR, MISSING A REQUIRED PARAMETER";
         }
 
@@ -70,7 +72,7 @@ public abstract class Tool {
         return useTool(tools);
     }
 
-    private String validateArguments(Map<String, Object> tools, Param p) {
+    private @Nullable String validateArguments(@NotNull Map<String, Object> tools, @NotNull Param p) {
         Object object = tools.get(p.argumentName());
 
 

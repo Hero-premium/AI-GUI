@@ -1,4 +1,4 @@
-package io.github.hero_premium.chatgui;
+package io.github.hero_premium.clients;
 
 
 import io.github.hero_premium.program.Program;
