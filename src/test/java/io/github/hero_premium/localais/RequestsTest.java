@@ -1,4 +1,4 @@
-package io.github.hero_premium.chatai;
+package io.github.hero_premium.localais;
 
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Roles;
@@ -10,7 +10,7 @@ class RequestsTest {
     @Test
     void getEvalDurationInSeconds() {
         int result = new Requests.RequestOut("system", "",
-                new Requests.Message(Roles.SYSTEM, "ollama server is down"),
+                new Requests.Message(Roles.USER_FACING, "ollama server is down"),
                 true, "", 0, 0,
                 0, 0, 0,
                 0, 5_000_000_000L).getEvalDurationInSeconds();

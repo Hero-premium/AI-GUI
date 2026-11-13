@@ -31,6 +31,6 @@ public class SaveChatTranscript extends Command {
             result = "failed to create transcript";
             LOGGER.error(result, e);
         }
-        return List.of(new Requests.Message(Roles.SYSTEM, result));
+        return List.of(new Requests.Message(Roles.USER_FACING, result));
     }
 }

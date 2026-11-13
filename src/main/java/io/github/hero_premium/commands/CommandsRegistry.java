@@ -85,7 +85,7 @@ public final class CommandsRegistry {
         LOGGER.debug("looking for command {}", givenCommand);
         if (command == null) {
             LOGGER.debug("could not find command {}", givenCommand);
-            return List.of(new Requests.Message(Roles.SYSTEM, "invalid command, use /getAllCommands for all commands"));
+            return List.of(new Requests.Message(Roles.USER_FACING, "invalid command, use /getAllCommands for all commands"));
         }
         LOGGER.debug("found {}", command);
         List<Requests.Message> messages = command.runCommand(conversation, client, parseCommand(command, givenCommand));

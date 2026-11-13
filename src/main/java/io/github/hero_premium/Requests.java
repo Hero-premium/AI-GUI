@@ -105,7 +105,7 @@ public final class Requests {
                 LOGGER.error(error);
             }
             if (message == null) {
-                message = new Message(Roles.SYSTEM, "failed to generate a response");
+                message = new Message(Roles.USER_FACING, "failed to generate a response");
             }
         }
 

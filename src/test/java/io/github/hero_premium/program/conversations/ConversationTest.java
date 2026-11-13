@@ -54,8 +54,8 @@ class ConversationTest {
         assertEquals("hi", ai.lastReceived.getLast().content());
 
         conversation = new Conversation("system");
-        conversation.chat(List.of(msg(Roles.SYSTEM, "sys"), msg(Roles.USER, "hi")), new FakeAi());
-        assertTrue(conversation.getMessages().stream().skip(1).noneMatch(m -> m.role() == Roles.SYSTEM));
+        conversation.chat(List.of(msg(Roles.USER_FACING, "sys"), msg(Roles.USER, "hi")), new FakeAi());
+        assertTrue(conversation.getMessages().stream().skip(1).noneMatch(m -> m.role() == Roles.USER_FACING));
 
         conversation = new Conversation("thinking");
         ai = new FakeAi();
@@ -67,7 +67,7 @@ class ConversationTest {
 
         conversation = new Conversation("error");
         ai = new FakeAi();
-        ai.nextReply = msg(Roles.SYSTEM, "ollama server is down");
+        ai.nextReply = msg(Roles.USER_FACING, "ollama server is down");
         conversation.chat(List.of(msg(Roles.USER, "hi")), ai);
         assertTrue(conversation.getMessages().stream().noneMatch(m -> m.role() == Roles.ASSISTANT));
 
