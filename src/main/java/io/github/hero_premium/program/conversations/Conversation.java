@@ -62,6 +62,10 @@ public class Conversation {
         }
     }
 
+    private void saveMessage(@NotNull Message m) {
+        this.messageList.add(m);
+        sqlite.save(Map.of(sqlite.tableScheme.columns.get(1), Util.gson.toJson(Objects.requireNonNull(m))));
+    }
     /**
      * this handles the Ais memory per chat and handles queuing too
      *

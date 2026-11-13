@@ -26,4 +26,9 @@ public enum PropertiesType {
     public Class<?> getType() {
         return type;
     }
+
+    public boolean compareType(Object object) {
+        if (this == NULL) return object == null;
+        return this.type.isInstance(object);
+    }
 }

@@ -55,13 +55,13 @@ class PropertiesTypeTest {
     @Test
     void passANumber() {
         Object num = Util.gson.fromJson("5", Object.class);
-        assertTrue(PropertiesType.INTEGER.getType().isInstance(num));
+        assertTrue(PropertiesType.INTEGER.compareType(num));
     }
 
     @Test
     void passANumber2() {
         Object num = Util.gson.fromJson("5.5", Object.class);
-        assertTrue(PropertiesType.NUMBER.getType().isInstance(num));
+        assertTrue(PropertiesType.NUMBER.compareType(num));
     }
 
 }

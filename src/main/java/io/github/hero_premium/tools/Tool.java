@@ -76,10 +76,10 @@ public abstract class Tool {
         Object object = tools.get(p.argumentName());
 
 
-        if ((object != null || p.isRequired()) && !p.type().getType().isInstance(object)) {
+        if ((object != null || p.isRequired()) && !p.type().compareType(object)) {
             String typeToString = "UNKNOWN";
             for (PropertiesType propertiesType : PropertiesType.values()) {
-                if (propertiesType.getType().isInstance(object)) {
+                if (propertiesType.compareType(object)) {
                     typeToString = propertiesType.toString();
                 }
             }
