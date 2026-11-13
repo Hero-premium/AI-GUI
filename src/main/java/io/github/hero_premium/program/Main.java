@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
-    private static final String DEFAULT_CLIENT = "io.github.hero_premium.chatgui.javafx.JavaFX";
+    private static final String DEFAULT_CLIENT = "io.github.hero_premium.clients.javafx.JavaFX";
 
      static void main(String @NotNull [] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         addShutdownHook();

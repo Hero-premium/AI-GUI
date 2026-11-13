@@ -30,13 +30,10 @@ public class SQLiteTable {
     public SQLiteTable(@NotNull TableScheme tableScheme, @NotNull String url) {
         this.url = Objects.requireNonNull(url, "url must not be null");
         this.tableScheme = Objects.requireNonNull(tableScheme, "tableScheme must not be null");
-        openConnection();
+        ConnectionsPool.openConnection(url);
         createTable(tableScheme);
     }
 
-    private void openConnection() {
-        ConnectionsPool.openConnection(url);
-    }
 
     private void createTable(@NotNull TableScheme tableScheme) {
         ConnectionsPool.get(url).ifPresentOrElse(
@@ -46,18 +43,30 @@ public class SQLiteTable {
     }
 
     private void save(@NotNull SQLiteConnection sqLiteConnection, @NotNull Map<TableScheme.Column, Object> toAddToColumns) {
+
         for (Map.Entry<TableScheme.Column, Object> columnsName : toAddToColumns.entrySet()) {
             TableScheme.Column column = columnsName.getKey();
             Object value = columnsName.getValue();
+
             if (!column.value().type.isInstance(value))
                 throw new IllegalArgumentException("value type " + value.getClass() + " is not the expected type" + column.value().type);
-            if (tableScheme.columns.stream()
-                    .noneMatch(columns -> columns.name().equals(column.name())))
-                throw new IllegalArgumentException("column name " + columnsName + " does not exist");
+
+            boolean noneMatch = tableScheme.columns.stream()
+                    .noneMatch(columns -> columns.name().equals(column.name()));
+            if (noneMatch)
+                throw new IllegalArgumentException("column  " + columnsName + " does not exist in this table");
         }
+
         sqLiteConnection.save(tableScheme.name, toAddToColumns);
     }
 
+    /**
+     * saves to the database, to whichever link was passed at the creation of this.
+     *
+     * @param toAddToColumns the key is the column and the value is whatever you want to add, value must match the column type.
+     * @throws IllegalArgumentException if the column passed does not exist in this table.
+     * @throws IllegalArgumentException if the object type does not match the type of column you are adding to.
+     */
     public void save(Map<TableScheme.Column, Object> toAddToColumns) {
         ConnectionsPool.get(url).ifPresentOrElse(
                 connection -> save(connection,
