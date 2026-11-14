@@ -6,6 +6,7 @@ import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -25,6 +26,7 @@ public class JavaFX extends Client {
 
     private final VBox messages = new VBox(5);
     private ScrollPane scrollPane;
+    private Label currentAiLabel;
 
     public JavaFX(@NotNull Stage primaryStage) {
         scrollPane = new ScrollPane(messages);
@@ -65,20 +67,28 @@ public class JavaFX extends Client {
         addChild("TOOLS [ " + message + " ]", Pos.CENTER_RIGHT);
     }
 
-
-    @Override
-    public void displayAIMessage(String message) {
-        addChild(message, Pos.CENTER_RIGHT);
-    }
-
     @Override
     public void displaySystemMessage(@NotNull String message) {
         addChild("IMPORTANT: " + message.toUpperCase(Locale.ROOT), Pos.CENTER);
     }
 
     @Override
-    public void endLine() {
+    public void displayAIMessage(String chunk) {
+        Platform.runLater(() -> {
+            if (currentAiLabel == null) {
+                currentAiLabel = new GuiMessage("").getLabel();
+                HBox row = new HBox(currentAiLabel);
+                row.setAlignment(Pos.CENTER_RIGHT);
+                messages.getChildren().add(row);
+            }
+            currentAiLabel.setText(currentAiLabel.getText() + chunk);
+        });
+    }
 
+    @Override
+    public void endLine() {
+        Platform.runLater(() -> currentAiLabel = null);
+        addChild("// your turn", Pos.CENTER_RIGHT);
     }
 
     private @NotNull TextField generateTextField() {

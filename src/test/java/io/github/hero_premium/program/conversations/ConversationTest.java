@@ -6,6 +6,7 @@ import io.github.hero_premium.localais.LocalAi;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,9 +31,9 @@ class ConversationTest {
         }
 
         @Override
-        public Requests.RequestOut chat(List<Requests.Message> messages) {
+        public void chat(List<Requests.Message> messages, Consumer<Requests.RequestOut> out) {
             lastReceived = List.copyOf(messages);
-            return reply(nextReply);
+             reply(nextReply);
         }
 
         @Override
@@ -46,7 +47,8 @@ class ConversationTest {
     void chat() {
         Conversation conversation = new Conversation("normal");
         FakeAi ai = new FakeAi();
-        assertNotNull(conversation.chat(List.of(msg(Roles.USER, "hi")), ai));
+        conversation.chat(List.of(msg(Roles.USER, "hi")), ai);
+        assertNotNull(conversation.pollLinesAndSaveThem(ai));
         assertEquals(3, conversation.getMessages().size());
         assertEquals(Roles.SYSTEM, conversation.getMessages().get(0).role());
         assertEquals(Roles.USER, conversation.getMessages().get(1).role());
@@ -60,7 +62,8 @@ class ConversationTest {
         conversation = new Conversation("thinking");
         ai = new FakeAi();
         ai.thinking = true;
-        assertNull(conversation.chat(List.of(msg(Roles.USER, "hi")), ai));
+        conversation.chat(List.of(msg(Roles.USER, "hi")), ai);
+        assertNull(conversation.pollLinesAndSaveThem(ai));
         assertTrue(conversation.isQueued());
         assertEquals(1, conversation.getMessages().size());
         assertNull(ai.lastReceived);

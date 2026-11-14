@@ -9,11 +9,11 @@ import io.github.hero_premium.program.sqlite.schemes.TableScheme;
 import io.github.hero_premium.util.RequestOutBuilder;
 import io.github.hero_premium.util.Util;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Conversation {
 
@@ -46,7 +46,9 @@ public class Conversation {
                 .column("messages", TableScheme.ColumnType.TEXT)
                 .build()
         );
-        messageList.add(new Message(Roles.SYSTEM, Objects.requireNonNull(systemPrompt, "systemPrompt must not be null")));
+        Message message = new Message(Roles.SYSTEM, Objects.requireNonNull(systemPrompt, "systemPrompt must not be null"));
+        messageList.add(message);
+        sqlite.save(Map.of(sqlite.tableScheme.columns.get(1), Util.gson.toJson(Objects.requireNonNull(message))));
     }
 
     Conversation(@NotNull String title) {
@@ -56,35 +58,52 @@ public class Conversation {
     private void saveMessage(@NotNull List<Message> messages) {
         for (Message m : messages) {
             Objects.requireNonNull(m, "a message in the messages was null");
-            if (m.role() != Roles.USER_FACING) {
-                saveMessage(m);
-            }
+            saveMessage(m);
         }
     }
 
     private void saveMessage(@NotNull Message m) {
-        this.messageList.add(m);
+        if (m.role() == Roles.USER_FACING) return;
+        messageList.add(m);
         sqlite.save(Map.of(sqlite.tableScheme.columns.get(1), Util.gson.toJson(Objects.requireNonNull(m))));
     }
+
+    private void saveAiMessage(@NotNull RequestOut request) {
+        Objects.requireNonNull(request, "request must not be null");
+        Roles role = request.message().role();
+        if (role == Roles.USER_FACING) return;
+        if (role != Roles.ASSISTANT) {
+            throw new IllegalArgumentException("messages in saveAiMessages must be sent by the ai");
+        }
+
+        request = requestOutBuilder.appendMessages(request);
+
+        if (request != null) {
+            saveMessage(request.message());
+        }
+    }
+
+
     /**
-     * this handles the Ais memory per chat and handles queuing too
+     * this handles the Ais memory per chat and handles queuing too,
      *
      * @param messages a list of the new messages, list in case of multiple tool usage
      * @param ai       the current AI
-     * @return the AI repose, null if the AI is thinking
      */
-    public @Nullable RequestOut chat(@NotNull List<Message> messages, @NotNull LocalAi ai) {
+    public synchronized void chat(@NotNull List<Message> messages, @NotNull LocalAi ai, Consumer<RequestOut> todo) {
         Objects.requireNonNull(messages, "messages must not be null");
         Objects.requireNonNull(ai, "ai must not be null");
         LOGGER.debug("received messages {}", messages);
         if (ai.isThinking()) {
             queue.addAll(messages);
-            return null;
+            LOGGER.debug("added {} to queue", messages);
+            return;
         }
         saveMessage(messages);
-        RequestOut aiReply = ai.chat(messageList);
-        saveAiMessage(aiReply);
-        return aiReply;
+        ai.chat(messages, requestOut -> {
+            saveAiMessage(requestOut);
+            todo.accept(requestOut);
+        });
     }
 
     public List<Message> getMessages() {

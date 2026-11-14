@@ -3,11 +3,13 @@ package io.github.hero_premium;
 
 import io.github.hero_premium.tools.ToolRegistry;
 import io.github.hero_premium.tools.ToolsInformation;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -48,6 +50,10 @@ public final class Requests {
         public Message(Roles role, String content, List<ToolsInformation.ToolCall> tool_calls) {
             this(role, content, null, tool_calls, null);
         }
+
+        public boolean noContentOrToolCalls() {
+            return (content() == null || content().isEmpty()) && (tool_calls() == null || tool_calls().isEmpty());
+        }
     }
 
     /**
@@ -60,8 +66,8 @@ public final class Requests {
      */
     public record RequestIn(String model, List<Message> messages, boolean stream,
                             Set<ToolsInformation.ToolData> tools) {
-        public RequestIn(String model, List<Message> message, boolean stream) {
-            this(model, message, stream, ToolRegistry.TOOLS_DATA);
+        public RequestIn(String model, List<Message> message) {
+            this(model, message, true, null /*ToolRegistry.TOOLS_DATA*/);
         }
     }
 
@@ -123,6 +129,15 @@ public final class Requests {
                           long eval_duration) {
             this(model, created_at, message, done, done_reason, total_duration, load_duration,
                     prompt_eval_count, prompt_eval_cached_count, prompt_eval_duration, eval_count, eval_duration, null);
+        }
+
+        @Contract("_, _ -> new")
+        public static @NotNull RequestOut defaultsIn(String model, String toDisplay) {
+            return new RequestOut(model, LocalDateTime.now().toString(),
+                    new Requests.Message(Roles.USER_FACING, toDisplay),
+                    true, "failure",
+                    0, 0, 0, 0, 0, 0, 0);
+
         }
 
         public int getEvalDurationInSeconds() {

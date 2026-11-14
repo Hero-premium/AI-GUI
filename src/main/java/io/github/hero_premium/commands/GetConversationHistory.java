@@ -23,12 +23,11 @@ public class GetConversationHistory extends Command {
         for (Requests.Message message : conversation.getMessages()) {
             boolean noMessage = message.content() == null || message.content().isEmpty();
 
-            if (noMessage &&
-                    (message.tool_calls() == null || message.tool_calls().isEmpty())) continue;
+            if (message.noContentOrToolCalls()) continue;
 
             String content;
             if (!noMessage) content = message.content();
-            else content = message.tool_calls().toString();
+            else content = message.tool_calls() != null ? message.tool_calls().toString() : "";
 
             client.displayAIMessage(content);
         }

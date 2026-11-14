@@ -7,6 +7,7 @@ import io.github.hero_premium.util.Util;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Llama3b extends LocalAi {
 
@@ -16,10 +17,13 @@ public class Llama3b extends LocalAi {
         super("llama3.2:3b");
     }
 
+
+    /**
+     * @param message the messages to send, usually the entire conversation history.
+     */
     @Override
-    public Requests.RequestOut chat(List<Requests.Message> message) {
-        return sendRequest(
-                buildHttpRequest(new Requests.RequestIn(modelName, message)));
+    public void chat(List<Requests.Message> message, Consumer<Requests.RequestOut> out) {
+        sendRequest(buildHttpRequest(new Requests.RequestIn(modelName, message)), out);
     }
 
 
