@@ -100,7 +100,7 @@ public class Conversation {
             return;
         }
         saveMessage(messages);
-        ai.chat(messages, requestOut -> {
+        ai.chat(messageList, requestOut -> {
             saveAiMessage(requestOut);
             todo.accept(requestOut);
         });
