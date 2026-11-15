@@ -111,10 +111,9 @@ public class Program {
     private boolean handleCommands(@NotNull String request, Conversation conversation) {
         if (!request.startsWith("/")) return false;
         for (Message message : CommandsRegistry.findAndRunCommand(request, conversation, client)) {
-            client.displayAIMessage(message.content());
-            return true;
+            displayMessage(message);
         }
-        return false;
+        return true;
     }
 
     public Map<String, LocalAi> getAllAis() {

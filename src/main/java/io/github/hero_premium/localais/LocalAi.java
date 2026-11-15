@@ -3,6 +3,7 @@ package io.github.hero_premium.localais;
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Requests.RequestOut;
 import io.github.hero_premium.util.Util;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * the class, every AI configuration is meant to extend, provides methods for the networking.
+ * the class every AI configuration is meant to extend, provides methods for networking.
  */
 public abstract class LocalAi {
 
@@ -41,17 +42,17 @@ public abstract class LocalAi {
             RequestOut requestOut;
             do {
                 String json = reader.readLine();
-                LOGGER.debug("json: {}", json);
                 requestOut = Util.gson.fromJson(json, RequestOut.class);
+                isThinking = !requestOut.done();
                 responseConsumer.accept(requestOut);
             } while (!requestOut.done());
         } catch (ConnectException e) {
             LOGGER.error("connection failed: ", e);
             responseConsumer.accept(RequestOut.defaultsIn(modelName,
-                    """
+                            """
                             couldn't reach ollama server,
-                             please check that ollama server is up
-                             (try 'ollama serve' in the cmd)"""
+                            please check that ollama server is up
+                            (try 'ollama serve' in the cmd)"""
             ));
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -60,8 +61,9 @@ public abstract class LocalAi {
         }
     }
 
-    public abstract void chat(List<Requests.Message> messages, Consumer<Requests.RequestOut> out);
+    public abstract void chat(List<Requests.Message> messages, Consumer<RequestOut> out);
 
+    @Contract(pure = true)
     public boolean isThinking() {
         return isThinking;
     }

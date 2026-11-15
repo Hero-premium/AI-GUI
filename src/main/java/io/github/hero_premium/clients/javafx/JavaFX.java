@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
-//TODO make this compatible with streams
+
 public class JavaFX extends Client {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaFX.class);

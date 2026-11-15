@@ -114,7 +114,7 @@ public class Wikipedia extends Source {
     }
 
 
-    private HttpRequest buildRequest(@NotNull String query) {
+    private static HttpRequest buildRequest(@NotNull String query) {
         Objects.requireNonNull(query, "query cannot be null");
         return HttpRequest.newBuilder()
                 .header("User-Agent", "AI-GUI/0.1 (https://github.com/Hero-premium/AI-GUI)")
