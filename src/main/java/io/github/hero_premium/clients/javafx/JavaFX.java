@@ -58,12 +58,12 @@ public class JavaFX extends Client {
     }
 
     @Override
-    public void displayUserMessage(String message) {
+    public void displayUserMessage(@NotNull String message) {
         addChild(message, Pos.CENTER_LEFT);
     }
 
     @Override
-    public void displayToolsMessage(String message) {
+    public void displayToolsMessage(@NotNull String message) {
         addChild("TOOLS [ " + message + " ]", Pos.CENTER_RIGHT);
     }
 
@@ -73,7 +73,7 @@ public class JavaFX extends Client {
     }
 
     @Override
-    public void displayAIMessage(String chunk) {
+    public void displayAIMessage(@NotNull String chunk) {
         Platform.runLater(() -> {
             if (currentAiLabel == null) {
                 currentAiLabel = new GuiMessage("").getLabel();

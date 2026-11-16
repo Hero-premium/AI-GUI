@@ -12,6 +12,7 @@ import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.program.conversations.ConversationsManager;
 import io.github.hero_premium.tools.ToolRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,15 +74,14 @@ public class Program {
 
     private void chatHandler(@NotNull RequestOut requestOut, Conversation conversation) {
         requestOut = handleTools(requestOut, conversation);
+        if (requestOut == null) return;
         displayMessage(requestOut.message());
-        if (requestOut.done()) {
-            LOGGER.debug("it's done in chatHandler");
-            client.endLine();
-        }
+        if (requestOut.done()) client.endLine();
     }
 
     private final List<Message> toolReplies = new CopyOnWriteArrayList<>();
-    @NotNull RequestOut handleTools(@NotNull RequestOut requestOut, final Conversation conversation) {
+
+    @Nullable RequestOut handleTools(@NotNull RequestOut requestOut, final Conversation conversation) {
         Objects.requireNonNull(requestOut, "requestOut must not be null");
         RequestOut[] requestOuts = new RequestOut[]{requestOut};
         // todo bring back the max limit + fix bugs
@@ -95,19 +95,24 @@ public class Program {
                 requestOuts[0] = requestOut1;
                 chatHandler(requestOut1, conversation);
             });
+            return null;
         }
-        return requestOuts[0];
+
+        if (requestOuts[0].done()) return requestOuts[0];
+        String content = requestOuts[0].message().content();
+        return (content == null || content.isEmpty()) ? null : requestOuts[0];
+
     }
 
     private void displayAsTool(@NotNull Stream<Message> toolReplies) {
-        toolReplies.map(toolCalls -> toolCalls.tool_name() + " " + toolCalls.content())
+        toolReplies
+                .map(toolCalls -> toolCalls.tool_name() + " " + toolCalls.content())
                 .forEach(client::displayToolsMessage);
     }
 
     private void displayMessage(@NotNull Message message) {
-        LOGGER.debug("displaying message {}", message);
         String content = message.content();
-        if (content == null || content.isBlank()) return;
+        if (content == null) return;
         switch (message.role()) {
             case USER -> client.displayUserMessage(content);
             case TOOL -> client.displayToolsMessage(content);

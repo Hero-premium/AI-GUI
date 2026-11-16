@@ -1,6 +1,8 @@
 package io.github.hero_premium.clients;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Scanner;
 //TODO make this compatible with streams
 public class ScannerInput extends Client {
@@ -25,22 +27,22 @@ public class ScannerInput extends Client {
     }
 
     @Override
-    public void displayUserMessage(String message) {
+    public void displayUserMessage(@NotNull String message) {
         IO.println("user: " + message);
     }
 
     @Override
-    public void displayToolsMessage(String message) {
+    public void displayToolsMessage(@NotNull String message) {
         IO.println("TOOLS [ " + message + " ]");
     }
 
     @Override
-    public void displayAIMessage(String message) {
+    public void displayAIMessage(@NotNull String message) {
         IO.println("AI: " + message);
     }
 
     @Override
-    public void displaySystemMessage(String message) {
+    public void displaySystemMessage(@NotNull String message) {
         IO.println("system: " + message);
     }
 

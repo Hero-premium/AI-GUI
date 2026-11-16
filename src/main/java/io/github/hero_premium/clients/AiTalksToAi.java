@@ -2,6 +2,7 @@ package io.github.hero_premium.clients;
 
 
 import io.github.hero_premium.program.Program;
+import org.jetbrains.annotations.NotNull;
 
 //FIXME double display bug
 //TODO make this compatible with streams
@@ -29,7 +30,7 @@ public class AiTalksToAi extends Client {
 
 
     @Override
-    public void displayUserMessage(String message) {
+    public void displayUserMessage(@NotNull String message) {
         switch (turn) {
             case AI1 -> {
                 aiInputs[0] = message;
@@ -46,12 +47,12 @@ public class AiTalksToAi extends Client {
     }
 
     @Override
-    public void displayToolsMessage(String message) {
+    public void displayToolsMessage(@NotNull String message) {
         IO.println("TOOL [ " + message + " ]");
     }
 
     @Override
-    public void displayAIMessage(String message) {
+    public void displayAIMessage(@NotNull String message) {
         switch (turn) {
             case AI1 -> {
                 aiInputs[0] = message;
@@ -67,7 +68,7 @@ public class AiTalksToAi extends Client {
 
 
     @Override
-    public void displaySystemMessage(String message) {
+    public void displaySystemMessage(@NotNull String message) {
         IO.println("SYSTEM [ " + message + " ]");
     }
 

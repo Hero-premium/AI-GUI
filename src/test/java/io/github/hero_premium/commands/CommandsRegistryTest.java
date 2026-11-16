@@ -2,6 +2,7 @@ package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.clients.Client;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -33,19 +34,19 @@ class CommandsRegistryTest {
             }
 
             @Override
-            public void displayUserMessage(String message) {
+            public void displayUserMessage(@NonNull String message) {
             }
 
             @Override
-            public void displayToolsMessage(String message) {
+            public void displayToolsMessage(@NonNull String message) {
             }
 
             @Override
-            public void displayAIMessage(String message) {
+            public void displayAIMessage(@NonNull String message) {
             }
 
             @Override
-            public void displaySystemMessage(String message) {
+            public void displaySystemMessage(@NonNull String message) {
             }
 
             @Override

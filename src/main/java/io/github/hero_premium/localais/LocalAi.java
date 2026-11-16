@@ -56,9 +56,7 @@ public abstract class LocalAi {
     private void readLines(@NotNull Consumer<RequestOut> responseConsumer, @NotNull BufferedReader reader) throws IOException {
         RequestOut requestOut;
         do {
-            String json = reader.readLine();
-            LOGGER.debug(json);
-            requestOut = Util.gson.fromJson(json, RequestOut.class);
+            requestOut = Util.gson.fromJson(reader.readLine(), RequestOut.class);
             isThinking = !requestOut.done();
             responseConsumer.accept(requestOut);
         } while (!requestOut.done());

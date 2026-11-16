@@ -135,22 +135,22 @@ class ProgramTest {
         }
 
         @Override
-        public void displayUserMessage(String message) {
+        public void displayUserMessage(@NonNull String message) {
             messages.add(message);
         }
 
         @Override
-        public void displayToolsMessage(String message) {
+        public void displayToolsMessage(@NonNull String message) {
             messages.add(message);
         }
 
         @Override
-        public void displayAIMessage(String message) {
+        public void displayAIMessage(@NonNull String message) {
             messages.add(message);
         }
 
         @Override
-        public void displaySystemMessage(String message) {
+        public void displaySystemMessage(@NonNull String message) {
             messages.add(message);
         }
 
