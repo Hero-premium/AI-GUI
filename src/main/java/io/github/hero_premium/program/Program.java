@@ -10,6 +10,7 @@ import io.github.hero_premium.localais.LocalAi;
 import io.github.hero_premium.localais.LocalAiRegistry;
 import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.program.conversations.ConversationsManager;
+import io.github.hero_premium.tools.ToolRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 public class Program {
 
@@ -59,51 +62,57 @@ public class Program {
         Conversation conversation = conversationsManager.getCurrentConversation();
         if (handleCommands(request, conversation)) return;
 
-        conversation.chat(List.of(new Message(Roles.USER, request)), ai, this::chatHandler);
-        if (conversation.isQueued()) {
-            conversation.chat(List.of(conversation.getNext()), ai, this::chatHandler);
+        conversation.chat(List.of(new Message(Roles.USER, request)), ai, requestOut -> chatHandler(requestOut, conversation));
+
+        while (conversation.isQueued()) {
+            Message next = conversation.getNext();
+            displayMessage(next);
+            conversation.chat(List.of(next), ai, requestOut -> chatHandler(requestOut, conversation));
         }
     }
 
-    private void chatHandler(@NotNull RequestOut requestOut) {
-        //requestOut = handleTools(requestOut, conversation);
+    private void chatHandler(@NotNull RequestOut requestOut, Conversation conversation) {
+        requestOut = handleTools(requestOut, conversation);
         displayMessage(requestOut.message());
-        if (requestOut.done()) client.endLine();
+        if (requestOut.done()) {
+            LOGGER.debug("it's done in chatHandler");
+            client.endLine();
+        }
     }
 
-//    @NotNull RequestOut handleTools(@NotNull RequestOut requestOut, Conversation conversation) {
-//        Objects.requireNonNull(requestOut, "requestOut must not be null");
-//        List<Message> toolReplies = ToolRegistry.findAndRunTools(requestOut.message().tool_calls());
-//
-//        int i = 0;
-//        while (!toolReplies.isEmpty()) {
-//            displayAsTool(toolReplies);
-//
-//            requestOut = conversation.pollLinesAndSaveThem(ai);
-//            conversation.chat(toolReplies, ai);
-//            toolReplies = ToolRegistry.findAndRunTools(requestOut.message().tool_calls());
-//
-//            requestOut = conversation.pollLinesAndSaveThem(ai);
-//            i++;
-//
-//            if (i >= MAX_TOOLS_REQUESTS)
-//                return RequestOut.defaultsIn(ai.modelName, "the AI hit tool calls limit and couldn't generate a response, please try again");
-//        }
-//        return requestOut;
-//    }
-//
-//    private void displayAsTool(@NotNull List<Message> toolReplies) {
-//        toolReplies.stream()
-//                .map(toolCalls -> toolCalls.tool_name() + " " + toolCalls.content())
-//                .forEach(client::displayToolsMessage);
-//    }
+    private final List<Message> toolReplies = new CopyOnWriteArrayList<>();
+    @NotNull RequestOut handleTools(@NotNull RequestOut requestOut, final Conversation conversation) {
+        Objects.requireNonNull(requestOut, "requestOut must not be null");
+        RequestOut[] requestOuts = new RequestOut[]{requestOut};
+        // todo bring back the max limit + fix bugs
+        toolReplies.addAll(ToolRegistry.findAndRunTools(requestOut.message().tool_calls()));
+
+        if (requestOuts[0].done() && !toolReplies.isEmpty()) {
+            List<Message> copy = List.copyOf(toolReplies);
+            toolReplies.clear();
+            displayAsTool(copy.stream());
+            conversation.chat(copy, ai, requestOut1 -> {
+                requestOuts[0] = requestOut1;
+                chatHandler(requestOut1, conversation);
+            });
+        }
+        return requestOuts[0];
+    }
+
+    private void displayAsTool(@NotNull Stream<Message> toolReplies) {
+        toolReplies.map(toolCalls -> toolCalls.tool_name() + " " + toolCalls.content())
+                .forEach(client::displayToolsMessage);
+    }
 
     private void displayMessage(@NotNull Message message) {
+        LOGGER.debug("displaying message {}", message);
+        String content = message.content();
+        if (content == null || content.isBlank()) return;
         switch (message.role()) {
-            case USER -> client.displayUserMessage(message.content());
-            case TOOL -> client.displayToolsMessage(message.content());
-            case ASSISTANT -> client.displayAIMessage(message.content());
-            case SYSTEM, USER_FACING -> client.displaySystemMessage(message.content());
+            case USER -> client.displayUserMessage(content);
+            case TOOL -> client.displayToolsMessage(content);
+            case ASSISTANT -> client.displayAIMessage(content);
+            case SYSTEM, USER_FACING -> client.displaySystemMessage(content);
             default -> LOGGER.warn("switch in io.github.hero_premium.program.Program reached an unexpected case");
         }
     }

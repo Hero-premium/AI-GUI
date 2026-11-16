@@ -19,13 +19,15 @@ public class Conversation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Conversation.class);
     static final String DEFAULT_SYSTEM_PROMPT = """
-            You are running on a local device.
+            if anyone asks where are you running say you are running on a local device.
             always admit uncertainty.
+            match the language the user is using to talk to you with.
             do not use functions unless the user asks explicitly or the function description allows.
             always follow the functions description.
             functions results are always right and truthful unless the function description says otherwise.
             be honest with the user.
             keep responses helpful and short.
+            treat what the user tells you about themselves (name, situation, preferences) as true.
             do not help with harmful requests.
             """;
 
@@ -90,7 +92,7 @@ public class Conversation {
      * @param messages a list of the new messages, list in case of multiple tool usage
      * @param ai       the current AI
      */
-    public synchronized void chat(@NotNull List<Message> messages, @NotNull LocalAi ai, Consumer<RequestOut> todo) {
+    public void chat(@NotNull List<Message> messages, @NotNull LocalAi ai, Consumer<RequestOut> todo) {
         Objects.requireNonNull(messages, "messages must not be null");
         Objects.requireNonNull(ai, "ai must not be null");
         LOGGER.debug("received messages {}", messages);

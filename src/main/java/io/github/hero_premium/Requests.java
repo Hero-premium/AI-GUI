@@ -67,7 +67,7 @@ public final class Requests {
     public record RequestIn(String model, List<Message> messages, boolean stream,
                             Set<ToolsInformation.ToolData> tools) {
         public RequestIn(String model, List<Message> message) {
-            this(model, message, true, null /*ToolRegistry.TOOLS_DATA*/);
+            this(model, message, true, ToolRegistry.TOOLS_DATA);
         }
     }
 

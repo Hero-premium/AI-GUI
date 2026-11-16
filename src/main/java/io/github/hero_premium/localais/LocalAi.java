@@ -4,6 +4,7 @@ import io.github.hero_premium.Requests;
 import io.github.hero_premium.Requests.RequestOut;
 import io.github.hero_premium.util.Util;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,30 +36,49 @@ public abstract class LocalAi {
     protected void sendRequest(HttpRequest request, Consumer<RequestOut> responseConsumer) {
         if (isThinking) throw new IllegalStateException("cannot accept more than one request at a time");
         isThinking = true;
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        Util.client.send(request, HttpResponse.BodyHandlers.ofInputStream()).body(),
-                        StandardCharsets.UTF_8))) {
-            RequestOut requestOut;
-            do {
-                String json = reader.readLine();
-                requestOut = Util.gson.fromJson(json, RequestOut.class);
-                isThinking = !requestOut.done();
-                responseConsumer.accept(requestOut);
-            } while (!requestOut.done());
+        try (BufferedReader reader = createBufferedReader(request)) {
+            readLines(responseConsumer, reader);
         } catch (ConnectException e) {
             LOGGER.error("connection failed: ", e);
-            responseConsumer.accept(RequestOut.defaultsIn(modelName,
-                            """
-                            couldn't reach ollama server,
-                            please check that ollama server is up
-                            (try 'ollama serve' in the cmd)"""
-            ));
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            responseConsumer.accept(getOllamaDownReqOut());
+        } catch (IOException e) {
+            LOGGER.error("IO error: ", e);
+            responseConsumer.accept(RequestOut.defaultsIn(modelName, "something went wrong while generating this response"));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.error("Interrupted: ", e);
+            responseConsumer.accept(RequestOut.defaultsIn(modelName, "something went wrong while generating this response"));
         } finally {
             isThinking = false;
         }
+    }
+
+    private void readLines(@NotNull Consumer<RequestOut> responseConsumer, @NotNull BufferedReader reader) throws IOException {
+        RequestOut requestOut;
+        do {
+            String json = reader.readLine();
+            LOGGER.debug(json);
+            requestOut = Util.gson.fromJson(json, RequestOut.class);
+            isThinking = !requestOut.done();
+            responseConsumer.accept(requestOut);
+        } while (!requestOut.done());
+    }
+
+    private @NotNull RequestOut getOllamaDownReqOut() {
+        return RequestOut.defaultsIn(modelName,
+                """
+                        couldn't reach ollama server,
+                        please check that ollama server is up
+                        (try 'ollama serve' in the cmd)"""
+        );
+    }
+
+    private @NotNull
+    static BufferedReader createBufferedReader(HttpRequest request) throws IOException, InterruptedException {
+        return new BufferedReader(
+                new InputStreamReader(
+                        Util.client.send(request, HttpResponse.BodyHandlers.ofInputStream()).body(),
+                        StandardCharsets.UTF_8));
     }
 
     public abstract void chat(List<Requests.Message> messages, Consumer<RequestOut> out);

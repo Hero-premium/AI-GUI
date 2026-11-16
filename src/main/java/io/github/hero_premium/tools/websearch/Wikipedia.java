@@ -113,7 +113,6 @@ public class Wikipedia extends Source {
         return page.title() + "\n\n" + page.extract() + "\n";
     }
 
-
     private static HttpRequest buildRequest(@NotNull String query) {
         Objects.requireNonNull(query, "query cannot be null");
         return HttpRequest.newBuilder()

@@ -101,8 +101,8 @@ class ProgramTest {
                         )
                 ))));
         program.chat("hello");
-        assertSame("", messages.get(0));
-        assertSame("unknown tool", messages.get(1));
+        assertEquals("hello", messages.get(0));
+        assertEquals("unknown tool", messages.get(1));
     }
 
     private static class FakeAi extends LocalAi {
@@ -117,12 +117,12 @@ class ProgramTest {
         @Contract(pure = true)
         @Override
         public void chat(@NonNull List<Requests.Message> messages, Consumer<Requests.RequestOut> out) {
-             toSay.getFirst();
+            toSay.forEach(out);
         }
     }
 
     private static class FakeClient extends Client {
-        //TODO make this compatible with streams
+
         private final List<String> messages;
 
         private FakeClient(@NotNull List<String> messages) {
