@@ -57,8 +57,8 @@ public final class CommandsRegistry {
      * @throws NullPointerException if givenCommand was null
      * @see #findAndRunCommand(String, Conversation, Client)
      */
-    public static Command findCommand(String givenCommand) {
-        return COMMANDS.get(Objects.requireNonNull(givenCommand, "givenCommand must not be null"));
+    public static Command findCommand(@NotNull String givenCommand) {
+        return COMMANDS.get(Objects.requireNonNull(givenCommand.toLowerCase(Locale.ROOT), "givenCommand must not be null"));
     }
 
     /**

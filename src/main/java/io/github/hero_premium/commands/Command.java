@@ -5,6 +5,7 @@ import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.program.conversations.Conversation;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -25,8 +26,9 @@ public abstract class Command {
      * @throws IllegalArgumentException if the command given does not start with /
      */
     public Command(String commandLine) {
-        this.commandLine = Objects.requireNonNull(commandLine, "commandLine must not be null");
+        Objects.requireNonNull(commandLine, "commandLine must not be null");
         if (!commandLine.startsWith("/")) throw new IllegalArgumentException("commandLine must start with /");
+        this.commandLine = commandLine.toLowerCase(Locale.ROOT);
     }
 
 

@@ -33,4 +33,11 @@ public class LocalAiRegistry {
         }
         AIS = Collections.unmodifiableMap(map);
     }
+
+    /**
+     * don't instantiate this
+     */
+    private LocalAiRegistry() {
+        throw new AssertionError("no io.github.hero_premium.LocalAiRegistry.Local instance for you!");
+    }
 }
