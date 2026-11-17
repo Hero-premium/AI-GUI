@@ -26,4 +26,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build and run tests
-        run: ./gradlew build
+        run: bash ./gradlew build
