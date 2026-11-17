@@ -43,11 +43,11 @@ public abstract class LocalAi {
             responseConsumer.accept(getOllamaDownReqOut());
         } catch (IOException e) {
             LOGGER.error("IO error: ", e);
-            responseConsumer.accept(RequestOut.defaultsIn(modelName, "something went wrong while generating this response"));
+            responseConsumer.accept(RequestOut.failureDefaultsIn(modelName, "something went wrong while generating this response"));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             LOGGER.error("Interrupted: ", e);
-            responseConsumer.accept(RequestOut.defaultsIn(modelName, "something went wrong while generating this response"));
+            responseConsumer.accept(RequestOut.failureDefaultsIn(modelName, "something went wrong while generating this response"));
         } finally {
             isThinking = false;
         }
@@ -63,7 +63,7 @@ public abstract class LocalAi {
     }
 
     private @NotNull RequestOut getOllamaDownReqOut() {
-        return RequestOut.defaultsIn(modelName,
+        return RequestOut.failureDefaultsIn(modelName,
                 """
                         couldn't reach ollama server,
                         please check that ollama server is up

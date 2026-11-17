@@ -3,9 +3,12 @@ package io.github.hero_premium.program.conversations;
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Roles;
 import io.github.hero_premium.localais.LocalAi;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.function.Consumer;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ConversationTest {
 
@@ -14,8 +17,10 @@ class ConversationTest {
     }
 
     private static Requests.RequestOut reply(Requests.Message message) {
-        return new Requests.RequestOut("test-model", "2026-01-01T00:00:00Z", message,
-                true, "stop", 0L, 0L, 0, 0, 0L, 0, 0L);
+        return new Requests.RequestOut(
+                "test-model", "2026-01-01T00:00:00Z", message,
+                true, "stop", 0L, 0L, 0, 0, 0L, 0, 0L
+        );
     }
 
     private static class FakeAi extends LocalAi {
@@ -30,108 +35,142 @@ class ConversationTest {
         @Override
         public void chat(List<Requests.Message> messages, Consumer<Requests.RequestOut> out) {
             lastReceived = List.copyOf(messages);
-             reply(nextReply);
+            out.accept(reply(nextReply));
         }
 
         @Override
         public boolean isThinking() {
             return thinking;
         }
-
     }
 
-//    @Test
-//    void chat() {
-//        Conversation conversation = new Conversation("normal");
-//        FakeAi ai = new FakeAi();
-//        conversation.chat(List.of(msg(Roles.USER, "hi")), ai);
-//        assertNotNull(conversation.pollLinesAndSaveThem(ai));
-//        assertEquals(3, conversation.getMessages().size());
-//        assertEquals(Roles.SYSTEM, conversation.getMessages().get(0).role());
-//        assertEquals(Roles.USER, conversation.getMessages().get(1).role());
-//        assertEquals(Roles.ASSISTANT, conversation.getMessages().get(2).role());
-//        assertEquals("hi", ai.lastReceived.getLast().content());
-//
-//        conversation = new Conversation("system");
-//        conversation.chat(List.of(msg(Roles.USER_FACING, "sys"), msg(Roles.USER, "hi")), new FakeAi());
-//        assertTrue(conversation.getMessages().stream().skip(1).noneMatch(m -> m.role() == Roles.USER_FACING));
-//
-//        conversation = new Conversation("thinking");
-//        ai = new FakeAi();
-//        ai.thinking = true;
-//        conversation.chat(List.of(msg(Roles.USER, "hi")), ai);
-//        assertNull(conversation.pollLinesAndSaveThem(ai));
-//        assertTrue(conversation.isQueued());
-//        assertEquals(1, conversation.getMessages().size());
-//        assertNull(ai.lastReceived);
-//
-//        conversation = new Conversation("error");
-//        ai = new FakeAi();
-//        ai.nextReply = msg(Roles.USER_FACING, "ollama server is down");
-//        conversation.chat(List.of(msg(Roles.USER, "hi")), ai);
-//        assertTrue(conversation.getMessages().stream().noneMatch(m -> m.role() == Roles.ASSISTANT));
-//
-//        // multiple messages in one call (tool usage) are all stored in order
-//        conversation = new Conversation("multi");
-//        conversation.chat(List.of(msg(Roles.USER, "a"), msg(Roles.TOOL, "b")), new FakeAi());
-//        assertEquals(Conversation.DEFAULT_SYSTEM_PROMPT, conversation.getMessages().getFirst().content());
-//        assertEquals("a", conversation.getMessages().get(1).content());
-//        assertEquals("b", conversation.getMessages().get(2).content());
-//
-//        // null checks
-//        Conversation nullCheck = new Conversation("nulls");
-//        assertThrows(NullPointerException.class, () -> nullCheck.chat(null, new FakeAi()));
-//        assertThrows(NullPointerException.class, () -> nullCheck.chat(List.of(msg(Roles.USER, "hi")), null));
-//    }
+    @Test
+    void chat() {
+        Conversation conversation = new Conversation("normal");
+        FakeAi ai = new FakeAi();
 
-//    @Test
-//    void getMessages() {
-//        // only system prompt at the start
-//        Conversation c = new Conversation("empty");
-//        assertEquals(1, c.getMessages().size());
-//
-//        // returns a copy that can't be modified
-//        c.chat(List.of(msg(Roles.USER, "hi")), new FakeAi());
-//        List<Requests.Message> copy = c.getMessages();
-//        assertThrows(UnsupportedOperationException.class, () -> copy.add(msg(Roles.USER, "x")));
-//
-//        // later chats don't change a copy taken earlier
-//        int sizeBefore = copy.size();
-//        c.chat(List.of(msg(Roles.USER, "again")), new FakeAi());
-//        assertEquals(sizeBefore, copy.size());
-//        assertEquals(sizeBefore + 2, c.getMessages().size());
-//    }
-//
-//    @Test
-//    void isQueued() {
-//        // false at the start
-//        Conversation c = new Conversation("queued");
-//        assertFalse(c.isQueued());
-//
-//        // true after a message is queued while thinking
-//        FakeAi ai = new FakeAi();
-//        ai.thinking = true;
-//        c.chat(List.of(msg(Roles.USER, "hi")), ai);
-//        assertTrue(c.isQueued());
-//
-//        // false again after the queue is drained
-//        c.getNext();
-//        assertFalse(c.isQueued());
-//    }
+        conversation.chat(List.of(msg(Roles.USER, "hi")), ai, _ -> {});
 
-//    @Test
-//    void getNext() {
-//
-//        Conversation c = new Conversation("next");
-//        FakeAi ai = new FakeAi();
-//        ai.thinking = true;
-//        c.chat(List.of(msg(Roles.USER, "first")), ai);
-//        c.chat(List.of(msg(Roles.USER, "second")), ai);
-//
-//        assertEquals("first", c.getNext().content());
-//        assertEquals("second", c.getNext().content());
-//
-//
-//         assertNull(c.getNext());
-//    }
+        IO.println(conversation.getMessages());
+        assertEquals(3, conversation.getMessages().size());
+        assertEquals(Roles.SYSTEM, conversation.getMessages().get(0).role());
+        assertEquals(Roles.USER, conversation.getMessages().get(1).role());
+        assertEquals(Roles.ASSISTANT, conversation.getMessages().get(2).role());
+        assertEquals("hi", ai.lastReceived.getLast().content());
+
+        conversation = new Conversation("system");
+        conversation.chat(
+                List.of(msg(Roles.USER_FACING, "sys"), msg(Roles.USER, "hi")),
+                new FakeAi(),
+                _ -> {}
+        );
+
+        assertTrue(conversation.getMessages().stream()
+                .noneMatch(m -> m.role() == Roles.USER_FACING));
+
+        conversation = new Conversation("thinking");
+        ai = new FakeAi();
+        ai.thinking = true;
+
+        conversation.chat(List.of(msg(Roles.USER, "hi")), ai, _ -> {});
+
+        assertTrue(conversation.isQueued());
+        assertEquals(1, conversation.getMessages().size());
+        assertNull(ai.lastReceived);
+
+        conversation = new Conversation("error");
+        ai = new FakeAi();
+        ai.nextReply = msg(Roles.USER_FACING, "ollama server is down");
+
+        conversation.chat(List.of(msg(Roles.USER, "hi")), ai, _ -> {});
+
+        assertTrue(conversation.getMessages().stream()
+                .noneMatch(m -> m.role() == Roles.ASSISTANT));
+
+        conversation = new Conversation("multi");
+
+        conversation.chat(
+                List.of(msg(Roles.USER, "a"), msg(Roles.TOOL, "b")),
+                new FakeAi(),
+                _ -> {}
+        );
+
+        assertEquals(
+                Conversation.DEFAULT_SYSTEM_PROMPT,
+                conversation.getMessages().getFirst().content()
+        );
+        assertEquals("a", conversation.getMessages().get(1).content());
+        assertEquals("b", conversation.getMessages().get(2).content());
+
+        Conversation nullCheck = new Conversation("nulls");
+
+        assertThrows(
+                NullPointerException.class,
+                () -> nullCheck.chat((List<Requests.Message>) null, new FakeAi(), _ -> {})
+        );
+        assertThrows(
+                NullPointerException.class,
+                () -> nullCheck.chat(
+                        List.of(msg(Roles.USER, "hi")),
+                        null,
+                        _ -> {}
+                )
+        );
+    }
+
+    @Test
+    void getMessages() {
+        Conversation c = new Conversation("empty");
+
+        assertEquals(1, c.getMessages().size());
+
+        c.chat(List.of(msg(Roles.USER, "hi")), new FakeAi(), _ -> {});
+
+        List<Requests.Message> copy = c.getMessages();
+
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> copy.add(msg(Roles.USER, "x"))
+        );
+
+        int sizeBefore = copy.size();
+
+        c.chat(List.of(msg(Roles.USER, "again")), new FakeAi(), _ -> {});
+
+        assertEquals(sizeBefore, copy.size());
+        assertEquals(sizeBefore + 2, c.getMessages().size());
+    }
+
+    @Test
+    void isQueued() {
+        Conversation c = new Conversation("queued");
+
+        assertFalse(c.isQueued());
+
+        FakeAi ai = new FakeAi();
+        ai.thinking = true;
+
+        c.chat(List.of(msg(Roles.USER, "hi")), ai, _ -> {});
+
+        assertTrue(c.isQueued());
+
+        c.getNext();
+
+        assertFalse(c.isQueued());
+    }
+
+    @Test
+    void getNext() {
+        Conversation c = new Conversation("next");
+        FakeAi ai = new FakeAi();
+        ai.thinking = true;
+
+        c.chat(List.of(msg(Roles.USER, "first")), ai, _ -> {});
+        c.chat(List.of(msg(Roles.USER, "second")), ai, _ -> {});
+
+        assertEquals("first", c.getNext().content());
+        assertEquals("second", c.getNext().content());
+
+        assertNull(c.getNext());
+    }
 }

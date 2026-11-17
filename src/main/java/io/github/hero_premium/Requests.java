@@ -132,7 +132,7 @@ public final class Requests {
         }
 
         @Contract("_, _ -> new")
-        public static @NotNull RequestOut defaultsIn(String model, String toDisplay) {
+        public static @NotNull RequestOut failureDefaultsIn(String model, String toDisplay) {
             return new RequestOut(model, LocalDateTime.now().toString(),
                     new Requests.Message(Roles.USER_FACING, toDisplay),
                     true, "failure",

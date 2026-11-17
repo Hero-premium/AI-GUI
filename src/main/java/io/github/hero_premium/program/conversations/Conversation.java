@@ -108,6 +108,10 @@ public class Conversation {
         });
     }
 
+    public void chat(Message message, LocalAi ai, Consumer<RequestOut> todo) {
+        chat(List.of(message), ai, todo);
+    }
+
     public List<Message> getMessages() {
         return List.copyOf(messageList);
     }

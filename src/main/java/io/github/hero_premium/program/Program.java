@@ -11,16 +11,18 @@ import io.github.hero_premium.localais.LocalAiRegistry;
 import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.program.conversations.ConversationsManager;
 import io.github.hero_premium.tools.ToolRegistry;
+import io.github.hero_premium.tools.ToolsInformation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Program {
 
@@ -55,21 +57,23 @@ public class Program {
     /**
      * call this to chat with the AI, it handles tools and commands and queue
      *
-     * @param request the String of what the user wants to tell the AI
+     * @param message the message of what to tell the AI
      */
-    public void chat(@NotNull String request) {
-        if (request.isBlank()) return;
-        client.displayUserMessage(request);
+    public void chat(@NotNull Message message) {
+        String content = message.content();
+        if (content == null || content.isBlank()) return;
+        displayMessage(message);
         Conversation conversation = conversationsManager.getCurrentConversation();
-        if (handleCommands(request, conversation)) return;
+        if (handleCommands(content, conversation)) return;
 
-        conversation.chat(List.of(new Message(Roles.USER, request)), ai, requestOut -> chatHandler(requestOut, conversation));
+        conversation.chat(message, ai, requestOut -> chatHandler(requestOut, conversation));
 
-        while (conversation.isQueued()) {
-            Message next = conversation.getNext();
-            displayMessage(next);
-            conversation.chat(List.of(next), ai, requestOut -> chatHandler(requestOut, conversation));
-        }
+        // FIXME a very very long loop when there's a queue
+        // if (conversation.isQueued()) chat(conversation.getNext());
+    }
+
+    public void chat(String request) {
+        chat(new Message(Roles.USER, request));
     }
 
     private void chatHandler(@NotNull RequestOut requestOut, Conversation conversation) {
@@ -80,32 +84,53 @@ public class Program {
     }
 
     private final List<Message> toolReplies = new CopyOnWriteArrayList<>();
+    private final AtomicInteger toolLoops = new AtomicInteger();
 
-    @Nullable RequestOut handleTools(@NotNull RequestOut requestOut, final Conversation conversation) {
+    private @Nullable RequestOut handleTools(@NotNull RequestOut requestOut, final Conversation conversation) {
         Objects.requireNonNull(requestOut, "requestOut must not be null");
-        RequestOut[] requestOuts = new RequestOut[]{requestOut};
-        // todo bring back the max limit + fix bugs
-        toolReplies.addAll(ToolRegistry.findAndRunTools(requestOut.message().tool_calls()));
 
-        if (requestOuts[0].done() && !toolReplies.isEmpty()) {
+        // todo bring back the max limit + fix bugs
+        List<ToolsInformation.ToolCall> toolCalls = requestOut.message().tool_calls();
+        if (toolCalls != null && !toolCalls.isEmpty()) {
+            toolLoops.incrementAndGet();
+            if (toolLoops.get() >= MAX_TOOLS_REQUESTS) {
+                toolLoops.set(0);
+                return new RequestOut(
+                        requestOut.model(),
+                        requestOut.created_at(),
+                        new Message(Roles.USER_FACING, "the AI hit a limit and couldn't generate a response, please try again"),
+                        true,
+                        "failure",
+                        requestOut.total_duration(),
+                        requestOut.load_duration(),
+                        requestOut.prompt_eval_count(),
+                        requestOut.prompt_eval_cached_count(),
+                        requestOut.prompt_eval_duration(),
+                        requestOut.eval_count(),
+                        requestOut.eval_duration(),
+                        requestOut.error());
+            }
+        }
+        toolReplies.addAll(ToolRegistry.findAndRunTools(toolCalls));
+
+        if (requestOut.done() && !toolReplies.isEmpty()) {
             List<Message> copy = List.copyOf(toolReplies);
             toolReplies.clear();
-            displayAsTool(copy.stream());
-            conversation.chat(copy, ai, requestOut1 -> {
-                requestOuts[0] = requestOut1;
-                chatHandler(requestOut1, conversation);
-            });
+            displayAsTool(copy);
+            conversation.chat(copy, ai, requestOut1 -> chatHandler(requestOut1, conversation));
             return null;
         }
 
-        if (requestOuts[0].done()) return requestOuts[0];
-        String content = requestOuts[0].message().content();
-        return (content == null || content.isEmpty()) ? null : requestOuts[0];
-
+        String content = requestOut.message().content();
+        if (requestOut.done() || content != null && !content.isEmpty()) {
+            toolLoops.set(0);
+            return requestOut;
+        }
+        return null;
     }
 
-    private void displayAsTool(@NotNull Stream<Message> toolReplies) {
-        toolReplies
+    private void displayAsTool(@NotNull Collection<Message> toolReplies) {
+        toolReplies.stream()
                 .map(toolCalls -> toolCalls.tool_name() + " " + toolCalls.content())
                 .forEach(client::displayToolsMessage);
     }
