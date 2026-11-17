@@ -133,11 +133,19 @@ public final class Requests {
 
         @Contract("_, _ -> new")
         public static @NotNull RequestOut failureDefaultsIn(String model, String toDisplay) {
-            return new RequestOut(model, LocalDateTime.now().toString(),
+            return new RequestOut(
+                    model,
+                    LocalDateTime.now().toString(),
                     new Requests.Message(Roles.USER_FACING, toDisplay),
-                    true, "failure",
-                    0, 0, 0, 0, 0, 0, 0);
-
+                    true,
+                    "failure",
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0);
         }
 
         public int getEvalDurationInSeconds() {

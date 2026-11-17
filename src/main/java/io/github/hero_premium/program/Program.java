@@ -10,26 +10,21 @@ import io.github.hero_premium.localais.LocalAi;
 import io.github.hero_premium.localais.LocalAiRegistry;
 import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.program.conversations.ConversationsManager;
-import io.github.hero_premium.tools.ToolRegistry;
-import io.github.hero_premium.tools.ToolsInformation;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Program {
 
-    private static final int MAX_TOOLS_REQUESTS = 5;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Program.class);
     @NotNull
     private final ConversationsManager conversationsManager = new ConversationsManager();
+    @NotNull
+    private final ToolHandler toolHandler = new ToolHandler();
     @NotNull
     private final Client client;
     @NotNull
@@ -77,63 +72,17 @@ public class Program {
     }
 
     private void chatHandler(@NotNull RequestOut requestOut, Conversation conversation) {
-        requestOut = handleTools(requestOut, conversation);
+        requestOut = toolHandler.handleTools(
+                requestOut,
+                conversation,
+                ai,
+                client,
+                this::chatHandler);
         if (requestOut == null) return;
         displayMessage(requestOut.message());
         if (requestOut.done()) client.endLine();
     }
 
-    private final List<Message> toolReplies = new CopyOnWriteArrayList<>();
-    private final AtomicInteger toolLoops = new AtomicInteger();
-
-    private @Nullable RequestOut handleTools(@NotNull RequestOut requestOut, final Conversation conversation) {
-        Objects.requireNonNull(requestOut, "requestOut must not be null");
-
-        // todo bring back the max limit + fix bugs
-        List<ToolsInformation.ToolCall> toolCalls = requestOut.message().tool_calls();
-        if (toolCalls != null && !toolCalls.isEmpty()) {
-            toolLoops.incrementAndGet();
-            if (toolLoops.get() >= MAX_TOOLS_REQUESTS) {
-                toolLoops.set(0);
-                return new RequestOut(
-                        requestOut.model(),
-                        requestOut.created_at(),
-                        new Message(Roles.USER_FACING, "the AI hit a limit and couldn't generate a response, please try again"),
-                        true,
-                        "failure",
-                        requestOut.total_duration(),
-                        requestOut.load_duration(),
-                        requestOut.prompt_eval_count(),
-                        requestOut.prompt_eval_cached_count(),
-                        requestOut.prompt_eval_duration(),
-                        requestOut.eval_count(),
-                        requestOut.eval_duration(),
-                        requestOut.error());
-            }
-        }
-        toolReplies.addAll(ToolRegistry.findAndRunTools(toolCalls));
-
-        if (requestOut.done() && !toolReplies.isEmpty()) {
-            List<Message> copy = List.copyOf(toolReplies);
-            toolReplies.clear();
-            displayAsTool(copy);
-            conversation.chat(copy, ai, requestOut1 -> chatHandler(requestOut1, conversation));
-            return null;
-        }
-
-        String content = requestOut.message().content();
-        if (requestOut.done() || content != null && !content.isEmpty()) {
-            toolLoops.set(0);
-            return requestOut;
-        }
-        return null;
-    }
-
-    private void displayAsTool(@NotNull Collection<Message> toolReplies) {
-        toolReplies.stream()
-                .map(toolCalls -> toolCalls.tool_name() + " " + toolCalls.content())
-                .forEach(client::displayToolsMessage);
-    }
 
     private void displayMessage(@NotNull Message message) {
         String content = message.content();
