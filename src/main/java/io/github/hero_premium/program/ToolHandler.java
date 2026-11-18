@@ -37,7 +37,7 @@ class ToolHandler {
             toolLoops.incrementAndGet();
             if (toolLoops.get() >= MAX_TOOLS_REQUESTS) {
                 toolLoops.set(0);
-                ai.interrupt();
+                if (!requestOut.done()) ai.interrupt();
                 return RequestOut.failureDefaultsIn(ai.modelName,
                         "the AI hit a limit and couldn't generate a response, please try again");
             }

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 public class Program {
 
@@ -29,6 +30,8 @@ public class Program {
     private final Client client;
     @NotNull
     private LocalAi ai;
+    private static final Random random = new Random();
+    private static final String ADVERTISEMENT_MESSAGE = "do you like this app? consider paying just 999$ a month for the pro+++ version!";
 
     public void setAi(LocalAi ai) {
         this.ai = Objects.requireNonNull(ai, "ai must not be null");
@@ -58,13 +61,13 @@ public class Program {
         String content = message.content();
         if (content == null || content.isBlank()) return;
         displayMessage(message);
+        // this is a joke if it somehow slipped into git, ill remove it
+        if (random.nextInt(100) < 25) displayMessage(new Message(Roles.USER_FACING, ADVERTISEMENT_MESSAGE));
         Conversation conversation = conversationsManager.getCurrentConversation();
         if (handleCommands(content, conversation)) return;
 
         conversation.chat(message, ai, requestOut -> chatHandler(requestOut, conversation));
 
-        // FIXME a very very long loop when there's a queue
-        // if (conversation.isQueued()) chat(conversation.getNext());
     }
 
     public void chat(String request) {
@@ -80,7 +83,10 @@ public class Program {
                 this::chatHandler);
         if (requestOut == null) return;
         displayMessage(requestOut.message());
-        if (requestOut.done()) client.endLine();
+        if (requestOut.done()) {
+            client.endLine();
+            if (conversation.isQueued() && !ai.isThinking()) chat(conversation.getNext());
+        }
     }
 
 

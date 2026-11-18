@@ -27,6 +27,7 @@ public abstract class LocalAi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
     public final String modelName;
+
     private volatile boolean isThinking = false;
     private volatile boolean interrupted = false;
 
@@ -51,6 +52,7 @@ public abstract class LocalAi {
             responseConsumer.accept(RequestOut.failureDefaultsIn(modelName, "something went wrong while generating this response"));
         } finally {
             isThinking = false;
+            interrupted = false;
         }
     }
 
@@ -59,7 +61,6 @@ public abstract class LocalAi {
         do {
             if (interrupted) {
                 responseConsumer.accept(RequestOut.failureDefaultsIn(modelName, "this response was interrupted"));
-                interrupted = false;
                 break;
             }
             requestOut = Util.gson.fromJson(reader.readLine(), RequestOut.class);
@@ -90,10 +91,6 @@ public abstract class LocalAi {
     @Contract(pure = true)
     public boolean isThinking() {
         return isThinking;
-    }
-
-    public boolean isInterrupted() {
-        return interrupted;
     }
 
     public void interrupt() {
