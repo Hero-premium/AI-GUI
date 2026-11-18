@@ -37,14 +37,18 @@ class ToolHandler {
             toolLoops.incrementAndGet();
             if (toolLoops.get() >= MAX_TOOLS_REQUESTS) {
                 toolLoops.set(0);
+                ai.interrupt();
                 return RequestOut.failureDefaultsIn(ai.modelName,
                         "the AI hit a limit and couldn't generate a response, please try again");
             }
         }
-        toolReplies.addAll(ToolRegistry.findAndRunTools(toolCalls));
+
+        List<Message> toolResults = ToolRegistry.findAndRunTools(toolCalls);
+        toolReplies.addAll(toolResults);
+        displayAsTool(toolResults, client);
 
         if (requestOut.done() && !toolReplies.isEmpty()) {
-            drainToolReplies(conversation, ai, client, chatHandler);
+            drainToolReplies(conversation, ai, chatHandler);
             return null;
         }
 
@@ -56,10 +60,9 @@ class ToolHandler {
         return null;
     }
 
-    private void drainToolReplies(@NotNull Conversation conversation, @NotNull LocalAi ai, @NotNull Client client, @NotNull BiConsumer<RequestOut, Conversation> chatHandler) {
+    private void drainToolReplies(@NotNull Conversation conversation, @NotNull LocalAi ai, @NotNull BiConsumer<RequestOut, Conversation> chatHandler) {
         List<Message> copy = List.copyOf(toolReplies);
         toolReplies.clear();
-        displayAsTool(copy, client);
         conversation.chat(copy, ai, requestOut -> chatHandler.accept(requestOut, conversation));
     }
 

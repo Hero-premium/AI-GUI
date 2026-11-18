@@ -28,6 +28,7 @@ public abstract class LocalAi {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
     public final String modelName;
     private volatile boolean isThinking = false;
+    private volatile boolean interrupted = false;
 
     public LocalAi(String modelName) {
         this.modelName = Objects.requireNonNull(modelName, "modelName must not be null");
@@ -56,6 +57,11 @@ public abstract class LocalAi {
     private void readLines(@NotNull Consumer<RequestOut> responseConsumer, @NotNull BufferedReader reader) throws IOException {
         RequestOut requestOut;
         do {
+            if (interrupted) {
+                responseConsumer.accept(RequestOut.failureDefaultsIn(modelName, "this response was interrupted"));
+                interrupted = false;
+                break;
+            }
             requestOut = Util.gson.fromJson(reader.readLine(), RequestOut.class);
             isThinking = !requestOut.done();
             responseConsumer.accept(requestOut);
@@ -84,5 +90,14 @@ public abstract class LocalAi {
     @Contract(pure = true)
     public boolean isThinking() {
         return isThinking;
+    }
+
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    public void interrupt() {
+        if (!isThinking) throw new IllegalStateException("cannot be interrupted if the ai is not thinking");
+        this.interrupted = true;
     }
 }
