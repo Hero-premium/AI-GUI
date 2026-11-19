@@ -15,6 +15,7 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 // this file is AI generated, unfortunately.
 class ProgramTest {
 
@@ -111,6 +112,10 @@ class ProgramTest {
         @Override
         public void endLine() {
             events.add("endLine");
+        }
+
+        @Override
+        public void endLine(String message) {
         }
 
         long count(String prefix) {

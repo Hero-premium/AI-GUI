@@ -53,6 +53,11 @@ class CommandsRegistryTest {
             public void endLine() {
 
             }
+
+            @Override
+            public void endLine(String message) {
+
+            }
         };
 
         List<Requests.Message> message = CommandsRegistry.findAndRunCommand(
