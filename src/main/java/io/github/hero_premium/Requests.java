@@ -61,7 +61,7 @@ public final class Requests {
      *
      * @param model    the name of the model that is meant to receive this request
      * @param messages all the messages that has been sent this conversation, you handle adding/removing messages yourself
-     * @param stream   whether the model will dump all the tokens at once or send one token at the time, for now we only support false
+     * @param stream   whether the model will dump all the tokens at once or send one token at the time.
      * @param tools    every available tool
      */
     public record RequestIn(String model, List<Message> messages, boolean stream,

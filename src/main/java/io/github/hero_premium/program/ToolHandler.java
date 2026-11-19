@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
-// fixme there's a fishy bug here, ig
+
 class ToolHandler {
 
     private static final int MAX_TOOLS_REQUESTS = 5;

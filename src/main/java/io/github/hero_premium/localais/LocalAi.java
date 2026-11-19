@@ -17,6 +17,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
@@ -28,7 +29,7 @@ public abstract class LocalAi {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
     public final String modelName;
 
-    private volatile boolean isThinking = false;
+    private final AtomicBoolean isThinking = new AtomicBoolean(false);
     private volatile boolean interrupted = false;
 
     public LocalAi(String modelName) {
@@ -36,8 +37,9 @@ public abstract class LocalAi {
     }
 
     protected void sendRequest(HttpRequest request, Consumer<RequestOut> responseConsumer) {
-        if (isThinking) throw new IllegalStateException("cannot accept more than one request at a time");
-        isThinking = true;
+        // if the model is already thinking isThinking would be true and the check will fail therefor throw
+        if (!isThinking.compareAndSet(false, true))
+            throw new IllegalStateException("cannot accept more than one request at a time");
         try (BufferedReader reader = createBufferedReader(request)) {
             readLines(responseConsumer, reader);
         } catch (ConnectException e) {
@@ -51,7 +53,7 @@ public abstract class LocalAi {
             LOGGER.error("Interrupted: ", e);
             responseConsumer.accept(RequestOut.failureDefaultsIn(modelName, "something went wrong while generating this response"));
         } finally {
-            isThinking = false;
+            isThinking.set(false);
             interrupted = false;
         }
     }
@@ -64,7 +66,7 @@ public abstract class LocalAi {
                 break;
             }
             requestOut = Util.gson.fromJson(reader.readLine(), RequestOut.class);
-            isThinking = !requestOut.done();
+            isThinking.set(!requestOut.done());
             responseConsumer.accept(requestOut);
         } while (!requestOut.done());
     }
@@ -90,11 +92,11 @@ public abstract class LocalAi {
 
     @Contract(pure = true)
     public boolean isThinking() {
-        return isThinking;
+        return isThinking.get();
     }
 
     public void interrupt() {
-        if (!isThinking) throw new IllegalStateException("cannot be interrupted if the ai is not thinking");
+        if (!isThinking.get()) throw new IllegalStateException("cannot be interrupted if the ai is not thinking");
         this.interrupted = true;
     }
 }
