@@ -32,7 +32,8 @@ public class JavaFX extends Client {
         scrollPane = new ScrollPane(messages);
         messages.setPadding(new Insets(10));
         scrollPane.setFitToWidth(true);
-        messages.heightProperty().addListener((_, _, _) -> scrollPane.setVvalue(1.0));
+        messages.heightProperty().addListener((_, _, _)
+                -> scrollPane.setVvalue(1.0));
 
         BorderPane root = new BorderPane();
         root.setCenter(scrollPane);
@@ -44,7 +45,7 @@ public class JavaFX extends Client {
     }
 
     public JavaFX() {
-        // NO OP so JavaFXLauncher can be call the one with stage
+        // NO OP so JavaFXLauncher can call the one with stage
     }
 
     private void addChild(String message, Pos pos) {
@@ -86,9 +87,9 @@ public class JavaFX extends Client {
     }
 
     @Override
-    public void endLine() {
+    public void endLine(String message) {
         Platform.runLater(() -> currentAiLabel = null);
-        addChild("// your turn", Pos.CENTER_RIGHT);
+        addChild(message, Pos.CENTER_RIGHT);
     }
 
     private @NotNull TextField generateTextField() {

@@ -34,7 +34,7 @@ public class Program {
         this.ai = Objects.requireNonNull(ai, "ai must not be null");
     }
 
-    public Program(@NotNull Client client, LocalAi ai) {
+    public Program(@NotNull Client client, @NotNull LocalAi ai) {
         Objects.requireNonNull(client, "client must not be null");
         Client varClient = Objects.requireNonNull(client.getClient(), "client.getClient() must not return null");
         this.client = Objects.requireNonNull(varClient.setProgram(this), "client.setProgram(Program) must not return null");

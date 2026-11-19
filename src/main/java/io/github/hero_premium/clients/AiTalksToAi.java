@@ -77,6 +77,11 @@ public class AiTalksToAi extends Client {
         IO.println();
     }
 
+    @Override
+    public void endLine(String message) {
+        IO.println(message);
+    }
+
     private enum Turns {
         AI1, AI2
     }

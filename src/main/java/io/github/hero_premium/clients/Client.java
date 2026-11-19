@@ -48,7 +48,18 @@ public abstract class Client {
      * for example you keep appending with {@link IO#print(Object)} then at the end of message call {@link IO#println(Object)}
      * for CLI based applications
      */
-    public abstract void endLine();
+    public void endLine() {
+        endLine("// your turn");
+    }
+
+    /**
+     * used alongside streaming mode to indicate the end of a message,
+     * for example you keep appending with {@link IO#print(Object)} then at the end of message call {@link IO#println(Object)}
+     * for CLI based applications
+     *
+     * @param message a custom message to display
+     */
+    public abstract void endLine(String message);
 
     public Client setProgram(@NotNull Program program) {
         this.program = Objects.requireNonNull(program, "program must not be null");

@@ -17,7 +17,6 @@ public class ScannerInput extends Client {
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine();
             program.chat(input);
-            displaySystemMessage("User turn!");
         }
         displaySystemMessage("you have just shut this down");
     }
@@ -44,6 +43,11 @@ public class ScannerInput extends Client {
 
     @Override
     public void endLine() {
-        IO.println();
+        endLine("User turn!");
+    }
+
+    @Override
+    public void endLine(String message) {
+        IO.println(message);
     }
 }

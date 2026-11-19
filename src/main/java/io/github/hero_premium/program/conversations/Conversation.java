@@ -34,6 +34,7 @@ public class Conversation {
     private final Deque<Message> queue = new ArrayDeque<>();
     private final List<Message> messageList = new ArrayList<>();
     private final RequestOutBuilder requestOutBuilder = new RequestOutBuilder();
+    public final UUID uuid = UUID.randomUUID();
 
     @NotNull
     public final String title;

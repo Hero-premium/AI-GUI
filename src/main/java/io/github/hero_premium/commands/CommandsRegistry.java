@@ -73,7 +73,9 @@ public final class CommandsRegistry {
     }
 
     /**
-     * runs the given command and returns the result as a list of messages, returns an empty list if the command was invalid or if the command returned null
+     * runs the given command and returns the result as a list of messages,
+     * returns a list containing one error message if the command was doesn't exist
+     * returns an empty list if the command returned null
      *
      * @param givenCommand the command to execute
      * @param conversation           the current running conversation

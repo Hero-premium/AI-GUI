@@ -3,6 +3,7 @@ package io.github.hero_premium.commands;
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.program.conversations.Conversation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,7 @@ public abstract class Command {
     }
 
 
-    protected abstract List<Requests.Message> runCommand(Conversation conversation, Client client, String[] arguments);
+    protected abstract @Nullable List<Requests.Message> runCommand(Conversation conversation, Client client, String[] arguments);
 
     @Override
     public String toString() {
