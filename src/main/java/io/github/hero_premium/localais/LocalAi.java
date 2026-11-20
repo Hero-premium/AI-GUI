@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
+import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -25,7 +26,7 @@ import java.util.function.Consumer;
  */
 public abstract class LocalAi {
 
-
+    private static final String AI_API_URL = "http://localhost:11434/api/chat";
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
     public final String modelName;
 
@@ -88,8 +89,9 @@ public abstract class LocalAi {
                         StandardCharsets.UTF_8));
     }
 
-    public abstract void chat(List<Requests.Message> messages, Consumer<RequestOut> out);
-
+    public void chat(List<Requests.Message> messages, Consumer<Requests.RequestOut> out) {
+        sendRequest(LocalAi.buildHttpRequest(new Requests.RequestIn(modelName, messages)), out);
+    }
     @Contract(pure = true)
     public boolean isThinking() {
         return isThinking.get();
@@ -98,5 +100,13 @@ public abstract class LocalAi {
     public void interrupt() {
         if (!isThinking.get()) throw new IllegalStateException("cannot be interrupted if the ai is not thinking");
         this.interrupted = true;
+    }
+
+    static HttpRequest buildHttpRequest(Requests.RequestIn requestIn) {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(AI_API_URL))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(Util.gson.toJson(requestIn)))
+                .build();
     }
 }

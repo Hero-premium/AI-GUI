@@ -42,7 +42,7 @@ public class Program {
     }
 
     public Program(@NotNull Client client) {
-        this(client, new Llama3b());
+        this(client, LocalAiRegistry.AIS.get("qwen3:4b"));
     }
 
     public void launch() {

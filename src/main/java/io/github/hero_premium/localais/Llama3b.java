@@ -1,37 +1,10 @@
 package io.github.hero_premium.localais;
 
 
-import io.github.hero_premium.Requests;
-import io.github.hero_premium.util.Util;
-
-import java.net.URI;
-import java.net.http.HttpRequest;
-import java.util.List;
-import java.util.function.Consumer;
-
 public class Llama3b extends LocalAi {
-
-    private static final String AI_API_URL = "http://localhost:11434/api/chat";
 
     public Llama3b() {
         super("llama3.2:3b");
     }
 
-
-    /**
-     * @param message the messages to send, usually the entire conversation history.
-     */
-    @Override
-    public void chat(List<Requests.Message> message, Consumer<Requests.RequestOut> out) {
-        sendRequest(buildHttpRequest(new Requests.RequestIn(modelName, message)), out);
-    }
-
-
-    private HttpRequest buildHttpRequest(Requests.RequestIn requestIn) {
-        return HttpRequest.newBuilder()
-                .uri(URI.create(AI_API_URL))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(Util.gson.toJson(requestIn)))
-                .build();
-    }
 }

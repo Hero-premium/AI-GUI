@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -65,9 +66,9 @@ public final class Requests {
      * @param tools    every available tool
      */
     public record RequestIn(String model, List<Message> messages, boolean stream,
-                            Set<ToolsInformation.ToolData> tools) {
+                            Set<ToolsInformation.ToolData> tools, Map<String, Object> options) {
         public RequestIn(String model, List<Message> message) {
-            this(model, message, true, ToolRegistry.TOOLS_DATA);
+            this(model, message, true, ToolRegistry.TOOLS_DATA, null);
         }
     }
 
