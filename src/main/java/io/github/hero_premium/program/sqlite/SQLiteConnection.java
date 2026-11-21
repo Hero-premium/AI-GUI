@@ -7,9 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
 
 class SQLiteConnection {
 
@@ -53,14 +51,28 @@ class SQLiteConnection {
         }
     }
 
-    private String @NotNull [] getColumnNames(@NotNull Map<TableScheme.Column, Object> values) {
+    synchronized <T> List<T> loadColumn(String tableName, String columnName, Class<T> columnType) {
+        try (PreparedStatement statement = connection.prepareStatement("SELECT %s FROM %s".formatted(columnName, tableName))) {
+            return getResults(columnType, statement.executeQuery());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static <T> @NotNull List<T> getResults(Class<T> columnType, ResultSet resultSet) throws SQLException {
+        List<T> list = new ArrayList<>();
+        while (resultSet.next()) list.add(resultSet.getObject(1, columnType));
+        return Collections.unmodifiableList(list);
+    }
+
+    private static String @NotNull [] getColumnNames(@NotNull Map<TableScheme.Column, Object> values) {
         return values.keySet().stream()
                 .map(TableScheme.Column::name)
                 .toList()
                 .toArray(new String[0]);
     }
 
-    private @NotNull @Language("sql") String getCommand(@NotNull String tableName, String @NotNull [] columns) {
+    private static @NotNull @Language("sql") String getCommand(@NotNull String tableName, String @NotNull [] columns) {
         StringJoiner columnsNamesJoiner = new StringJoiner(", ", "(", ")");
         StringJoiner valuesJoiner = new StringJoiner(", ", "(", ")");
         for (String column : columns) {

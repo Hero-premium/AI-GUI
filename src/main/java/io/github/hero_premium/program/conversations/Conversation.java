@@ -18,10 +18,9 @@ import java.util.function.Consumer;
 
 public class Conversation {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Conversation.class);
     public static final String DEFAULT_SYSTEM_PROMPT = """
-            if anyone asks where are you running say you are running on a local device.
-            always admit uncertainty.
+            Only if the user asks where you are running: say you are running on a local device (offline, on their device).
+            if you don't know something or aren't sure, say so.
             match the language the user is using to talk to you with.
             do not use functions unless the user asks explicitly or the function description allows.
             always follow the functions' description.
@@ -31,6 +30,9 @@ public class Conversation {
             treat what the user tells you about themselves (name, situation, preferences) as true.
             do not help with harmful requests.
             """;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Conversation.class);
+
     private final RequestOutBuilder requestOutBuilder = new RequestOutBuilder();
     private final Deque<Message> queue = new ArrayDeque<>();
 
@@ -39,7 +41,7 @@ public class Conversation {
     @NotNull
     public final UUID uuid;
     @NotNull
-    public final String title;
+    private String title;
     @NotNull
     private final SQLiteTable sqlite;
 
@@ -130,5 +132,13 @@ public class Conversation {
 
     public Message getNext() {
         return queue.poll();
+    }
+
+     void setTitle(@NotNull String title) {
+        this.title = Objects.requireNonNull(title, "title must not be null");
+    }
+
+    public @NotNull String getTitle() {
+        return title;
     }
 }

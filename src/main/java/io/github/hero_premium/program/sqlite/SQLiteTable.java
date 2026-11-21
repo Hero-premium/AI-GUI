@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,8 +43,22 @@ public class SQLiteTable {
         );
     }
 
-    private void save(@NotNull SQLiteConnection sqLiteConnection, @NotNull Map<TableScheme.Column, Object> toAddToColumns) {
+    /**
+     * saves to the database, to whichever link was passed at the creation of this.
+     *
+     * @param toAddToColumns the key is the column and the value is whatever you want to add, value must match the column type.
+     * @throws IllegalArgumentException if the column passed does not exist in this table.
+     * @throws IllegalArgumentException if the object type does not match the type of column you are adding to.
+     */
+    public void save(Map<TableScheme.Column, Object> toAddToColumns) {
+        ConnectionsPool.get(url).ifPresentOrElse(
+                connection -> save(connection,
+                        Objects.requireNonNull(toAddToColumns, "columnsNames must not be null")),
+                () -> LOGGER.error("this connection is closed, cannot save to table"));
+    }
 
+
+    private void save(@NotNull SQLiteConnection sqLiteConnection, @NotNull Map<TableScheme.Column, Object> toAddToColumns) {
         for (Map.Entry<TableScheme.Column, Object> columnsName : toAddToColumns.entrySet()) {
             TableScheme.Column column = columnsName.getKey();
             Object value = columnsName.getValue();
@@ -60,19 +75,17 @@ public class SQLiteTable {
         sqLiteConnection.save(tableScheme.name, toAddToColumns);
     }
 
-    /**
-     * saves to the database, to whichever link was passed at the creation of this.
-     *
-     * @param toAddToColumns the key is the column and the value is whatever you want to add, value must match the column type.
-     * @throws IllegalArgumentException if the column passed does not exist in this table.
-     * @throws IllegalArgumentException if the object type does not match the type of column you are adding to.
-     */
-    public void save(Map<TableScheme.Column, Object> toAddToColumns) {
-        ConnectionsPool.get(url).ifPresentOrElse(
-                connection -> save(connection,
-                        Objects.requireNonNull(toAddToColumns, "columnsNames must not be null")),
-                () -> LOGGER.error("this connection is closed, cannot save to table"));
+    public <T> List<T> loadColumn(TableScheme.Column column, Class<T> type) {
+        if (column.value().type != type)
+            throw new IllegalArgumentException(column.name() + " is " + column.value().type + ", not " + type);
+        return ConnectionsPool.get(url)
+                .map(connection -> connection.loadColumn(tableScheme.name, column.name(), type))
+                .orElseGet(() -> {
+                    LOGGER.error("couldn't load column because connection was not found");
+                    return List.of();
+                });
     }
+
 
     /// used for tests, temporarily, do not call
     Object runAction(@NotNull @Language("sql") String sql) {
