@@ -8,15 +8,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 class ThinkingDisplayHandler {
 
     private final AtomicBoolean displayed = new AtomicBoolean(false);
+    private final AtomicBoolean thoughtOnce = new AtomicBoolean(false);
 
     void display(Requests.RequestOut requestOut, Client client) {
         String thinking = requestOut.message().thinking();
         if (thinking != null) {
             client.displayThinking(thinking);
-        } else if (!requestOut.done() && displayed.compareAndSet(false, true)) {
+            thoughtOnce.compareAndSet(false, true);
+        } else if (!requestOut.done() &&
+                displayed.compareAndSet(false, true) &&
+                thoughtOnce.get()) {
             client.endLineOfThinking();
         } else if (requestOut.done()) {
             displayed.set(false);
+            thoughtOnce.set(false);
         }
     }
 }
