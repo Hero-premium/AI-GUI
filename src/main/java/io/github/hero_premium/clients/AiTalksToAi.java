@@ -82,6 +82,16 @@ public class AiTalksToAi extends Client {
         IO.println(message);
     }
 
+    @Override
+    public void displayThinking(String message) {
+
+    }
+
+    @Override
+    public void endLineOfThinking() {
+
+    }
+
     private enum Turns {
         AI1, AI2
     }

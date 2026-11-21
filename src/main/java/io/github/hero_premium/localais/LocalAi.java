@@ -26,8 +26,9 @@ import java.util.function.Consumer;
  */
 public abstract class LocalAi {
 
-    private static final String AI_API_URL = "http://localhost:11434/api/chat";
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
+    private static final String AI_API_URL = "http://localhost:11434/api/chat";
+
     public final String modelName;
 
     private final AtomicBoolean isThinking = new AtomicBoolean(false);
@@ -48,15 +49,19 @@ public abstract class LocalAi {
             responseConsumer.accept(getOllamaDownReqOut());
         } catch (IOException e) {
             LOGGER.error("IO error: ", e);
-            responseConsumer.accept(RequestOut.failureDefaultsIn(modelName, "something went wrong while generating this response"));
+            responseConsumer.accept(genaricFailerMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             LOGGER.error("Interrupted: ", e);
-            responseConsumer.accept(RequestOut.failureDefaultsIn(modelName, "something went wrong while generating this response"));
+            responseConsumer.accept(genaricFailerMessage());
         } finally {
             isThinking.set(false);
             interrupted = false;
         }
+    }
+
+    private @NotNull RequestOut genaricFailerMessage() {
+        return RequestOut.failureDefaultsIn(modelName, "something went wrong while generating this response");
     }
 
     private void readLines(@NotNull Consumer<RequestOut> responseConsumer, @NotNull BufferedReader reader) throws IOException {
@@ -92,6 +97,7 @@ public abstract class LocalAi {
     public void chat(List<Requests.Message> messages, Consumer<Requests.RequestOut> out) {
         sendRequest(LocalAi.buildHttpRequest(new Requests.RequestIn(modelName, messages)), out);
     }
+
     @Contract(pure = true)
     public boolean isThinking() {
         return isThinking.get();

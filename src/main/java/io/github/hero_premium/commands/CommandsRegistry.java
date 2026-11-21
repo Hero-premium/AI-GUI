@@ -96,7 +96,7 @@ public final class CommandsRegistry {
 
     @Contract(value = "_, _ -> new", pure = true)
     private static String @NotNull [] parseCommand(Command command, String givenCommand) {
-        // TODO add parser
-        return new String[]{givenCommand};
+        // TODO add parser, make sure "string here" counts as one arg.
+        return new String[]{givenCommand.strip().substring(command.commandLine.length())};
     }
 }

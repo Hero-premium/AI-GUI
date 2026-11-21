@@ -61,6 +61,18 @@ public abstract class Client {
      */
     public abstract void endLine(String message);
 
+    /**
+     *
+     * @param message the chunk to display in the thinking box.
+     */
+    public abstract void displayThinking(String message);
+
+    /**
+     * ends the line of thinking so new thinking calls appears on a separate line.
+     */
+    public abstract void endLineOfThinking();
+
+
     public Client setProgram(@NotNull Program program) {
         this.program = Objects.requireNonNull(program, "program must not be null");
         return this;

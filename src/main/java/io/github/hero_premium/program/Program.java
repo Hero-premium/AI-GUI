@@ -5,7 +5,6 @@ import io.github.hero_premium.Requests.RequestOut;
 import io.github.hero_premium.Roles;
 import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.commands.CommandsRegistry;
-import io.github.hero_premium.localais.Llama3b;
 import io.github.hero_premium.localais.LocalAi;
 import io.github.hero_premium.localais.LocalAiRegistry;
 import io.github.hero_premium.program.conversations.Conversation;
@@ -25,6 +24,8 @@ public class Program {
     private final ConversationsManager conversationsManager = new ConversationsManager();
     @NotNull
     private final ToolHandler toolHandler = new ToolHandler();
+    @NotNull
+    private final ThinkingDisplayHandler thinkingDisplayHandler = new ThinkingDisplayHandler();
     @NotNull
     private final Client client;
     @NotNull
@@ -71,6 +72,7 @@ public class Program {
     }
 
     private void chatHandler(@NotNull RequestOut requestOut, Conversation conversation) {
+        thinkingDisplayHandler.display(requestOut, client);
         requestOut = toolHandler.handleTools(
                 requestOut,
                 conversation,
@@ -81,6 +83,7 @@ public class Program {
         displayMessage(requestOut.message());
         if (requestOut.done()) {
             client.endLine();
+            IO.println();
             if (conversation.isQueued() && !ai.isThinking()) chat(conversation.getNext());
         }
     }

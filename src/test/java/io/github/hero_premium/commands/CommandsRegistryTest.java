@@ -58,6 +58,16 @@ class CommandsRegistryTest {
             public void endLine(String message) {
 
             }
+
+            @Override
+            public void displayThinking(String message) {
+
+            }
+
+            @Override
+            public void endLineOfThinking() {
+
+            }
         };
 
         List<Requests.Message> message = CommandsRegistry.findAndRunCommand(

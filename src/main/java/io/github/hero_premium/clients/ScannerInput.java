@@ -50,4 +50,14 @@ public class ScannerInput extends Client {
     public void endLine(String message) {
         IO.println(message);
     }
+
+    @Override
+    public void displayThinking(String message) {
+
+    }
+
+    @Override
+    public void endLineOfThinking() {
+
+    }
 }

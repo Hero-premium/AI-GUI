@@ -27,6 +27,7 @@ public class JavaFX extends Client {
     private final VBox messages = new VBox(5);
     private ScrollPane scrollPane;
     private Label currentAiLabel;
+    private Label currentThinkingLabel;
 
     public JavaFX(@NotNull Stage primaryStage) {
         scrollPane = new ScrollPane(messages);
@@ -90,6 +91,25 @@ public class JavaFX extends Client {
     public void endLine(String message) {
         Platform.runLater(() -> currentAiLabel = null);
         addChild(message, Pos.CENTER_RIGHT);
+    }
+
+    @Override
+    public void displayThinking(String message) {
+        Platform.runLater(() -> {
+            if (currentThinkingLabel == null) {
+                currentThinkingLabel = new GuiMessage("").getLabel();
+                HBox row = new HBox(currentThinkingLabel);
+                row.setAlignment(Pos.CENTER_RIGHT);
+                messages.getChildren().add(row);
+            }
+            currentThinkingLabel.setText(currentThinkingLabel.getText() + message);
+        });
+    }
+
+    @Override
+    public void endLineOfThinking() {
+        Platform.runLater(() -> currentThinkingLabel = null);
+        addChild("", Pos.CENTER_RIGHT);
     }
 
     private @NotNull TextField generateTextField() {

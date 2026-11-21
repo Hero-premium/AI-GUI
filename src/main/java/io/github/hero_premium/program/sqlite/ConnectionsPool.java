@@ -18,11 +18,11 @@ class ConnectionsPool {
         for (SQLiteConnection sqLiteConnection : connections.values()) {
             try {
                 sqLiteConnection.close();
+                connections.remove(sqLiteConnection.url);
             } catch (SQLException e) {
                 LOGGER.error("Error while closing SQLiteConnection with URL {}", sqLiteConnection.url, e);
             }
         }
-        connections.clear();
     }
 
     static void openConnection(String url) {

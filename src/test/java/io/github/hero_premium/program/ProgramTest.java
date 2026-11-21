@@ -118,6 +118,16 @@ class ProgramTest {
         public void endLine(String message) {
         }
 
+        @Override
+        public void displayThinking(String message) {
+
+        }
+
+        @Override
+        public void endLineOfThinking() {
+
+        }
+
         long count(String prefix) {
             return events.stream().filter(e -> e.startsWith(prefix)).count();
         }
