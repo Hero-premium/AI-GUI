@@ -19,7 +19,9 @@ public class ConversationsManager {
 
     private final List<Conversation> conversations;
     @NotNull
-    private Conversation currentConversation = new Conversation("untitled");
+    private Conversation currentConversation = new Conversation("untitled",
+            Conversation.DEFAULT_SYSTEM_PROMPT,
+            UUID.fromString("0655a6af-9139-4d3e-83fd-28a856c4af9b"));
 
     public ConversationsManager() {
         conversations = new ArrayList<>();
@@ -36,8 +38,7 @@ public class ConversationsManager {
 
             conversations.add(new Conversation(title,
                     Conversation.DEFAULT_SYSTEM_PROMPT,
-                    UUID.fromString(uuid),
-                    null)
+                    UUID.fromString(uuid))
             );
         }
     }

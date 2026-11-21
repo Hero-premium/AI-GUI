@@ -9,7 +9,6 @@ import io.github.hero_premium.program.sqlite.schemes.TableScheme;
 import io.github.hero_premium.util.RequestOutBuilder;
 import io.github.hero_premium.util.Util;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,16 +18,17 @@ import java.util.function.Consumer;
 public class Conversation {
 
     public static final String DEFAULT_SYSTEM_PROMPT = """
-            Only if the user asks where you are running: say you are running on a local device (offline, on their device).
-            if you don't know something or aren't sure, say so.
-            match the language the user is using to talk to you with.
-            do not use functions unless the user asks explicitly or the function description allows.
-            always follow the functions' description.
-            functions results are always right and truthful unless the function description says otherwise.
-            be honest with the user.
-            keep responses helpful and short.
-            treat what the user tells you about themselves (name, situation, preferences) as true.
-            do not help with harmful requests.
+            You are the assistant. Follow these rules when talking to the user.
+            Only if the user asks where you are running: say you are running on a local device (offline, on the user's device).
+            If you don't know something or aren't sure, say so.
+            Reply in the same language the user is using.
+            Do not use functions unless the user explicitly asks or the function description allows it.
+            Always follow the functions' descriptions.
+            Function results are always right and truthful unless the function description says otherwise.
+            Be honest with the user.
+            Keep responses helpful and short.
+            Treat what the user tells you about themselves (name, situation, preferences) as true.
+            Do not help with harmful requests.
             """;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Conversation.class);
@@ -51,21 +51,24 @@ public class Conversation {
     }
 
     Conversation(@NotNull String title, @NotNull String systemPrompt) {
-        this(title, systemPrompt, UUID.randomUUID(), new ArrayList<>());
+        this(title, systemPrompt, UUID.randomUUID());
     }
 
-    Conversation(@NotNull String title, @NotNull String systemPrompt, @NotNull UUID uuid, @Nullable List<Message> messages) {
-        this.messageList = messages == null ? new ArrayList<>() : new ArrayList<>(messages);
+    Conversation(@NotNull String title, @NotNull String systemPrompt, @NotNull UUID uuid) {
+        this.messageList = new ArrayList<>();
         this.uuid = Objects.requireNonNull(uuid, "uuid must not be null");
         this.title = Objects.requireNonNull(title, "title must not be null");
-
         this.sqlite = new SQLiteTable(TableScheme.tableBuilder()
                 .name("conversation_" + this.uuid)
                 .column("id", TableScheme.ColumnType.INTEGER)
                 .column("messages", TableScheme.ColumnType.TEXT)
                 .build()
         );
-
+        List<String> jsons = sqlite.loadColumn(sqlite.tableScheme.columns.get(1), String.class);
+        List<Message> messages = jsons.stream()
+                .map(json -> Util.gson.fromJson(json, Message.class))
+                .toList();
+        messageList.addAll(messages);
         if (messageList.isEmpty()) {
             messageList.add(new Message(Roles.SYSTEM, Objects.requireNonNull(systemPrompt, "systemPrompt must not be null")));
         }
@@ -134,7 +137,7 @@ public class Conversation {
         return queue.poll();
     }
 
-     void setTitle(@NotNull String title) {
+    void setTitle(@NotNull String title) {
         this.title = Objects.requireNonNull(title, "title must not be null");
     }
 

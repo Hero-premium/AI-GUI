@@ -29,7 +29,7 @@ public class Program {
     @NotNull
     private final Client client;
     @NotNull
-    private LocalAi ai;
+    private volatile LocalAi ai;
 
     public void setAi(LocalAi ai) {
         this.ai = Objects.requireNonNull(ai, "ai must not be null");
@@ -83,7 +83,6 @@ public class Program {
         displayMessage(requestOut.message());
         if (requestOut.done()) {
             client.endLine();
-            IO.println();
             if (conversation.isQueued() && !ai.isThinking()) chat(conversation.getNext());
         }
     }

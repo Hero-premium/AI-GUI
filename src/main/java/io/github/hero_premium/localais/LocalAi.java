@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 /**
  * the class every AI configuration is meant to extend, provides methods for networking.
  */
-public abstract class LocalAi {
+public class LocalAi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalAi.class);
     private static final String AI_API_URL = "http://localhost:11434/api/chat";
@@ -114,5 +114,10 @@ public abstract class LocalAi {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(Util.gson.toJson(requestIn)))
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "AI: " + modelName;
     }
 }
