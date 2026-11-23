@@ -1,7 +1,7 @@
 package io.github.hero_premium.util;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.tools.ToolsInformation;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
@@ -21,15 +21,15 @@ class RequestOutBuilderTest {
     }
 
     private static Requests.@NonNull RequestOut putDefaults(String message, boolean isDone, List<ToolsInformation.ToolCall> toolCalls) {
-        return putDefaults(message, isDone, toolCalls, Roles.ASSISTANT);
+        return putDefaults(message, isDone, toolCalls, Role.ASSISTANT);
     }
 
     @Contract("_, _, _ -> new")
-    private static Requests.@NonNull RequestOut putDefaults(String message, boolean isDone, Roles sayer) {
+    private static Requests.@NonNull RequestOut putDefaults(String message, boolean isDone, Role sayer) {
         return putDefaults(message, isDone, null, sayer);
     }
 
-    private static Requests.@NonNull RequestOut putDefaults(String message, boolean isDone, List<ToolsInformation.ToolCall> toolCalls, Roles sayer) {
+    private static Requests.@NonNull RequestOut putDefaults(String message, boolean isDone, List<ToolsInformation.ToolCall> toolCalls, Role sayer) {
         return new Requests.RequestOut(
                 "fakeAi", "now",
                 new Requests.Message(sayer, message, null, toolCalls, null), isDone, isDone ? "finished" : null,

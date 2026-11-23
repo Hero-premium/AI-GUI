@@ -1,7 +1,7 @@
 package io.github.hero_premium.program.conversations;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.localais.LocalAi;
 import io.github.hero_premium.program.sqlite.Constants;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ConversationTest {
 
-    private static Requests.Message msg(Roles role, String content) {
+    private static Requests.Message msg(Role role, String content) {
         return new Requests.Message(role, content);
     }
 
@@ -26,7 +26,7 @@ class ConversationTest {
     }
 
     private static class FakeAi extends LocalAi {
-        Requests.Message nextReply = msg(Roles.ASSISTANT, "hello");
+        Requests.Message nextReply = msg(Role.ASSISTANT, "hello");
         boolean thinking = false;
         List<Requests.Message> lastReceived;
 
@@ -55,26 +55,26 @@ class ConversationTest {
 
         IO.println(conversation.getMessages());
         assertEquals(3, conversation.getMessages().size());
-        assertEquals(Roles.SYSTEM, conversation.getMessages().get(0).role());
-        assertEquals(Roles.USER, conversation.getMessages().get(1).role());
-        assertEquals(Roles.ASSISTANT, conversation.getMessages().get(2).role());
+        assertEquals(Role.SYSTEM, conversation.getMessages().get(0).role());
+        assertEquals(Role.USER, conversation.getMessages().get(1).role());
+        assertEquals(Role.ASSISTANT, conversation.getMessages().get(2).role());
         assertEquals("hi", ai.lastReceived.getLast().content());
 
         conversation = new Conversation("system", UUID.randomUUID(), Constants.TO_MEMORY_URL);
         conversation.chat(
-                List.of(msg(Roles.USER_FACING, "sys"), msg(Roles.USER, "hi")),
+                List.of(msg(Role.USER_FACING, "sys"), msg(Role.USER, "hi")),
                 new FakeAi(),
                 _ -> {}
         );
 
         assertTrue(conversation.getMessages().stream()
-                .noneMatch(m -> m.role() == Roles.USER_FACING));
+                .noneMatch(m -> m.role() == Role.USER_FACING));
 
         conversation = new Conversation("thinking", UUID.randomUUID(), Constants.TO_MEMORY_URL);
         ai = new FakeAi();
         ai.thinking = true;
 
-        conversation.chat(List.of(msg(Roles.USER, "hi")), ai, _ -> {});
+        conversation.chat(List.of(msg(Role.USER, "hi")), ai, _ -> {});
 
         assertTrue(conversation.isQueued());
         assertEquals(1, conversation.getMessages().size());
@@ -82,17 +82,17 @@ class ConversationTest {
 
         conversation = new Conversation("error", UUID.randomUUID(), Constants.TO_MEMORY_URL);
         ai = new FakeAi();
-        ai.nextReply = msg(Roles.USER_FACING, "ollama server is down");
+        ai.nextReply = msg(Role.USER_FACING, "ollama server is down");
 
-        conversation.chat(List.of(msg(Roles.USER, "hi")), ai, _ -> {});
+        conversation.chat(List.of(msg(Role.USER, "hi")), ai, _ -> {});
 
         assertTrue(conversation.getMessages().stream()
-                .noneMatch(m -> m.role() == Roles.ASSISTANT));
+                .noneMatch(m -> m.role() == Role.ASSISTANT));
 
         conversation = new Conversation("multi", UUID.randomUUID(), Constants.TO_MEMORY_URL);
 
         conversation.chat(
-                List.of(msg(Roles.USER, "a"), msg(Roles.TOOL, "b")),
+                List.of(msg(Role.USER, "a"), msg(Role.TOOL, "b")),
                 new FakeAi(),
                 _ -> {}
         );
@@ -113,7 +113,7 @@ class ConversationTest {
         assertThrows(
                 NullPointerException.class,
                 () -> nullCheck.chat(
-                        List.of(msg(Roles.USER, "hi")),
+                        List.of(msg(Role.USER, "hi")),
                         null,
                         _ -> {}
                 )
@@ -126,18 +126,18 @@ class ConversationTest {
 
         assertEquals(1, c.getMessages().size());
 
-        c.chat(List.of(msg(Roles.USER, "hi")), new FakeAi(), _ -> {});
+        c.chat(List.of(msg(Role.USER, "hi")), new FakeAi(), _ -> {});
 
         List<Requests.Message> copy = c.getMessages();
 
         assertThrows(
                 UnsupportedOperationException.class,
-                () -> copy.add(msg(Roles.USER, "x"))
+                () -> copy.add(msg(Role.USER, "x"))
         );
 
         int sizeBefore = copy.size();
 
-        c.chat(List.of(msg(Roles.USER, "again")), new FakeAi(), _ -> {});
+        c.chat(List.of(msg(Role.USER, "again")), new FakeAi(), _ -> {});
 
         assertEquals(sizeBefore, copy.size());
         assertEquals(sizeBefore + 2, c.getMessages().size());
@@ -152,7 +152,7 @@ class ConversationTest {
         FakeAi ai = new FakeAi();
         ai.thinking = true;
 
-        c.chat(List.of(msg(Roles.USER, "hi")), ai, _ -> {});
+        c.chat(List.of(msg(Role.USER, "hi")), ai, _ -> {});
 
         assertTrue(c.isQueued());
 
@@ -167,8 +167,8 @@ class ConversationTest {
         FakeAi ai = new FakeAi();
         ai.thinking = true;
 
-        c.chat(List.of(msg(Roles.USER, "first")), ai, _ -> {});
-        c.chat(List.of(msg(Roles.USER, "second")), ai, _ -> {});
+        c.chat(List.of(msg(Role.USER, "first")), ai, _ -> {});
+        c.chat(List.of(msg(Role.USER, "second")), ai, _ -> {});
 
         assertEquals("first", c.getNext().content());
         assertEquals("second", c.getNext().content());

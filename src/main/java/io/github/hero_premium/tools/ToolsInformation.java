@@ -38,7 +38,7 @@ public final class ToolsInformation {
      * @param type        the type of parameters the AI will use (string, int, boolean, etc.)
      * @param description
      */
-    public record Property(PropertiesType type, String description) {
+    public record Property(PropertyType type, String description) {
     }
 
     /**
@@ -83,7 +83,7 @@ public final class ToolsInformation {
         }
 
 
-        public ToolDataBuilder parameter(String argumentName, PropertiesType type, String description, boolean isRequired) {
+        public ToolDataBuilder parameter(String argumentName, PropertyType type, String description, boolean isRequired) {
             properties.put(Objects.requireNonNull(argumentName, "argumentName must not be null"),
                     new Property(
                             Objects.requireNonNull(type, "type must not be null"),

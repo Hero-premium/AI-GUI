@@ -11,8 +11,8 @@ class ToolTest {
     @Test
     void toolUse() {
         Tool tool = new Tool("", ""
-                , new Tool.Param("needed", PropertiesType.STRING, "needed very", true)
-                , new Tool.Param("not needed", PropertiesType.STRING, "not needed very", false)) {
+                , new Tool.Param("needed", PropertyType.STRING, "needed very", true)
+                , new Tool.Param("not needed", PropertyType.STRING, "not needed very", false)) {
             @Override
             protected String useTool(Map<String, Object> arguments) {
                 return "TEST PASSED!";

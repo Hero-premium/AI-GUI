@@ -2,7 +2,7 @@ package io.github.hero_premium.tools;
 
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Requests.Message;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -77,8 +77,8 @@ public final class ToolRegistry {
             ToolsInformation.FunctionCall function = toolCall.function();
 
             Message message = getTool(function.name())
-                    .map(tool -> new Message(Roles.TOOL, tool.toolUse(function.arguments()), function.name()))
-                    .orElseGet(() -> new Message(Roles.TOOL, "unknown tool", function.name()));
+                    .map(tool -> new Message(Role.TOOL, tool.toolUse(function.arguments()), function.name()))
+                    .orElseGet(() -> new Message(Role.TOOL, "unknown tool", function.name()));
             messages.add(message);
         }
         return List.copyOf(messages);

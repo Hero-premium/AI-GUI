@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.List;
 import java.util.Map;
 
-public enum PropertiesType {
+public enum PropertyType {
 
     @SerializedName("array") ARRAY(List.class),
     @SerializedName("number") NUMBER(Double.class),
@@ -18,7 +18,7 @@ public enum PropertiesType {
 
     private final Class<?> type;
 
-    PropertiesType(Class<?> type) {
+    PropertyType(Class<?> type) {
         this.type = type;
     }
 

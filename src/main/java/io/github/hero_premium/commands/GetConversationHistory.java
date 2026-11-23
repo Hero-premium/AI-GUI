@@ -1,7 +1,7 @@
 package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.program.conversations.Conversation;
 
@@ -31,6 +31,6 @@ public class GetConversationHistory extends Command {
 
             client.displayAIMessage(content);
         }
-        return List.of(new Requests.Message(Roles.USER_FACING, ""));
+        return List.of(new Requests.Message(Role.USER_FACING, ""));
     }
 }

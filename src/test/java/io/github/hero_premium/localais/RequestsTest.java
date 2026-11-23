@@ -1,7 +1,7 @@
 package io.github.hero_premium.localais;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.tools.ToolsInformation;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ class RequestsTest {
     @Test
     void getEvalDurationInSeconds() {
         int result = new Requests.RequestOut("system", "",
-                new Requests.Message(Roles.USER_FACING, "ollama server is down"),
+                new Requests.Message(Role.USER_FACING, "ollama server is down"),
                 true, "", 0, 0,
                 0, 0, 0,
                 0, 5_000_000_000L).getEvalDurationInSeconds();
@@ -22,24 +22,24 @@ class RequestsTest {
 
     @Test
     void noMessage() {
-        Requests.Message message = new Requests.Message(Roles.USER_FACING, null, null, null, null);
+        Requests.Message message = new Requests.Message(Role.USER_FACING, null, null, null, null);
         assertTrue(message.noContentOrToolCalls());
     }
     @Test
     void contentButNoToolCalls(){
-        Requests.Message message = new Requests.Message(Roles.USER_FACING, "hi", null, null, null);
+        Requests.Message message = new Requests.Message(Role.USER_FACING, "hi", null, null, null);
         assertFalse(message.noContentOrToolCalls());
     }
 
     @Test
     void noContentButWithToolCalls(){
-        Requests.Message message = new Requests.Message(Roles.USER_FACING, null, null, List.of(new ToolsInformation.ToolCall("", null)), null);
+        Requests.Message message = new Requests.Message(Role.USER_FACING, null, null, List.of(new ToolsInformation.ToolCall("", null)), null);
         assertFalse(message.noContentOrToolCalls());
     }
 
     @Test
     void noContentButNoToolCalls(){
-        Requests.Message message = new Requests.Message(Roles.USER_FACING, "", null, List.of(), null);
+        Requests.Message message = new Requests.Message(Role.USER_FACING, "", null, List.of(), null);
         assertTrue(message.noContentOrToolCalls());
     }
 }

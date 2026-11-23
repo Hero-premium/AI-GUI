@@ -2,7 +2,7 @@ package io.github.hero_premium.program;
 
 import io.github.hero_premium.Requests.Message;
 import io.github.hero_premium.Requests.RequestOut;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.commands.CommandsRegistry;
 import io.github.hero_premium.localais.LocalAi;

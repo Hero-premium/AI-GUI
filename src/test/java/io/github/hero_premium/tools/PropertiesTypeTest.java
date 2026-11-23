@@ -8,60 +8,60 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PropertiesTypeTest {
+class PropertyTypeTest {
 
     @Test
     void stringToSTRING() {
-        PropertiesType type = Util.gson.fromJson("\"string\"", PropertiesType.class);
+        PropertyType type = Util.gson.fromJson("\"string\"", PropertyType.class);
         assertSame(String.class, type.getType());
     }
 
     @Test
     void stringToARRAY() {
-        PropertiesType type = Util.gson.fromJson("\"array\"", PropertiesType.class);
+        PropertyType type = Util.gson.fromJson("\"array\"", PropertyType.class);
         assertSame(List.class, type.getType());
     }
 
     @Test
     void stringToNUMBER() {
-        PropertiesType type = Util.gson.fromJson("\"number\"", PropertiesType.class);
+        PropertyType type = Util.gson.fromJson("\"number\"", PropertyType.class);
         assertSame(Double.class, type.getType());
     }
 
     @Test
     void stringToINTEGER() {
-        PropertiesType type = Util.gson.fromJson("\"integer\"", PropertiesType.class);
+        PropertyType type = Util.gson.fromJson("\"integer\"", PropertyType.class);
         assertSame(Double.class, type.getType());
     }
 
     @Test
     void stringToOBJECT() {
-        PropertiesType type = Util.gson.fromJson("\"object\"", PropertiesType.class);
+        PropertyType type = Util.gson.fromJson("\"object\"", PropertyType.class);
         assertSame(Map.class, type.getType());
     }
 
     @Test
     void stringToBOOLEAN() {
-        PropertiesType type = Util.gson.fromJson("\"boolean\"", PropertiesType.class);
+        PropertyType type = Util.gson.fromJson("\"boolean\"", PropertyType.class);
         assertSame(Boolean.class, type.getType());
     }
 
     @Test
     void stringToNULL() {
-        PropertiesType type = Util.gson.fromJson("\"null\"", PropertiesType.class);
+        PropertyType type = Util.gson.fromJson("\"null\"", PropertyType.class);
         assertNull(type.getType());
     }
 
     @Test
     void passANumber() {
         Object num = Util.gson.fromJson("5", Object.class);
-        assertTrue(PropertiesType.INTEGER.compareType(num));
+        assertTrue(PropertyType.INTEGER.compareType(num));
     }
 
     @Test
     void passANumber2() {
         Object num = Util.gson.fromJson("5.5", Object.class);
-        assertTrue(PropertiesType.NUMBER.compareType(num));
+        assertTrue(PropertyType.NUMBER.compareType(num));
     }
 
 }

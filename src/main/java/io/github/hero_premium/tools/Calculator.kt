@@ -11,7 +11,7 @@ class Calculator :
             this tool can help you with math, from basic math to complex problems, always use it for anything involving math,
              and do not use it for anything the user does it mention math in for
             """,
-        Param("expression", PropertiesType.STRING, "the expression you wish to calculate", true)
+        Param("expression", PropertyType.STRING, "the expression you wish to calculate", true)
     ) {
 
 

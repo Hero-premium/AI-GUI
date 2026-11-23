@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  */
 public abstract class Tool {
 
-    protected record Param(String argumentName, PropertiesType type, String description,
+    protected record Param(String argumentName, PropertyType type, String description,
                            boolean isRequired) {
     }
 
@@ -78,9 +78,9 @@ public abstract class Tool {
 
         if ((object != null || p.isRequired()) && !p.type().compareType(object)) {
             String typeToString = "UNKNOWN";
-            for (PropertiesType propertiesType : PropertiesType.values()) {
-                if (propertiesType.compareType(object)) {
-                    typeToString = propertiesType.toString();
+            for (PropertyType propertyType : PropertyType.values()) {
+                if (propertyType.compareType(object)) {
+                    typeToString = propertyType.toString();
                 }
             }
             String errorMessage = "TOOL ERROR, EXPECTED " + p.type() + ", RECEIVED " + typeToString;

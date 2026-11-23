@@ -1,7 +1,7 @@
 package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.program.conversations.Conversation;
 import org.jetbrains.annotations.Contract;
@@ -87,7 +87,7 @@ public final class CommandsRegistry {
         LOGGER.debug("looking for command {}", givenCommand);
         if (command == null) {
             LOGGER.debug("could not find command {}", givenCommand);
-            return List.of(new Requests.Message(Roles.USER_FACING, "invalid command, use /getAllCommands for all commands"));
+            return List.of(new Requests.Message(Role.USER_FACING, "invalid command, use /getAllCommands for all commands"));
         }
         LOGGER.debug("found {}", command);
         List<Requests.Message> messages = command.runCommand(conversation, client, parseCommand(command, givenCommand));

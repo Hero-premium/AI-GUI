@@ -2,7 +2,7 @@ package io.github.hero_premium.program.conversations;
 
 import io.github.hero_premium.Requests.Message;
 import io.github.hero_premium.Requests.RequestOut;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.localais.LocalAi;
 import io.github.hero_premium.program.sqlite.Constants;
 import io.github.hero_premium.program.sqlite.SQLiteTable;
@@ -51,6 +51,14 @@ public class Conversation {
         this(title, DEFAULT_SYSTEM_PROMPT);
     }
 
+    Conversation(String title, @NotNull UUID uuid) {
+        this(title, uuid, Constants.DEFAULT_URL);
+    }
+
+    Conversation(String title, UUID uuid, String url) {
+        this(title, DEFAULT_SYSTEM_PROMPT, uuid, url);
+    }
+
     Conversation(@NotNull String title, @NotNull String systemPrompt) {
         this(title, systemPrompt, UUID.randomUUID());
     }
@@ -81,16 +89,16 @@ public class Conversation {
 
     private void saveMessage(@NotNull Message message) {
         Objects.requireNonNull(message, "message must not be null");
-        if (message.role() == Roles.USER_FACING) return;
+        if (message.role() == Role.USER_FACING) return;
         messageList.add(message);
         sqlite.save(Map.of(sqlite.tableScheme.columns.get(1), Util.gson.toJson(Objects.requireNonNull(message))));
     }
 
     private void saveAiMessage(@NotNull RequestOut request) {
         Objects.requireNonNull(request, "request must not be null");
-        Roles role = request.message().role();
-        if (role == Roles.USER_FACING) return;
-        if (role != Roles.ASSISTANT) {
+        Role role = request.message().role();
+        if (role == Role.USER_FACING) return;
+        if (role != Role.ASSISTANT) {
             throw new IllegalArgumentException("messages in saveAiMessages must be sent by the ai");
         }
 

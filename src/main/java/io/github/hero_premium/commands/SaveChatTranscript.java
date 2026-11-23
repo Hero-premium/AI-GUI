@@ -1,7 +1,7 @@
 package io.github.hero_premium.commands;
 
 import io.github.hero_premium.Requests;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.util.Util;
@@ -31,6 +31,6 @@ public class SaveChatTranscript extends Command {
             result = "failed to create transcript";
             LOGGER.error(result, e);
         }
-        return List.of(new Requests.Message(Roles.USER_FACING, result));
+        return List.of(new Requests.Message(Role.USER_FACING, result));
     }
 }

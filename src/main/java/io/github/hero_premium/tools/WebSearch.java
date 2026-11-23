@@ -14,9 +14,10 @@ public class WebSearch extends Tool {
 
     public WebSearch() {
         super("WebSearch", "use only when the user explicitly asks you to fetch information from the internet"
-                , new Param("query", PropertiesType.STRING,
+                , new Param("query", PropertyType.STRING,
                         "the query that will be used to get your search result back", true)
-                , new Param("source", PropertiesType.STRING, "the source of the search result, the sources are " + SOURCES.keySet(), true));
+                , new Param("source", PropertyType.STRING, "the source of the search result, the sources are " + SOURCES.keySet() +
+                        " you must select one of those sources, any other source will be rejected", true));
     }
 
 
