@@ -7,6 +7,7 @@ import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.commands.CommandsRegistry;
 import io.github.hero_premium.localais.LocalAi;
 import io.github.hero_premium.localais.LocalAiRegistry;
+import io.github.hero_premium.localais.LocalAiStorer;
 import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.program.conversations.ConversationsManager;
 import io.github.hero_premium.program.sqlite.Constants;
@@ -38,9 +39,50 @@ public class Program {
     }
 
     public Program(@NotNull Client client) {
-        this(client, LocalAiRegistry.AIS.get("qwen3:4b"));
+        //fixme javafx
+        LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get("qwen3:4b");
+        LocalAi varAi = localAiStorer != null && localAiStorer.isAvailable() ? localAiStorer.localAi() :
+                LocalAiRegistry.AIS.values()
+                        .stream()
+                        .filter(LocalAiStorer::isAvailable)
+                        .map(LocalAiStorer::localAi)
+                        .findFirst()
+                        .orElseGet(() -> {
+                            client.displaySystemMessage("""
+                                    no AIs were loaded,
+                                     please make sure ollama is up
+                                     and have at least one installed model,
+                                     then relaunch this application""");
+                            return null;
+                        });
+        this(client, varAi);
+    }
+
     public Program(@NotNull Client client, @NotNull LocalAi ai, String sqlUrl) {
+        Objects.requireNonNull(client, "client must not be null");
+        Client varClient = Objects.requireNonNull(client.getClient(), "client.getClient() must not return null");
+        this.client = Objects.requireNonNull(varClient.setProgram(this), "client.setProgram(Program) must not return null");
+        this.ai = Objects.requireNonNull(ai, "ai must not be null");
         conversationsManager = new ConversationsManager(sqlUrl);
+    }
+
+    /**
+     * to set the current AI to the given AI.
+     *
+     * @param ai the name of the new AI.
+     * @return true if the process succeeded, false otherwise (e.g. model is unavailable).
+     * @throws NullPointerException if the passed AI name was null.
+     */
+    public boolean setAi(String ai) {
+        LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get(Objects.requireNonNull(ai, "ai must not be null"));
+        if (localAiStorer == null || !localAiStorer.isAvailable()) return false;
+        this.ai = localAiStorer.localAi();
+        return true;
+    }
+
+    /// for tests
+    void setAi(LocalAi ai) {
+        this.ai = Objects.requireNonNull(ai, "ai must not be null");
     }
 
     public void launch() {
@@ -105,7 +147,7 @@ public class Program {
         return true;
     }
 
-    public Map<String, LocalAi> getAllAis() {
+    public Map<String, LocalAiStorer> getAllAis() {
         return LocalAiRegistry.AIS;
     }
 

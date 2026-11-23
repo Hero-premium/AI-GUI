@@ -3,9 +3,11 @@ package io.github.hero_premium.program.conversations;
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Roles;
 import io.github.hero_premium.localais.LocalAi;
+import io.github.hero_premium.program.sqlite.Constants;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,14 +41,14 @@ class ConversationTest {
         }
 
         @Override
-        public boolean isThinking() {
+        public boolean isBusy() {
             return thinking;
         }
     }
 
     @Test
     void chat() {
-        Conversation conversation = new Conversation("normal");
+        Conversation conversation = new Conversation("normal", UUID.randomUUID(), Constants.TO_MEMORY_URL);
         FakeAi ai = new FakeAi();
 
         conversation.chat(List.of(msg(Role.USER, "hi")), ai, _ -> {});

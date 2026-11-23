@@ -75,7 +75,7 @@ public class Conversation {
                 .toList();
         messageList.addAll(messages);
         if (messageList.isEmpty()) {
-            messageList.add(new Message(Roles.SYSTEM, Objects.requireNonNull(systemPrompt, "systemPrompt must not be null")));
+            saveMessage(new Message(Role.SYSTEM, Objects.requireNonNull(systemPrompt, "systemPrompt must not be null")));
         }
     }
 
@@ -114,7 +114,7 @@ public class Conversation {
         Objects.requireNonNull(todo, "todo must not be null");
 
         LOGGER.debug("received messages {}", messages);
-        if (ai.isThinking()) {
+        if (ai.isBusy()) {
             queue.addAll(messages);
             LOGGER.debug("added {} to queue", messages);
             return;

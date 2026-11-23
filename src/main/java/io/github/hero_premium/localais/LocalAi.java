@@ -31,16 +31,16 @@ public class LocalAi {
 
     public final String modelName;
 
-    private final AtomicBoolean isThinking = new AtomicBoolean(false);
+    private final AtomicBoolean isBusy = new AtomicBoolean(false);
     private volatile boolean interrupted = false;
 
-    public LocalAi(String modelName) {
+    protected LocalAi(String modelName) {
         this.modelName = Objects.requireNonNull(modelName, "modelName must not be null");
     }
 
     protected void sendRequest(HttpRequest request, Consumer<RequestOut> responseConsumer) {
-        // if the model is already thinking isThinking would be true and the check will fail therefor throw
-        if (!isThinking.compareAndSet(false, true))
+        // if the model is already thinking isBusy would be true and the check will fail therefor throw
+        if (!isBusy.compareAndSet(false, true))
             throw new IllegalStateException("cannot accept more than one request at a time");
         try (BufferedReader reader = createBufferedReader(request)) {
             readLines(responseConsumer, reader);
@@ -49,18 +49,18 @@ public class LocalAi {
             responseConsumer.accept(getOllamaDownReqOut());
         } catch (IOException e) {
             LOGGER.error("IO error: ", e);
-            responseConsumer.accept(genaricFailerMessage());
+            responseConsumer.accept(genericFailerMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             LOGGER.error("Interrupted: ", e);
-            responseConsumer.accept(genaricFailerMessage());
+            responseConsumer.accept(genericFailerMessage());
         } finally {
-            isThinking.set(false);
+            isBusy.set(false);
             interrupted = false;
         }
     }
 
-    private @NotNull RequestOut genaricFailerMessage() {
+    private @NotNull RequestOut genericFailerMessage() {
         return RequestOut.failureDefaultsIn(modelName, "something went wrong while generating this response");
     }
 
@@ -72,7 +72,7 @@ public class LocalAi {
                 break;
             }
             requestOut = Util.gson.fromJson(reader.readLine(), RequestOut.class);
-            isThinking.set(!requestOut.done());
+            isBusy.set(!requestOut.done());
             responseConsumer.accept(requestOut);
         } while (!requestOut.done());
     }
@@ -99,12 +99,12 @@ public class LocalAi {
     }
 
     @Contract(pure = true)
-    public boolean isThinking() {
-        return isThinking.get();
+    public boolean isBusy() {
+        return isBusy.get();
     }
 
     public void interrupt() {
-        if (!isThinking.get()) throw new IllegalStateException("cannot be interrupted if the ai is not thinking");
+        if (!isBusy.get()) throw new IllegalStateException("cannot be interrupted if the ai is not thinking");
         this.interrupted = true;
     }
 
@@ -114,6 +114,19 @@ public class LocalAi {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(Util.gson.toJson(requestIn)))
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || o.getClass() != this.getClass()) return false;
+        LocalAi that = (LocalAi) o;
+        return Objects.equals(this.modelName, that.modelName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(modelName);
     }
 
     @Override
