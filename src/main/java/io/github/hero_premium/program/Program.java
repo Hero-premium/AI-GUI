@@ -107,7 +107,7 @@ public class Program {
     }
 
     public void chat(String request) {
-        chat(new Message(Roles.USER, request));
+        chat(new Message(Role.USER, request));
     }
 
     private void chatHandler(@NotNull RequestOut requestOut, Conversation conversation) {
@@ -122,7 +122,7 @@ public class Program {
         displayMessage(requestOut.message());
         if (requestOut.done()) {
             client.endLine();
-            if (conversation.isQueued() && !ai.isThinking()) chat(conversation.getNext());
+            if (conversation.isQueued() && !ai.isBusy()) chat(conversation.getNext());
         }
     }
 

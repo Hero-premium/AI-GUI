@@ -1,16 +1,12 @@
 package io.github.hero_premium.tools;
 
 import io.github.hero_premium.tools.websearch.SourceCatalog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 import static io.github.hero_premium.tools.websearch.SourceCatalog.SOURCES;
 
 public class WebSearch extends Tool {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebSearch.class);
 
     public WebSearch() {
         super("WebSearch", "use only when the user explicitly asks you to fetch information from the internet"
