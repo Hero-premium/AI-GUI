@@ -2,9 +2,10 @@ package io.github.hero_premium.program;
 
 import io.github.hero_premium.Requests.Message;
 import io.github.hero_premium.Requests.RequestOut;
-import io.github.hero_premium.Roles;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.clients.Client;
 import io.github.hero_premium.localais.LocalAi;
+import io.github.hero_premium.program.sqlite.Constants;
 import io.github.hero_premium.tools.ToolsInformation;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
@@ -19,18 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 // this file is AI generated, unfortunately.
 class ProgramTest {
 
-    // ---------------------------------------------------------------
-    // ADJUST THESE: things I couldn't see
-    // ---------------------------------------------------------------
-
-    /** Number of AI calls expected when the AI requests a tool on every round. Pins current behavior. */
     private static final int CAP_ROUNDS = 5;
 
-    /** Role used for assistant messages. ASSUMED name. */
-    private static final Roles ASSISTANT = Roles.ASSISTANT;
+    private static final Role ASSISTANT = Role.ASSISTANT;
 
-    /** Role used for tool result messages. ASSUMED name. */
-    private static final Roles TOOL = Roles.TOOL;
+    private static final Role TOOL = Role.TOOL;
 
 
     private static ToolsInformation.ToolCall toolCall(String name) {
@@ -149,7 +143,7 @@ class ProgramTest {
     private final FakeAi ai = new FakeAi();
 
     private Program program() {
-        return new Program(client, ai); // ASSUMED parameter order (client, AI)
+        return new Program(client, ai, Constants.TO_MEMORY_URL);
     }
 
     // ---------------------------------------------------------------

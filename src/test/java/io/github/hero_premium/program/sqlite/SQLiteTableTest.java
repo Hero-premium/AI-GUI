@@ -30,7 +30,7 @@ class SQLiteTableTest {
                 .name("Test")
                 .column("ID", TableScheme.ColumnType.INTEGER)
                 .column("NAME", TableScheme.ColumnType.TEXT)
-                .build(), "jdbc:sqlite::memory:");
+                .build(), Constants.TO_MEMORY_URL);
 
         for (String s : Arrays.asList("hi", "i", "hope", "you")) {
             sqLiteTable.save(Map.of(sqLiteTable.tableScheme.columns.get(1), s));
@@ -49,7 +49,7 @@ class SQLiteTableTest {
                 .name("Test")
                 .column("ID", TableScheme.ColumnType.INTEGER)
                 .column("NAME", TableScheme.ColumnType.TEXT)
-                .build(), "jdbc:sqlite::memory:");
+                .build(), Constants.TO_MEMORY_URL);
         assertThrows(IllegalArgumentException.class, () ->
                 sqLiteTable.loadColumn(sqLiteTable.tableScheme.columns.getFirst(), String.class));
     }

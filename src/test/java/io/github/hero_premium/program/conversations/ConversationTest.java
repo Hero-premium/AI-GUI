@@ -49,7 +49,7 @@ class ConversationTest {
         Conversation conversation = new Conversation("normal");
         FakeAi ai = new FakeAi();
 
-        conversation.chat(List.of(msg(Roles.USER, "hi")), ai, _ -> {});
+        conversation.chat(List.of(msg(Role.USER, "hi")), ai, _ -> {});
 
         IO.println(conversation.getMessages());
         assertEquals(3, conversation.getMessages().size());
@@ -58,7 +58,7 @@ class ConversationTest {
         assertEquals(Roles.ASSISTANT, conversation.getMessages().get(2).role());
         assertEquals("hi", ai.lastReceived.getLast().content());
 
-        conversation = new Conversation("system");
+        conversation = new Conversation("system", UUID.randomUUID(), Constants.TO_MEMORY_URL);
         conversation.chat(
                 List.of(msg(Roles.USER_FACING, "sys"), msg(Roles.USER, "hi")),
                 new FakeAi(),
@@ -68,7 +68,7 @@ class ConversationTest {
         assertTrue(conversation.getMessages().stream()
                 .noneMatch(m -> m.role() == Roles.USER_FACING));
 
-        conversation = new Conversation("thinking");
+        conversation = new Conversation("thinking", UUID.randomUUID(), Constants.TO_MEMORY_URL);
         ai = new FakeAi();
         ai.thinking = true;
 
@@ -78,7 +78,7 @@ class ConversationTest {
         assertEquals(1, conversation.getMessages().size());
         assertNull(ai.lastReceived);
 
-        conversation = new Conversation("error");
+        conversation = new Conversation("error", UUID.randomUUID(), Constants.TO_MEMORY_URL);
         ai = new FakeAi();
         ai.nextReply = msg(Roles.USER_FACING, "ollama server is down");
 
@@ -87,7 +87,7 @@ class ConversationTest {
         assertTrue(conversation.getMessages().stream()
                 .noneMatch(m -> m.role() == Roles.ASSISTANT));
 
-        conversation = new Conversation("multi");
+        conversation = new Conversation("multi", UUID.randomUUID(), Constants.TO_MEMORY_URL);
 
         conversation.chat(
                 List.of(msg(Roles.USER, "a"), msg(Roles.TOOL, "b")),
@@ -102,7 +102,7 @@ class ConversationTest {
         assertEquals("a", conversation.getMessages().get(1).content());
         assertEquals("b", conversation.getMessages().get(2).content());
 
-        Conversation nullCheck = new Conversation("nulls");
+        Conversation nullCheck = new Conversation("nulls", UUID.randomUUID(), Constants.TO_MEMORY_URL);
 
         assertThrows(
                 NullPointerException.class,
@@ -120,7 +120,7 @@ class ConversationTest {
 
     @Test
     void getMessages() {
-        Conversation c = new Conversation("empty");
+        Conversation c = new Conversation("empty", UUID.randomUUID(), Constants.TO_MEMORY_URL);
 
         assertEquals(1, c.getMessages().size());
 
@@ -143,7 +143,7 @@ class ConversationTest {
 
     @Test
     void isQueued() {
-        Conversation c = new Conversation("queued");
+        Conversation c = new Conversation("queued", UUID.randomUUID(), Constants.TO_MEMORY_URL);
 
         assertFalse(c.isQueued());
 
@@ -161,7 +161,7 @@ class ConversationTest {
 
     @Test
     void getNext() {
-        Conversation c = new Conversation("next");
+        Conversation c = new Conversation("next", UUID.randomUUID(), Constants.TO_MEMORY_URL);
         FakeAi ai = new FakeAi();
         ai.thinking = true;
 

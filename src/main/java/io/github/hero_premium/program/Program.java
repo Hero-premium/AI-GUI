@@ -9,6 +9,7 @@ import io.github.hero_premium.localais.LocalAi;
 import io.github.hero_premium.localais.LocalAiRegistry;
 import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.program.conversations.ConversationsManager;
+import io.github.hero_premium.program.sqlite.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class Program {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Program.class);
     @NotNull
-    private final ConversationsManager conversationsManager = new ConversationsManager();
+    private final ConversationsManager conversationsManager;
     @NotNull
     private final ToolHandler toolHandler = new ToolHandler();
     @NotNull
@@ -31,19 +32,15 @@ public class Program {
     @NotNull
     private volatile LocalAi ai;
 
-    public void setAi(LocalAi ai) {
-        this.ai = Objects.requireNonNull(ai, "ai must not be null");
-    }
-
+    // todo add fourth overload
     public Program(@NotNull Client client, @NotNull LocalAi ai) {
-        Objects.requireNonNull(client, "client must not be null");
-        Client varClient = Objects.requireNonNull(client.getClient(), "client.getClient() must not return null");
-        this.client = Objects.requireNonNull(varClient.setProgram(this), "client.setProgram(Program) must not return null");
-        this.ai = Objects.requireNonNull(ai, "ai must not be null");
+        this(client, ai, Constants.DEFAULT_URL);
     }
 
     public Program(@NotNull Client client) {
         this(client, LocalAiRegistry.AIS.get("qwen3:4b"));
+    public Program(@NotNull Client client, @NotNull LocalAi ai, String sqlUrl) {
+        conversationsManager = new ConversationsManager(sqlUrl);
     }
 
     public void launch() {

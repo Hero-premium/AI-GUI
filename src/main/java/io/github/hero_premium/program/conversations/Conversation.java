@@ -4,6 +4,7 @@ import io.github.hero_premium.Requests.Message;
 import io.github.hero_premium.Requests.RequestOut;
 import io.github.hero_premium.Roles;
 import io.github.hero_premium.localais.LocalAi;
+import io.github.hero_premium.program.sqlite.Constants;
 import io.github.hero_premium.program.sqlite.SQLiteTable;
 import io.github.hero_premium.program.sqlite.schemes.TableScheme;
 import io.github.hero_premium.util.RequestOutBuilder;
@@ -55,6 +56,10 @@ public class Conversation {
     }
 
     Conversation(@NotNull String title, @NotNull String systemPrompt, @NotNull UUID uuid) {
+        this(title, systemPrompt, uuid, Constants.DEFAULT_URL);
+    }
+
+    Conversation(@NotNull String title, @NotNull String systemPrompt, @NotNull UUID uuid, String sqlUrl) {
         this.messageList = new ArrayList<>();
         this.uuid = Objects.requireNonNull(uuid, "uuid must not be null");
         this.title = Objects.requireNonNull(title, "title must not be null");
@@ -63,7 +68,7 @@ public class Conversation {
                 .column("id", TableScheme.ColumnType.INTEGER)
                 .column("messages", TableScheme.ColumnType.TEXT)
                 .build()
-        );
+                , sqlUrl);
         List<String> jsons = sqlite.loadColumn(sqlite.tableScheme.columns.get(1), String.class);
         List<Message> messages = jsons.stream()
                 .map(json -> Util.gson.fromJson(json, Message.class))

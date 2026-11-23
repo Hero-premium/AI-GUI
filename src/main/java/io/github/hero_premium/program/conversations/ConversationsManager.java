@@ -1,5 +1,6 @@
 package io.github.hero_premium.program.conversations;
 
+import io.github.hero_premium.program.sqlite.Constants;
 import io.github.hero_premium.program.sqlite.SQLiteTable;
 import io.github.hero_premium.program.sqlite.schemes.TableScheme;
 import org.jetbrains.annotations.NotNull;
@@ -19,11 +20,13 @@ public class ConversationsManager {
 
     private final List<Conversation> conversations;
     @NotNull
-    private Conversation currentConversation = new Conversation("untitled",
-            Conversation.DEFAULT_SYSTEM_PROMPT,
-            UUID.fromString("0655a6af-9139-4d3e-83fd-28a856c4af9b"));
+    private Conversation currentConversation;
 
     public ConversationsManager() {
+        this(Constants.DEFAULT_URL);
+    }
+
+    public ConversationsManager(String databaseName) {
         conversations = new ArrayList<>();
         List<String> uuids = sqliteTable.loadColumn(sqliteTable.tableScheme.columns.getFirst(), String.class);
         List<String> createdAts = sqliteTable.loadColumn(sqliteTable.tableScheme.columns.get(1), String.class);
@@ -41,6 +44,9 @@ public class ConversationsManager {
                     UUID.fromString(uuid))
             );
         }
+        currentConversation = new Conversation("untitled",
+                Conversation.DEFAULT_SYSTEM_PROMPT,
+                UUID.randomUUID(), databaseName);
     }
 
     /**
