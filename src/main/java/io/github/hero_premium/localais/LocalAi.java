@@ -2,6 +2,7 @@ package io.github.hero_premium.localais;
 
 import io.github.hero_premium.Requests;
 import io.github.hero_premium.Requests.RequestOut;
+import io.github.hero_premium.Role;
 import io.github.hero_premium.util.Util;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -95,6 +96,11 @@ public class LocalAi {
     }
 
     public void chat(List<Requests.Message> messages, Consumer<Requests.RequestOut> out) {
+        var userFacingList = messages.stream()
+                .filter(message -> message.role() == Role.USER_FACING)
+                .toList();
+        if (!userFacingList.isEmpty())
+            throw new IllegalArgumentException("a user facing message must not reach the ai " + userFacingList);
         sendRequest(LocalAi.buildHttpRequest(new Requests.RequestIn(modelName, messages)), out);
     }
 

@@ -12,6 +12,7 @@ import io.github.hero_premium.program.conversations.Conversation;
 import io.github.hero_premium.program.conversations.ConversationsManager;
 import io.github.hero_premium.program.sqlite.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ public class Program {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Program.class);
+    public static final String DEFAULT_MODEL = "qwen3:4b";
     @NotNull
     private final ConversationsManager conversationsManager;
     @NotNull
@@ -30,39 +32,33 @@ public class Program {
     private final ThinkingDisplayHandler thinkingDisplayHandler = new ThinkingDisplayHandler();
     @NotNull
     private final Client client;
-    @NotNull
     private volatile LocalAi ai;
 
-    // todo add fourth overload
-    public Program(@NotNull Client client, @NotNull LocalAi ai) {
-        this(client, ai, Constants.DEFAULT_URL);
+    public Program(@NotNull Client client) {
+        LocalAi varAi = getDefaultModel();
+        this(client, varAi);
     }
 
-    public Program(@NotNull Client client) {
-        //fixme javafx
-        LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get("qwen3:4b");
-        LocalAi varAi = localAiStorer != null && localAiStorer.isAvailable() ? localAiStorer.localAi() :
+    private static @Nullable LocalAi getDefaultModel() {
+        LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get(DEFAULT_MODEL);
+        return localAiStorer != null && localAiStorer.isAvailable() ? localAiStorer.localAi() :
                 LocalAiRegistry.AIS.values()
                         .stream()
                         .filter(LocalAiStorer::isAvailable)
                         .map(LocalAiStorer::localAi)
                         .findFirst()
-                        .orElseGet(() -> {
-                            client.displaySystemMessage("""
-                                    no AIs were loaded,
-                                     please make sure ollama is up
-                                     and have at least one installed model,
-                                     then relaunch this application""");
-                            return null;
-                        });
-        this(client, varAi);
+                        .orElse(null);
     }
 
-    public Program(@NotNull Client client, @NotNull LocalAi ai, String sqlUrl) {
+    public Program(@NotNull Client client, @Nullable LocalAi ai) {
+        this(client, ai, Constants.DEFAULT_URL);
+    }
+
+    public Program(@NotNull Client client, @Nullable LocalAi ai, String sqlUrl) {
         Objects.requireNonNull(client, "client must not be null");
         Client varClient = Objects.requireNonNull(client.getClient(), "client.getClient() must not return null");
         this.client = Objects.requireNonNull(varClient.setProgram(this), "client.setProgram(Program) must not return null");
-        this.ai = Objects.requireNonNull(ai, "ai must not be null");
+        this.ai = ai;
         conversationsManager = new ConversationsManager(sqlUrl);
     }
 
@@ -73,7 +69,7 @@ public class Program {
      * @return true if the process succeeded, false otherwise (e.g. model is unavailable).
      * @throws NullPointerException if the passed AI name was null.
      */
-    public boolean setAi(String ai) {
+    public boolean setAi(@NotNull String ai) {
         LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get(Objects.requireNonNull(ai, "ai must not be null"));
         if (localAiStorer == null || !localAiStorer.isAvailable()) return false;
         this.ai = localAiStorer.localAi();
@@ -81,12 +77,21 @@ public class Program {
     }
 
     /// for tests
-    void setAi(LocalAi ai) {
+    void setAi(@NotNull LocalAi ai) {
         this.ai = Objects.requireNonNull(ai, "ai must not be null");
     }
 
     public void launch() {
         client.launchApplication();
+        if (ai == null) {
+            client.displaySystemMessage("""
+                    no AIs were loaded, please make sure ollama is up and have at least one installed model,\
+                     then relaunch this application""");
+        }
+    }
+
+    public void chat(String request) {
+        chat(new Message(Role.USER, request));
     }
 
     /**
@@ -95,6 +100,12 @@ public class Program {
      * @param message the message of what to tell the AI
      */
     public void chat(@NotNull Message message) {
+        if (ai == null) {
+            client.displaySystemMessage("""
+                    chat is blocked until an available model is loaded, \
+                    please make sure ollama is up or install a model then try again""");
+            return;
+        }
         String content = message.content();
         if (content == null || content.isBlank()) return;
         displayMessage(message);
@@ -104,10 +115,6 @@ public class Program {
 
         conversation.chat(message, ai, requestOut -> chatHandler(requestOut, conversation));
 
-    }
-
-    public void chat(String request) {
-        chat(new Message(Role.USER, request));
     }
 
     private void chatHandler(@NotNull RequestOut requestOut, Conversation conversation) {

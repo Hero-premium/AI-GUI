@@ -1,5 +1,6 @@
 package io.github.hero_premium.program.conversations;
 
+import com.google.gson.JsonSyntaxException;
 import io.github.hero_premium.Requests.Message;
 import io.github.hero_premium.Requests.RequestOut;
 import io.github.hero_premium.Role;
@@ -67,8 +68,7 @@ public class Conversation {
         this(title, systemPrompt, uuid, Constants.DEFAULT_URL);
     }
 
-    Conversation(@NotNull String title, @NotNull String systemPrompt, @NotNull UUID uuid, String sqlUrl) {
-        this.messageList = new ArrayList<>();
+    Conversation(@NotNull String title, @NotNull String systemPrompt, @NotNull UUID uuid, @NotNull String sqlUrl) {
         this.uuid = Objects.requireNonNull(uuid, "uuid must not be null");
         this.title = Objects.requireNonNull(title, "title must not be null");
         this.sqlite = new SQLiteTable(TableScheme.tableBuilder()
@@ -77,9 +77,18 @@ public class Conversation {
                 .column("messages", TableScheme.ColumnType.TEXT)
                 .build()
                 , sqlUrl);
+        this.messageList = new ArrayList<>();
         List<String> jsons = sqlite.loadColumn(sqlite.tableScheme.columns.get(1), String.class);
         List<Message> messages = jsons.stream()
-                .map(json -> Util.gson.fromJson(json, Message.class))
+                .map(json -> {
+                    try {
+                        return Util.gson.fromJson(json, Message.class);
+                    } catch (JsonSyntaxException _) {
+                        LOGGER.error("failed to retrieve message: {}", json);
+                        //todo add better handling
+                        return new Message(Role.ASSISTANT, "something went wrong while retrieve this message");
+                    }
+                })
                 .toList();
         messageList.addAll(messages);
         if (messageList.isEmpty()) {
