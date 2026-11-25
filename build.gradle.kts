@@ -2,7 +2,6 @@ plugins {
     id("java")
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
-    id("com.gradleup.shadow") version "9.6.1"
     id("org.springframework.boot") version "4.1.1"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("jvm")
@@ -67,18 +66,6 @@ tasks.jacocoTestReport {
     }
 }
 
-    tasks.shadowJar {
-        archiveClassifier.set("")
-
-        manifest {
-            attributes["Main-Class"] = "io.github.hero_premium.program.Main"
-        }
-
-        mergeServiceFiles()
-
-        exclude(
-            "META-INF/*.SF",
-            "META-INF/*.DSA",
-            "META-INF/*.RSA"
-        )
-    }
+tasks.bootJar {
+    archiveClassifier.set("")
+}
