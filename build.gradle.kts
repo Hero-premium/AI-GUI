@@ -3,6 +3,8 @@ plugins {
     id("application")
     id("org.openjfx.javafxplugin") version "0.1.0"
     id("com.gradleup.shadow") version "9.6.1"
+    id("org.springframework.boot") version "4.1.1"
+    id("io.spring.dependency-management") version "1.1.7"
     kotlin("jvm")
     jacoco
 }
@@ -32,6 +34,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.6.6")
     implementation("org.xerial:sqlite-jdbc:3.53.2.1")
     implementation("com.ezylang:EvalEx:3.7.0")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     compileOnly("org.jetbrains:annotations:26.1.0")
 }
 
