@@ -96,12 +96,16 @@ public class LocalAi {
     }
 
     public void chat(List<Requests.Message> messages, Consumer<Requests.RequestOut> out) {
-        var userFacingList = messages.stream()
-                .filter(message -> message.role() == Role.USER_FACING)
-                .toList();
+        var userFacingList = getUserFacingList(messages);
         if (!userFacingList.isEmpty())
             throw new IllegalArgumentException("a user facing message must not reach the ai " + userFacingList);
         sendRequest(LocalAi.buildHttpRequest(new Requests.RequestIn(modelName, messages)), out);
+    }
+
+    private static @NotNull List<Requests.Message> getUserFacingList(List<Requests.Message> messages) {
+        return messages.stream()
+                .filter(message -> message.role() == Role.USER_FACING)
+                .toList();
     }
 
     @Contract(pure = true)

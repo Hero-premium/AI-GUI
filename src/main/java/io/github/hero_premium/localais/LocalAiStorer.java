@@ -16,12 +16,12 @@ public record LocalAiStorer(@NotNull LocalAi localAi, boolean isAvailable) {
     }
 
     /**
-     * @throws AiUnavailableException if the AI was not available
+     * @throws ModelUnavailableException if the AI was not available
      * @return the AI, if available
      */
     @Override
     public @NotNull LocalAi localAi() {
-        if (!isAvailable) throw new AiUnavailableException(localAi + " is not available");
+        if (!isAvailable) throw new ModelUnavailableException(localAi + " is not available");
         return localAi;
     }
 

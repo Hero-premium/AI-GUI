@@ -10,7 +10,6 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class LocalAiRegistry {
 
@@ -30,8 +29,7 @@ public class LocalAiRegistry {
 
     private static void mergeConfigs(Map<String, LocalAiStorer> map) {
         try {
-            Stream<ServiceLoader.Provider<LocalAi>> ais = ServiceLoader.load(LocalAi.class).stream();
-            ais.forEach(provider -> {
+           ServiceLoader.load(LocalAi.class).stream().forEach(provider -> {
                 try {
                     /*
                      * if ollama already provided the config class this means the class is available,
@@ -44,16 +42,17 @@ public class LocalAiRegistry {
                      * the overwrite is intentional in case someone wants one AI model config to be different.
                      */
                     LocalAi ai = provider.get();
+                    LOGGER.info("loaded {} from config", ai.modelName);
                     boolean available = map.containsKey(ai.modelName);
                     if (!available) LOGGER.warn("model config {} loaded with no real model in ollama", ai.modelName);
                     map.put(ai.modelName, new LocalAiStorer(ai, available));
                 } catch (ServiceConfigurationError e) {
-                    LOGGER.error("Could not be loaded: {}", e.getMessage(), e);
+                    LOGGER.error("Could not be loaded", e);
                 }
             });
 
         } catch (ServiceConfigurationError e) {
-            LOGGER.error("no Ais were loaded: {}", e.getMessage(), e);
+            LOGGER.error("no Ais were loaded", e);
         }
     }
 
