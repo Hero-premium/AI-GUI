@@ -29,6 +29,7 @@ public abstract class Command {
     public Command(String commandLine) {
         Objects.requireNonNull(commandLine, "commandLine must not be null");
         if (!commandLine.startsWith("/")) throw new IllegalArgumentException("commandLine must start with /");
+        if (commandLine.length() == 1) throw new IllegalArgumentException("commandLine must have at least one argument");
         this.commandLine = commandLine.toLowerCase(Locale.ROOT);
     }
 
@@ -37,6 +38,6 @@ public abstract class Command {
 
     @Override
     public String toString() {
-        return "command " + getClass().getSimpleName();
+        return "command " + commandLine.substring(1);
     }
 }

@@ -17,7 +17,7 @@ public class ScannerInput extends Client {
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) handleChat(scanner.nextLine());
         }
-        displaySystemMessage("thanks for using this application.");
+        displaySystemMessage("Thanks for using this application.");
     }
 
     private void handleChat(String nextLine) {

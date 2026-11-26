@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Program {
 
@@ -39,22 +40,16 @@ public class Program {
         this(client, varAi);
     }
 
-    private static @Nullable LocalAi getDefaultModel() {
-        LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get(DEFAULT_MODEL);
-        return localAiStorer != null && localAiStorer.isAvailable() ? localAiStorer.localAi() :
-                LocalAiRegistry.AIS.values()
-                        .stream()
-                        .filter(LocalAiStorer::isAvailable)
-                        .map(LocalAiStorer::localAi)
-                        .findFirst()
-                        .orElse(null);
+    public Program(Client client, String aiName) {
+        LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get(aiName);
+        this(client, localAiStorer != null && localAiStorer.isAvailable() ? localAiStorer.localAi() : null);
     }
 
-    public Program(@NotNull Client client, @Nullable LocalAi ai) {
+    Program(@NotNull Client client, @Nullable LocalAi ai) {
         this(client, ai, Constants.DEFAULT_URL);
     }
 
-    public Program(@NotNull Client client, @Nullable LocalAi ai, String sqlUrl) {
+    public Program(@NotNull Client client, @Nullable LocalAi ai, @NotNull String sqlUrl) {
         Objects.requireNonNull(client, "client must not be null");
         Client varClient = Objects.requireNonNull(client.getClient(), "client.getClient() must not return null");
         this.client = Objects.requireNonNull(varClient.setProgram(this), "client.setProgram(Program) must not return null");
@@ -65,12 +60,12 @@ public class Program {
     /**
      * to set the current AI to the given AI.
      *
-     * @param ai the name of the new AI.
+     * @param aiName the name of the new AI.
      * @return true if the process succeeded, false otherwise (e.g. model is unavailable).
      * @throws NullPointerException if the passed AI name was null.
      */
-    public boolean setAi(@NotNull String ai) {
-        LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get(Objects.requireNonNull(ai, "ai must not be null"));
+    public boolean setAi(@NotNull String aiName) {
+        LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get(Objects.requireNonNull(aiName, "aiName must not be null"));
         if (localAiStorer == null || !localAiStorer.isAvailable()) return false;
         this.ai = localAiStorer.localAi();
         return true;
@@ -154,8 +149,35 @@ public class Program {
         return true;
     }
 
+    private static @Nullable LocalAi getDefaultModel() {
+        LocalAiStorer localAiStorer = LocalAiRegistry.AIS.get(DEFAULT_MODEL);
+        return localAiStorer != null && localAiStorer.isAvailable() ? localAiStorer.localAi() :
+                LocalAiRegistry.AIS.values()
+                        .stream()
+                        .filter(LocalAiStorer::isAvailable)
+                        .map(LocalAiStorer::localAi)
+                        .findFirst()
+                        .orElse(null);
+    }
+
+
     public Map<String, LocalAiStorer> getAllAis() {
         return LocalAiRegistry.AIS;
     }
 
+    public Map<UUID, Conversation> getConversations() {
+        return conversationsManager.getConversations();
+    }
+
+    public void setCurrentConversation(UUID uuid) {
+        conversationsManager.setCurrentConversation(uuid);
+    }
+
+    public Conversation getCurrentConversation() {
+        return conversationsManager.getCurrentConversation();
+    }
+
+    public Conversation newConversation(String title) {
+        return conversationsManager.newConversation(title);
+    }
 }

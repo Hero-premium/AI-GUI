@@ -6,6 +6,8 @@ import io.github.hero_premium.Role;
 import io.github.hero_premium.util.Util;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,21 +49,21 @@ public class LocalAi {
             readLines(responseConsumer, reader);
         } catch (ConnectException e) {
             LOGGER.error("connection failed: ", e);
-            responseConsumer.accept(getOllamaDownReqOut());
+            responseConsumer.accept(ollamaDownMessage());
         } catch (IOException e) {
             LOGGER.error("IO error: ", e);
-            responseConsumer.accept(genericFailerMessage());
+            responseConsumer.accept(genericFailureMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             LOGGER.error("Interrupted: ", e);
-            responseConsumer.accept(genericFailerMessage());
+            responseConsumer.accept(genericFailureMessage());
         } finally {
             isBusy.set(false);
             interrupted = false;
         }
     }
 
-    private @NotNull RequestOut genericFailerMessage() {
+    private @NotNull RequestOut genericFailureMessage() {
         return RequestOut.failureDefaultsIn(modelName, "something went wrong while generating this response");
     }
 
@@ -78,7 +80,7 @@ public class LocalAi {
         } while (!requestOut.done());
     }
 
-    private @NotNull RequestOut getOllamaDownReqOut() {
+    private @NotNull RequestOut ollamaDownMessage() {
         return RequestOut.failureDefaultsIn(modelName,
                 """
                         couldn't reach ollama server,
@@ -102,7 +104,7 @@ public class LocalAi {
         sendRequest(LocalAi.buildHttpRequest(new Requests.RequestIn(modelName, messages)), out);
     }
 
-    private static @NotNull List<Requests.Message> getUserFacingList(List<Requests.Message> messages) {
+    private static @NotNull @Unmodifiable List<Requests.Message> getUserFacingList(@NonNull List<Requests.Message> messages) {
         return messages.stream()
                 .filter(message -> message.role() == Role.USER_FACING)
                 .toList();

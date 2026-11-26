@@ -37,9 +37,7 @@ public class Conversation {
 
     private final RequestOutBuilder requestOutBuilder = new RequestOutBuilder();
     private final Deque<Message> queue = new ArrayDeque<>();
-
-    @NotNull
-    private final List<Message> messageList;
+    private final List<Message> messageList = new ArrayList<>();
     @NotNull
     public final UUID uuid;
     @NotNull
@@ -50,10 +48,6 @@ public class Conversation {
 
     Conversation(@NotNull String title) {
         this(title, DEFAULT_SYSTEM_PROMPT);
-    }
-
-    Conversation(String title, @NotNull UUID uuid) {
-        this(title, uuid, Constants.DEFAULT_URL);
     }
 
     Conversation(String title, UUID uuid, String url) {
@@ -71,15 +65,16 @@ public class Conversation {
     Conversation(@NotNull String title, @NotNull String systemPrompt, @NotNull UUID uuid, @NotNull String sqlUrl) {
         this.uuid = Objects.requireNonNull(uuid, "uuid must not be null");
         this.title = Objects.requireNonNull(title, "title must not be null");
-        this.sqlite = new SQLiteTable(TableScheme.tableBuilder()
-                .name("conversation_" + this.uuid)
-                .column("id", TableScheme.ColumnType.INTEGER)
-                .column("messages", TableScheme.ColumnType.TEXT)
-                .build()
-                , sqlUrl);
-        this.messageList = new ArrayList<>();
-        List<String> jsons = sqlite.loadColumn(sqlite.tableScheme.columns.get(1), String.class);
-        List<Message> messages = jsons.stream()
+        this.sqlite = createSqlite(sqlUrl);
+        messageList.addAll(loadMessages());
+        // if load was empty then this is a fresh convo and needs a system prompt
+        if (messageList.isEmpty()) {
+            saveMessage(new Message(Role.SYSTEM, Objects.requireNonNull(systemPrompt, "systemPrompt must not be null")));
+        }
+    }
+
+    private @NotNull List<Message> loadMessages() {
+        return sqlite.loadColumn(sqlite.tableScheme.columns.get(1), String.class).stream()
                 .map(json -> {
                     try {
                         return Util.gson.fromJson(json, Message.class);
@@ -90,10 +85,15 @@ public class Conversation {
                     }
                 })
                 .toList();
-        messageList.addAll(messages);
-        if (messageList.isEmpty()) {
-            saveMessage(new Message(Role.SYSTEM, Objects.requireNonNull(systemPrompt, "systemPrompt must not be null")));
-        }
+    }
+
+    private @NotNull SQLiteTable createSqlite(@NotNull String sqlUrl) {
+        return new SQLiteTable(TableScheme.tableBuilder()
+                .name("conversation_" + this.uuid)
+                .column("id", TableScheme.ColumnType.INTEGER)
+                .column("messages", TableScheme.ColumnType.TEXT)
+                .build()
+                , sqlUrl);
     }
 
     private void saveMessage(@NotNull Message message) {

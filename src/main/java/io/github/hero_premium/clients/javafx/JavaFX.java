@@ -45,6 +45,7 @@ public class JavaFX extends Client {
         primaryStage.show();
     }
 
+    @SuppressWarnings("unused")
     public JavaFX() {
         // NO OP so JavaFXLauncher can call the one with stage
     }
