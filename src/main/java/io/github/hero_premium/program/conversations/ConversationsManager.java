@@ -9,6 +9,7 @@ import io.github.hero_premium.program.sqlite.schemes.TableScheme.ColumnType;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class ConversationsManager {
@@ -42,9 +43,9 @@ public class ConversationsManager {
 
         for (int i = 0; i < uuids.size(); i++) {
             String uuid = getUuid(uuids.get(i));
-            String title = titles.get(i);
             String createdAt = createdAts.get(i);
             String lastModifiedAt = lastModifiedAts.get(i);
+            String title = titles.get(i);
             Conversation convo = new Conversation(title == null ? "untitled" : title, Conversation.DEFAULT_SYSTEM_PROMPT, UUID.fromString(uuid));
             conversations.put(convo.uuid, convo);
         }
@@ -73,7 +74,12 @@ public class ConversationsManager {
     public @NotNull Conversation newConversation(String title, String dataBaseName) {
         currentConversation = new Conversation(title, Conversation.DEFAULT_SYSTEM_PROMPT, UUID.randomUUID(), dataBaseName);
         conversations.put(currentConversation.uuid, currentConversation);
-        sqliteTable.save(Map.of(sqliteTable.tableScheme.columns.getFirst(), "conversation_" + currentConversation.uuid));
+        List<Column> columns = sqliteTable.tableScheme.columns;
+        sqliteTable.save(Map.of(
+                columns.getFirst(), "conversation_" + currentConversation.uuid,
+                columns.get(1), LocalDateTime.now().toString(),
+                columns.get(3), title
+        ));
         return currentConversation;
     }
 
@@ -103,6 +109,13 @@ public class ConversationsManager {
 
     public Map<UUID, Conversation> getConversations() {
         return Map.copyOf(conversations);
+    }
+
+    public void renameConversation(UUID conversationUuid, String newTitle) {
+        Conversation conversation = conversations.get(conversationUuid);
+        if (conversation == null) throw new NoSuchElementException("the uuid " + conversationUuid + " does not exist");
+        conversation.setTitle(newTitle);
+        // todo edit in db
     }
 
 }
