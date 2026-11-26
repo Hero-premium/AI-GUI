@@ -2,23 +2,30 @@ package io.github.hero_premium.clients;
 
 
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
 
+@SuppressWarnings("unused")
 public class ScannerInput extends Client {
-    private final Scanner scanner;
 
-    public ScannerInput() {
-        scanner = new Scanner(System.in);
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScannerInput.class);
 
     @Override
     public void launchApplication() {
-        while (scanner.hasNextLine()) {
-            String input = scanner.nextLine();
-            program.chat(input);
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (scanner.hasNextLine()) handleChat(scanner.nextLine());
         }
-        displaySystemMessage("you have just shut this down");
+        displaySystemMessage("thanks for using this application.");
+    }
+
+    private void handleChat(String nextLine) {
+        try {
+            program.chat(nextLine);
+        } catch (Exception e) {
+            LOGGER.error("something went wrong", e);
+        }
     }
 
     @Override
@@ -53,11 +60,11 @@ public class ScannerInput extends Client {
 
     @Override
     public void displayThinking(String message) {
-
+        IO.print(message);
     }
 
     @Override
     public void endLineOfThinking() {
-
+        IO.println("reply:");
     }
 }
