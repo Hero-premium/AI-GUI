@@ -2,12 +2,19 @@ package io.github.hero_premium.clients.web;
 
 import io.github.hero_premium.clients.Client;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SuppressWarnings("unused")
+@SpringBootApplication
 public class Server extends Client {
 
     @Override
     public void launchApplication() {
-
+        SpringApplication springApplication = new SpringApplication(Server.class);
+        springApplication.addInitializers(context ->
+                context.getBeanFactory().registerSingleton("program", program));
+        springApplication.run();
     }
 
     @Override

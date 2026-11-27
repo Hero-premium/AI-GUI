@@ -1,0 +1,8 @@
+#message-form {
+    position: fixed;
+    bottom: 0;
+}
+
+textarea {
+    width: 400%;
+}

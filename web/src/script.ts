@@ -1,9 +1,16 @@
+function clearBox() {
+    const inputBox = document.getElementById("inputBox");
+    if (inputBox instanceof HTMLTextAreaElement) {
+        inputBox.value = "";
+    } else {
+        console.error("inputBox not found or not a textarea");
+    }
+}
+
 function showNotification(event: SubmitEvent) {
     event.preventDefault();
-    const form = document?.getElementById("message-form");
-    const data = new FormData(form as HTMLFormElement);
-    const text = data.get("message");
-    alert(text);
+    alert((document.getElementById("inputBox") as HTMLTextAreaElement).value);
+    clearBox();
 }
 
 function attachNotification() {
