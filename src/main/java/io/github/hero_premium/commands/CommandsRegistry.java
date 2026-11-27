@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * all commands are registered here, also methods for finding and running them safely.
@@ -27,8 +26,7 @@ public final class CommandsRegistry {
     static {
         Map<String, Command> map = new HashMap<>();
         try {
-            Stream<ServiceLoader.Provider<Command>> commands = ServiceLoader.load(Command.class).stream();
-            commands.forEach(provider -> {
+            ServiceLoader.load(Command.class).stream().forEach(provider -> {
                 try {
                     Command command = provider.get();
                     map.put(command.commandLine, command);
@@ -37,6 +35,7 @@ public final class CommandsRegistry {
                     LOGGER.error("Could not be loaded: {}", e.getMessage(), e);
                 }
             });
+
         } catch (ServiceConfigurationError e) {
             LOGGER.error("no commands were loaded: {}", e.getMessage(), e);
         }
@@ -58,18 +57,8 @@ public final class CommandsRegistry {
      * @see #findAndRunCommand(String, Conversation, Client)
      */
     public static Command findCommand(@NotNull String givenCommand) {
-        return COMMANDS.get(Objects.requireNonNull(givenCommand.toLowerCase(Locale.ROOT), "givenCommand must not be null"));
-    }
-
-    /**
-     * returns true if the given string is a valid command
-     *
-     * @param givenCommand the command to be tested
-     * @return true if the line is a command, otherwise false
-     * @throws NullPointerException if givenCommand was null
-     */
-    public static boolean isACommand(String givenCommand) {
-        return findCommand(givenCommand) != null;
+        Objects.requireNonNull(givenCommand, "givenCommand must not be null");
+        return COMMANDS.get(givenCommand.strip().toLowerCase(Locale.ROOT));
     }
 
     /**
@@ -95,8 +84,9 @@ public final class CommandsRegistry {
     }
 
     @Contract(value = "_, _ -> new", pure = true)
-    private static String @NotNull [] parseCommand(Command command, String givenCommand) {
-        // TODO add parser, make sure "string here" counts as one arg.
-        return new String[]{givenCommand.strip().substring(command.commandLine.length())};
+    static String @NotNull [] parseCommand(@NotNull Command command, @NotNull String givenCommand) {
+        // TODO make "string here" counts as one arg.
+        String s = givenCommand.strip().substring(command.commandLine.length()).strip();
+        return s.isBlank() ? new String[0] : s.split("\\s+");
     }
 }
